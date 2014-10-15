@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "App.h"
+#include "Logger.h"
 
 App::App()
 {
@@ -25,7 +26,12 @@ BOOL App::CreateMainWindow(PCWSTR lpWindowName, DWORD dwStyle, DWORD dwExStyle /
 	mHandleMainWindow = CreateWindowEx(	dwExStyle, WINDOW_NAME, lpWindowName, dwStyle,
 										x, y, nWidth, nHeight, hWndParent, hMenu, GetModuleHandle(NULL), this);
 
-
+	//로깅용 콘솔 생성
+#ifdef _PRINT_CONSOLE
+	Logger::GetInstance()->CreateConsole();
+	Logger::GetInstance()->SetLogStatus(LOG_CONSOLE);
+	Log("test입니다 \n");
+#endif
 	return mHandleMainWindow ? TRUE : FALSE;
 }
 
@@ -78,6 +84,10 @@ int App::Run() const
 
 	}
 
+#ifdef _PRINT_CONSOLE
+	Logger::GetInstance()->DestroyConsole();
+	Logger::Release();
+#endif
 	return (int)msg.wParam;
 }
 
