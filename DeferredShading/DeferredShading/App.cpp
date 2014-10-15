@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "App.h"
 #include "Logger.h"
+#include "ProcessManager.h"
 
 App::App()
 {
@@ -26,11 +27,11 @@ BOOL App::CreateMainWindow(PCWSTR lpWindowName, DWORD dwStyle, DWORD dwExStyle /
 	mHandleMainWindow = CreateWindowEx(	dwExStyle, WINDOW_NAME, lpWindowName, dwStyle,
 										x, y, nWidth, nHeight, hWndParent, hMenu, GetModuleHandle(NULL), this);
 
-	//·Î±ë¿ë ÄÜ¼Ö »ý¼º
+	//ë¡œê¹…ìš© ì½˜ì†” ìƒì„±
 #ifdef _PRINT_CONSOLE
 	Logger::GetInstance()->CreateConsole();
 	Logger::GetInstance()->SetLogStatus(LOG_CONSOLE);
-	Log("testÀÔ´Ï´Ù \n");
+	Log("testìž…ë‹ˆë‹¤ \n");
 #endif
 	return mHandleMainWindow ? TRUE : FALSE;
 }
@@ -68,9 +69,16 @@ LRESULT CALLBACK App::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 int App::Run() const
 {
 	MSG msg = { 0, };
+	
+	if (!ProcessManager::GetInstance()->Init())
+	{
+		ProcessManager::GetInstance()->Destroy();
+		ProcessManager::Release();
 
-	//todo : init
+		MessageBox(mHandleMainWindow, L"Process Manager Initialization Error", L"Process Manager Init Error!", MB_ICONINFORMATION | MB_OK);
 
+		return false;
+	}
 
 	while (msg.message != WM_QUIT)
 	{
@@ -80,8 +88,13 @@ int App::Run() const
 			DispatchMessage(&msg);
 		}
 
-		// todo : process
+		if (!ProcessManager::GetInstance()->Process())
+		{
+			ProcessManager::GetInstance()->Destroy();
+			ProcessManager::Release();
 
+			PostQuitMessage(0);
+		}
 	}
 
 #ifdef _PRINT_CONSOLE
