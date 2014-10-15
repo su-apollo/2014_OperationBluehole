@@ -20,7 +20,9 @@ int APIENTRY _tWinMain(	_In_ HINSTANCE hInstance,
 	// _CrtSetBreakAlloc( #### );
 	// _CrtSetBreakAlloc( 139 );
 
-	if (false == App::GetInstance()->CreateMainWindow(L"DeferredShading", WS_POPUPWINDOW))
+	// full screen
+	//if (false == App::GetInstance()->CreateMainWindow(L"DeferredShading", WS_POPUPWINDOW))
+	if (false == App::GetInstance()->CreateMainWindow(L"DeferredShading", WS_OVERLAPPEDWINDOW))
 	{
 		return 0;
 	}
