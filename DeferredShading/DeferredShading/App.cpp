@@ -89,18 +89,17 @@ int App::Run() const
 		}
 
 		if (!ProcessManager::GetInstance()->Process())
-		{
-			ProcessManager::GetInstance()->Destroy();
-			ProcessManager::Release();
-
 			PostQuitMessage(0);
-		}
 	}
 
 #ifdef _PRINT_CONSOLE
 	Logger::GetInstance()->DestroyConsole();
 	Logger::Release();
 #endif
+
+	ProcessManager::GetInstance()->Destroy();
+	ProcessManager::Release();
+
 	return (int)msg.wParam;
 }
 

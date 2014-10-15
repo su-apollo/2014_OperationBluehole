@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ProcessManager.h"
-
+#include "Timer.h"
+#include "Logger.h"
 
 ProcessManager::ProcessManager()
 {
@@ -24,6 +25,7 @@ BOOL ProcessManager::Process() const
 		return FALSE;
 
 	// todo : timer set
+	Timer::GetInstance()->OnTick();
 
 	// todo : dispatch input
 
@@ -35,4 +37,6 @@ BOOL ProcessManager::Process() const
 void ProcessManager::Destroy() const
 {
 	// todo : release renderer
+
+	Timer::Release();
 }
