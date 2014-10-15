@@ -15,8 +15,6 @@
 // for memory leak check
 #include <memory>
 
-// direct x
-
 // logger
 #include <mbstring.h>
 #include <stdio.h>
@@ -24,15 +22,18 @@
 // timer
 #include <timeapi.h>
 
-// std
-#include <list>
-#include <map>
-#include <Array>
-
 // C RunTime Header Files
 #include <stdlib.h>
 #include <malloc.h>
 #include <tchar.h>
 #include <atlconv.h>
 #include <assert.h>
+
+// direct x
+#include <d3dx11.h>
+
+// std
+#include <list>
+#include <map>
+#include <Array>
 
