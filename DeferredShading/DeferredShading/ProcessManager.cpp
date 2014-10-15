@@ -31,6 +31,7 @@ BOOL ProcessManager::Process() const
 
 	// todo : rendering
 
+
 	return TRUE;
 }
 
