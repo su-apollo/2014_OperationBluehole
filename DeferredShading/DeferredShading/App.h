@@ -25,6 +25,8 @@ public:
 	int		Run()const;
 	BOOL	Display(int nCmdShow) const { return ShowWindow(mHandleMainWindow, nCmdShow); }
 
+	HWND	GetHandleMainWindow() { return mHandleMainWindow; };
+
 private:
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
