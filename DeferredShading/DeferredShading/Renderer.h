@@ -14,19 +14,19 @@ struct CB_VS_PER_OBJECT
 	D3DXMATRIX mWorldViewProj;
 	D3DXMATRIX mWorld;
 };
-UINT gCBVSPerObjectBind = 0;
+static UINT gCBVSPerObjectBind = 0;
 
 struct CB_PS_PER_OBJECT
 {
 	D3DXVECTOR4 mObjectColor;
 };
-UINT gCBPSPerObjectBind = 0;
+static UINT gCBPSPerObjectBind = 0;
 
 struct CB_PS_PER_FRAME
 {
 	D3DXVECTOR4 mLightDirAmbient;
 };
-UINT gCBPSPerFrameBind = 1;
+static UINT gCBPSPerFrameBind = 1;
 
 
 static const WCHAR* VS_PATH = L"VertexShader.hlsl";
