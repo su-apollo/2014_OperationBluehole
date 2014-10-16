@@ -50,6 +50,8 @@ private:
 
 	ID3D11InputLayout*      mVertexLayout11 = NULL;
 
+
+
 	UINT					mDPCallNum = 0;
 
 };
