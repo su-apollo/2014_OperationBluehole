@@ -31,6 +31,8 @@ BOOL Renderer::Init()
 		return FALSE;
 	}
 	
+	mCube.FillBuffer();
+
 	return TRUE;
 }
 
@@ -134,8 +136,63 @@ void Renderer::DestroyDevice()
 
 void Renderer::Render()
 {
+	//clear
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; //red,green,blue,alpha
 	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
+
+	D3DXMATRIX matWorldViewProjection;
+	D3DXVECTOR3 vLightDir;
+	D3DXMATRIX matWorld;
+	D3DXMATRIX matView;
+	D3DXMATRIX matProj;
+
+	//matProj = mCamera.GetMatProj();
+	//matView = mCamera.GetMatView();
+
+	// per frame cb update
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	mD3DDeviceContext->Map(mPSPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	CB_PS_PER_FRAME* pPerFrame = (CB_PS_PER_FRAME*)MappedResource.pData;
+	float fAmbient = 0.1f;
+	pPerFrame->mLightDirAmbient = D3DXVECTOR4(vLightDir.x, vLightDir.y, vLightDir.z, fAmbient);
+	mD3DDeviceContext->Unmap(mPSPerFrame, 0);
+
+	mD3DDeviceContext->PSSetConstantBuffers(gCBPSPerFrameBind, 1, &mPSPerFrame);
+	
+	//IA setup
+	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
+
+	// Set the shaders
+	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
+	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
+
+	matWorld = mCube.GetMatWorld();
+	matProj = mCamera.GetMatProj();
+	matView = mCamera.GetMatView();
+
+	matWorldViewProjection = matWorld * matView * matProj;
+
+	// VS Per object
+	mD3DDeviceContext->Map(mVSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	CB_VS_PER_OBJECT* pVSPerObject = (CB_VS_PER_OBJECT*)MappedResource.pData;
+	D3DXMatrixTranspose(&pVSPerObject->mWorldViewProj, &matWorldViewProjection);
+	D3DXMatrixTranspose(&pVSPerObject->mWorld, &matWorld);
+	mD3DDeviceContext->Unmap(mVSPerObject, 0);
+
+	mD3DDeviceContext->VSSetConstantBuffers(gCBVSPerObjectBind, 1, &mVSPerObject);
+
+	// PS Per object
+	mD3DDeviceContext->Map(mPSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	CB_PS_PER_OBJECT* pPSPerObject = (CB_PS_PER_OBJECT*)MappedResource.pData;
+	pPSPerObject->mObjectColor = D3DXVECTOR4(1, 1, 1, 1);
+	mD3DDeviceContext->Unmap(mPSPerObject, 0);
+
+	mD3DDeviceContext->PSSetConstantBuffers(gCBPSPerObjectBind, 1, &mPSPerObject);
+
+	//dp call
+	mD3DDeviceContext->DrawIndexed(36, 0, 0);
+
+	// back to front
 	mSwapChain->Present(0, 0);
 }
 
@@ -208,6 +265,19 @@ BOOL Renderer::CompileShader()
 
 	SafeRelease(pVSBlob);
 	SafeRelease(pPSBlob);
+
+	D3D11_BUFFER_DESC Desc;
+	Desc.Usage = D3D11_USAGE_DYNAMIC;
+	Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	Desc.MiscFlags = 0;
+
+	Desc.ByteWidth = sizeof(CB_VS_PER_OBJECT);
+	mD3DDevice->CreateBuffer(&Desc, NULL, &mVSPerObject);
+	Desc.ByteWidth = sizeof(CB_PS_PER_OBJECT);
+	mD3DDevice->CreateBuffer(&Desc, NULL, &mPSPerObject);
+	Desc.ByteWidth = sizeof(CB_PS_PER_FRAME);
+	mD3DDevice->CreateBuffer(&Desc, NULL, &mPSPerFrame);
 
 	return TRUE;
 }

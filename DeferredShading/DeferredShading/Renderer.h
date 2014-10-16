@@ -1,5 +1,7 @@
 #pragma once
 #include "Singleton.h"
+#include "Camera.h"
+#include "Cube.h"
 
 enum GbufferType
 {
@@ -79,6 +81,10 @@ private:
 	ID3D11Buffer*           mPSPerFrame = NULL;
 
 	UINT					mDPCallNum = 0;
+
+	// contents
+	Camera					mCamera;
+	Cube					mCube;
 
 };
 

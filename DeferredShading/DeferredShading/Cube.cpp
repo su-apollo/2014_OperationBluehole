@@ -8,6 +8,15 @@
 
 Cube::Cube()
 {
+}
+
+
+Cube::~Cube()
+{
+}
+
+void Cube::FillBuffer()
+{
 	CubeVertex vertices[] =
 	{
 		{ D3DXVECTOR3(-1.0f, 1.0f, -1.0f), D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f) },
@@ -30,7 +39,7 @@ Cube::Cube()
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
 	Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer);
-	
+
 	// Set vertex buffer
 	UINT stride = sizeof(CubeVertex);
 	UINT offset = 0;
@@ -70,11 +79,6 @@ Cube::Cube()
 
 	// Set primitive topology
 	Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
-
-Cube::~Cube()
-{
 }
 
 

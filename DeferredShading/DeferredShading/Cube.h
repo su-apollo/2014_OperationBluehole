@@ -16,10 +16,14 @@ public:
 	Cube();
 	~Cube();
 
+	void FillBuffer();
+	D3DXMATRIX GetMatWorld(){ return mWorld; }
+
+private:
+
 	ID3D11Buffer*           mVertexBuffer = NULL;
 	ID3D11Buffer*           mIndexBuffer = NULL;
 
-
-
+	D3DXMATRIX				mWorld;
 };
 
