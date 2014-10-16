@@ -1,7 +1,13 @@
 #pragma once
 #include "Singleton.h"
 
-
+enum GbufferType
+{
+	GBUFF_DEPTH = 0,
+	GBUFF_NORMAL,
+	GBUFF_ALBEDO,
+	GBUFF_SPECULAR,
+};
 
 
 class Renderer : public Singleton<Renderer>
@@ -11,6 +17,8 @@ public:
 	~Renderer();
 
 	BOOL Init();
+
+	void Render();
 
 private:
 
@@ -24,9 +32,12 @@ private:
 	IDXGISwapChain*			mSwapChain = NULL;
 
 	ID3D11Device*           mD3DDevice = NULL;
-	ID3D11DeviceContext*    mImmediateContext = NULL;
+	ID3D11DeviceContext*    mD3DDeviceContext = NULL;
 
 	ID3D11RenderTargetView* mRenderTargetView = NULL;
+
+
+	UINT					mDPCallNum = 0;
 
 };
 

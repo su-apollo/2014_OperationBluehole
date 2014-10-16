@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Renderer.h"
 #include "App.h"
-
+#include "Logger.h"
 
 
 
@@ -12,16 +12,23 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	DestroyDevice();
 }
 
 BOOL Renderer::Init()
 {
-
+	if (!CreateDevice(App::GetInstance()->GetHandleMainWindow()))
+	{
+		MessageBox(App::GetInstance()->GetHandleMainWindow(), L"CreateDevice Error!", L"CreateDevice Error!", MB_ICONINFORMATION | MB_OK);
+		DestroyDevice();
+		return FALSE;
+	}
+	
+	return TRUE;
 }
 
 BOOL Renderer::CreateDevice(HWND hWnd)
 {
-	HWND hWnd = App::GetInstance()->GetHandleMainWindow();
 	HRESULT hr = S_OK;
 
 	RECT rc;
@@ -68,10 +75,11 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 	{
 		mDriverType = driverTypes[driverTypeIndex];
 		hr = D3D11CreateDeviceAndSwapChain(NULL, mDriverType, NULL, createDeviceFlags, featureLevels, numFeatureLevels,
-			D3D11_SDK_VERSION, &sd, &mSwapChain, &mD3DDevice, &mFeatureLevel, &mImmediateContext);
+			D3D11_SDK_VERSION, &sd, &mSwapChain, &mD3DDevice, &mFeatureLevel, &mD3DDeviceContext);
 		if (SUCCEEDED(hr))
 			break;
 	}
+
 	if (FAILED(hr))
 		return FALSE;
 
@@ -79,14 +87,15 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 	ID3D11Texture2D* pBackBuffer = NULL;
 	hr = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 	if (FAILED(hr))
-		return hr;
+		return FALSE;
 
 	hr = mD3DDevice->CreateRenderTargetView(pBackBuffer, NULL, &mRenderTargetView);
 	pBackBuffer->Release();
 	if (FAILED(hr))
-		return hr;
+		return FALSE;
 
-	mImmediateContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
+	// set rendertarget
+	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
 
 	// Setup the viewport
 	D3D11_VIEWPORT vp;
@@ -96,12 +105,25 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
-	mImmediateContext->RSSetViewports(1, &vp);
+	mD3DDeviceContext->RSSetViewports(1, &vp);
 
 	return TRUE;
 }
 
 void Renderer::DestroyDevice()
 {
-	
+	if (mD3DDeviceContext)
+		mD3DDeviceContext->ClearState();
+
+	SafeRelease(mRenderTargetView);
+	SafeRelease(mSwapChain);
+	SafeRelease(mD3DDeviceContext);
+	SafeRelease(mD3DDevice);
+}
+
+void Renderer::Render()
+{
+	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; //red,green,blue,alpha
+	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
+	mSwapChain->Present(0, 0);
 }
