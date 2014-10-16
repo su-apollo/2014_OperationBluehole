@@ -9,6 +9,26 @@ enum GbufferType
 	GBUFF_SPECULAR,
 };
 
+struct CB_VS_PER_OBJECT
+{
+	D3DXMATRIX mWorldViewProj;
+	D3DXMATRIX mWorld;
+};
+UINT gCBVSPerObjectBind = 0;
+
+struct CB_PS_PER_OBJECT
+{
+	D3DXVECTOR4 mObjectColor;
+};
+UINT gCBPSPerObjectBind = 0;
+
+struct CB_PS_PER_FRAME
+{
+	D3DXVECTOR4 mLightDirAmbient;
+};
+UINT gCBPSPerFrameBind = 1;
+
+
 static const WCHAR* VS_PATH = L"VertexShader.hlsl";
 static const LPCSTR	VS_MAIN = "main";
 
@@ -24,6 +44,9 @@ public:
 	BOOL Init();
 
 	void Render();
+
+	ID3D11Device* GetDevice() { return mD3DDevice; }
+	ID3D11DeviceContext* GetDeviceContext() { return mD3DDeviceContext; }
 
 private:
 
@@ -50,7 +73,10 @@ private:
 
 	ID3D11InputLayout*      mVertexLayout11 = NULL;
 
-
+	// shader content
+	ID3D11Buffer*           mVSPerObject = NULL;
+	ID3D11Buffer*           mPSPerObject = NULL;
+	ID3D11Buffer*           mPSPerFrame = NULL;
 
 	UINT					mDPCallNum = 0;
 
