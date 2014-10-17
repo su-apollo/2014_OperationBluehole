@@ -1,10 +1,11 @@
 #pragma once
+#include "Singleton.h"
 
 
 
 
 
-class Camera
+class Camera : public Singleton<Camera>
 {
 public:
 	Camera();

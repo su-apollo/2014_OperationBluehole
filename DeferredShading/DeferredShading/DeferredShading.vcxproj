@@ -87,7 +87,6 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Cube.h" />
     <ClInclude Include="DeferredShading.h" />
     <ClInclude Include="Elin.h" />
     <ClInclude Include="Logger.h" />
@@ -103,7 +102,6 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DeferredShading.cpp" />
     <ClCompile Include="Elin.cpp" />
     <ClCompile Include="Logger.cpp" />

@@ -30,6 +30,8 @@ BOOL ProcessManager::Process() const
 
 	// todo : dispatch input
 
+	Camera::GetInstance()->Update();
+
 	Renderer::GetInstance()->Render();
 
 	return TRUE;
@@ -39,4 +41,5 @@ void ProcessManager::Destroy() const
 {
 	Renderer::Release();
 	Timer::Release();
+	Camera::Release();
 }
