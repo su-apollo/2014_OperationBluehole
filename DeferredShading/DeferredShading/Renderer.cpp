@@ -31,7 +31,12 @@ BOOL Renderer::Init()
 		return FALSE;
 	}
 	
-	mCube.FillBuffer();
+	if (!mCube.FillBuffer())
+	{
+		MessageBox(App::GetInstance()->GetHandleMainWindow(), L"FillBuffer Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		DestroyDevice();
+		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -139,60 +144,29 @@ void Renderer::Render()
 	//clear
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; //red,green,blue,alpha
 	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
+	
+	mCamera.Update();
 
-	D3DXMATRIX matWorldViewProjection;
-	D3DXVECTOR3 vLightDir;
+	//update constbuff
 	D3DXMATRIX matWorld;
 	D3DXMATRIX matView;
 	D3DXMATRIX matProj;
-
-	//matProj = mCamera.GetMatProj();
-	//matView = mCamera.GetMatView();
-
-	// per frame cb update
-	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	mD3DDeviceContext->Map(mPSPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-	CB_PS_PER_FRAME* pPerFrame = (CB_PS_PER_FRAME*)MappedResource.pData;
-	float fAmbient = 0.1f;
-	pPerFrame->mLightDirAmbient = D3DXVECTOR4(vLightDir.x, vLightDir.y, vLightDir.z, fAmbient);
-	mD3DDeviceContext->Unmap(mPSPerFrame, 0);
-
-	mD3DDeviceContext->PSSetConstantBuffers(gCBPSPerFrameBind, 1, &mPSPerFrame);
+	ConstantBuffer cb;
+	D3DXMatrixTranspose( &matWorld, &(mCube.GetMatWorld()));
+	D3DXMatrixTranspose(&matView, &(mCamera.GetMatView()));
+	D3DXMatrixTranspose(&matProj, &(mCamera.GetMatProj()));
+	cb.mWorld = matWorld;
+	cb.mView = matView;
+	cb.mProjection = matProj;
+	mD3DDeviceContext->UpdateSubresource(mConstantBuffer, 0, NULL, &cb, 0, 0);
 	
-	//IA setup
-	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
-
-	// Set the shaders
+	//draw
 	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
+	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mConstantBuffer);
 	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
-
-	matWorld = mCube.GetMatWorld();
-	matProj = mCamera.GetMatProj();
-	matView = mCamera.GetMatView();
-
-	matWorldViewProjection = matWorld * matView * matProj;
-
-	// VS Per object
-	mD3DDeviceContext->Map(mVSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-	CB_VS_PER_OBJECT* pVSPerObject = (CB_VS_PER_OBJECT*)MappedResource.pData;
-	D3DXMatrixTranspose(&pVSPerObject->mWorldViewProj, &matWorldViewProjection);
-	D3DXMatrixTranspose(&pVSPerObject->mWorld, &matWorld);
-	mD3DDeviceContext->Unmap(mVSPerObject, 0);
-
-	mD3DDeviceContext->VSSetConstantBuffers(gCBVSPerObjectBind, 1, &mVSPerObject);
-
-	// PS Per object
-	mD3DDeviceContext->Map(mPSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-	CB_PS_PER_OBJECT* pPSPerObject = (CB_PS_PER_OBJECT*)MappedResource.pData;
-	pPSPerObject->mObjectColor = D3DXVECTOR4(1, 1, 1, 1);
-	mD3DDeviceContext->Unmap(mPSPerObject, 0);
-
-	mD3DDeviceContext->PSSetConstantBuffers(gCBPSPerObjectBind, 1, &mPSPerObject);
-
-	//dp call
 	mD3DDeviceContext->DrawIndexed(36, 0, 0);
 
-	// back to front
+	// backbuffer to front
 	mSwapChain->Present(0, 0);
 }
 
@@ -233,51 +207,57 @@ BOOL Renderer::CompileShader()
 	if (FAILED(hr))
 		return FALSE;
 
-	ID3DBlob* pPSBlob = NULL;
-	hr = CompileShaderFromFile(const_cast<WCHAR*>(PS_PATH), PS_MAIN, "ps_4_0_level_9_1", &pPSBlob);
-	if (FAILED(hr))
-		return FALSE;
-
 	hr = mD3DDevice->CreateVertexShader(pVSBlob->GetBufferPointer(),
 		pVSBlob->GetBufferSize(), NULL, &mVertexShader);
 
 	if (FAILED(hr))
+	{
+		SafeRelease(pVSBlob);
 		return FALSE;
+	}
 
-	hr = mD3DDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
-		pPSBlob->GetBufferSize(), NULL, &mPixelShader);
-
-	if (FAILED(hr))
-		return FALSE;
-
+	// input layout
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
+	UINT numElements = ARRAYSIZE(layout);
 
-	hr = mD3DDevice->CreateInputLayout(layout, ARRAYSIZE(layout), pVSBlob->GetBufferPointer(),
+	hr = mD3DDevice->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(),
 		pVSBlob->GetBufferSize(), &mVertexLayout11);
+
+	SafeRelease(pVSBlob);
 
 	if (FAILED(hr))
 		return FALSE;
 
-	SafeRelease(pVSBlob);
+	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
+
+	ID3DBlob* pPSBlob = NULL;
+	hr = CompileShaderFromFile(const_cast<WCHAR*>(PS_PATH), PS_MAIN, "ps_4_0_level_9_1", &pPSBlob);
+	if (FAILED(hr))
+		return FALSE;
+		
+	hr = mD3DDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
+		pPSBlob->GetBufferSize(), NULL, &mPixelShader);
+
 	SafeRelease(pPSBlob);
+	if (FAILED(hr))
+		return FALSE;
 
-	D3D11_BUFFER_DESC Desc;
-	Desc.Usage = D3D11_USAGE_DYNAMIC;
-	Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	Desc.MiscFlags = 0;
+	D3D11_BUFFER_DESC bd;
+	//아래 zeromemory를 꼭해야함
+	ZeroMemory(&bd, sizeof(bd));
+	// Create the constant buffer
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(ConstantBuffer);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mConstantBuffer);
 
-	Desc.ByteWidth = sizeof(CB_VS_PER_OBJECT);
-	mD3DDevice->CreateBuffer(&Desc, NULL, &mVSPerObject);
-	Desc.ByteWidth = sizeof(CB_PS_PER_OBJECT);
-	mD3DDevice->CreateBuffer(&Desc, NULL, &mPSPerObject);
-	Desc.ByteWidth = sizeof(CB_PS_PER_FRAME);
-	mD3DDevice->CreateBuffer(&Desc, NULL, &mPSPerFrame);
+	if (FAILED(hr))
+		return FALSE;
 
 	return TRUE;
 }

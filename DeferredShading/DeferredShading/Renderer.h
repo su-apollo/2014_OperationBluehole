@@ -3,33 +3,12 @@
 #include "Camera.h"
 #include "Cube.h"
 
-enum GbufferType
+struct ConstantBuffer
 {
-	GBUFF_DEPTH = 0,
-	GBUFF_NORMAL,
-	GBUFF_ALBEDO,
-	GBUFF_SPECULAR,
-};
-
-struct CB_VS_PER_OBJECT
-{
-	D3DXMATRIX mWorldViewProj;
 	D3DXMATRIX mWorld;
+	D3DXMATRIX mView;
+	D3DXMATRIX mProjection;
 };
-static UINT gCBVSPerObjectBind = 0;
-
-struct CB_PS_PER_OBJECT
-{
-	D3DXVECTOR4 mObjectColor;
-};
-static UINT gCBPSPerObjectBind = 0;
-
-struct CB_PS_PER_FRAME
-{
-	D3DXVECTOR4 mLightDirAmbient;
-};
-static UINT gCBPSPerFrameBind = 1;
-
 
 static const WCHAR* VS_PATH = L"VertexShader.hlsl";
 static const LPCSTR	VS_MAIN = "main";
@@ -75,12 +54,9 @@ private:
 
 	ID3D11InputLayout*      mVertexLayout11 = NULL;
 
-	// shader content
-	ID3D11Buffer*           mVSPerObject = NULL;
-	ID3D11Buffer*           mPSPerObject = NULL;
-	ID3D11Buffer*           mPSPerFrame = NULL;
-
 	UINT					mDPCallNum = 0;
+
+	ID3D11Buffer*           mConstantBuffer = NULL;
 
 	// contents
 	Camera					mCamera;

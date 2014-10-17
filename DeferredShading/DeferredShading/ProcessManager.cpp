@@ -15,7 +15,8 @@ ProcessManager::~ProcessManager()
 
 BOOL ProcessManager::Init() const
 {
-	Renderer::GetInstance()->Init();
+	if (!Renderer::GetInstance()->Init())
+		return FALSE;
 
 	return TRUE;
 }

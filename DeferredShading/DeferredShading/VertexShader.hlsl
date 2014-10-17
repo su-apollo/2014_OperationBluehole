@@ -4,39 +4,31 @@
 //--------------------------------------------------------------------------------------
 // Globals
 //--------------------------------------------------------------------------------------
-cbuffer cbPerObject : register(b0)
+cbuffer ConstantBuffer : register(b0)
 {
-	matrix		g_mWorldViewProjection	: packoffset(c0);
-	matrix		g_mWorld				: packoffset(c4);
+	matrix World;
+	matrix View;
+	matrix Projection;
 };
 
 //--------------------------------------------------------------------------------------
 // Input / Output structures
 //--------------------------------------------------------------------------------------
-struct VS_INPUT
-{
-	float4 vPosition	: POSITION;
-	float3 vNormal		: NORMAL;
-	float2 vTexcoord	: TEXCOORD0;
-};
-
 struct VS_OUTPUT
 {
-	float3 vNormal		: NORMAL;
-	float2 vTexcoord	: TEXCOORD0;
-	float4 vPosition	: SV_POSITION;
+	float4 Pos : SV_POSITION;
+	float4 Color : COLOR0;
 };
 
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-VS_OUTPUT main(VS_INPUT Input)
+VS_OUTPUT main( float4 Pos : POSITION, float4 Color : COLOR )
 {
-	VS_OUTPUT Output;
-
-	Output.vPosition = mul(Input.vPosition, g_mWorldViewProjection);
-	Output.vNormal = mul(Input.vNormal, (float3x3)g_mWorld);
-	Output.vTexcoord = Input.vTexcoord;
-
-	return Output;
+	VS_OUTPUT output = (VS_OUTPUT)0;
+	output.Pos = mul(Pos, World);
+	output.Pos = mul(output.Pos, View);
+	output.Pos = mul(output.Pos, Projection);
+	output.Color = Color;
+	return output;
 }

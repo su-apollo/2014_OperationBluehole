@@ -16,8 +16,8 @@ public:
 	Cube();
 	~Cube();
 
-	void FillBuffer();
-	D3DXMATRIX GetMatWorld(){ return mWorld; }
+	BOOL		FillBuffer();
+	D3DXMATRIX	GetMatWorld(){ return mWorld; }
 
 private:
 

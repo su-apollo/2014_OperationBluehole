@@ -5,9 +5,9 @@
 
 
 
-
 Cube::Cube()
 {
+	D3DXMatrixIdentity(&mWorld);
 }
 
 
@@ -15,8 +15,18 @@ Cube::~Cube()
 {
 }
 
-void Cube::FillBuffer()
+BOOL Cube::FillBuffer()
 {
+	HRESULT hr = S_OK;
+
+	//IA - Input Assembler Stage
+	//1. 입력버퍼 생성
+	//2. layout 생성(vertex 정의)
+	//3. IASetinputlayout, IASetbuffer를 통해서 IA단계에 생성 정보들을 전달
+	//4. IASetPrimitiveTopology를 통해 설정
+	//5. dpcall
+
+	// Create vertex buffer
 	CubeVertex vertices[] =
 	{
 		{ D3DXVECTOR3(-1.0f, 1.0f, -1.0f), D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f) },
@@ -38,13 +48,14 @@ void Cube::FillBuffer()
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
-	Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer);
+	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer);
+	if (FAILED(hr))
+		return FALSE;
 
 	// Set vertex buffer
 	UINT stride = sizeof(CubeVertex);
 	UINT offset = 0;
 	Renderer::GetInstance()->GetDeviceContext()->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
-
 
 	// Create index buffer
 	WORD indices[] =
@@ -72,13 +83,17 @@ void Cube::FillBuffer()
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	InitData.pSysMem = indices;
-	Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer);
+	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer);
+	if (FAILED(hr))
+		return FALSE;
 
 	// Set index buffer
 	Renderer::GetInstance()->GetDeviceContext()->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 	// Set primitive topology
 	Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	return TRUE;
 }
 
 
