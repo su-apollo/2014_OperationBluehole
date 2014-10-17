@@ -2,6 +2,7 @@
 #include "RenderObj.h"
 #include "Renderer.h"
 #include "Camera.h"
+#include "Timer.h"
 
 
 RenderObj::RenderObj()
@@ -31,16 +32,22 @@ BOOL RenderObj::Init()
 
 void RenderObj::Render()
 {
+	//rotate
+	D3DXMATRIX matRotate;
+	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
+	mWorld *= matRotate;
+
 	//update constbuff
+	D3DXMATRIX matWorld;
 	D3DXMATRIX matView = Camera::GetInstance()->GetMatView();
 	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
 	ConstantBuffer cb;
 
 	//열 우선배치
-	D3DXMatrixTranspose(&mWorld, &mWorld);
+	D3DXMatrixTranspose(&matWorld, &mWorld);
 	D3DXMatrixTranspose(&matView, &matView);
 	D3DXMatrixTranspose(&matProj, &matProj);
-	cb.mWorld = mWorld;
+	cb.mWorld = matWorld;
 	cb.mView = matView;
 	cb.mProjection = matProj;
 	mD3DDeviceContext->UpdateSubresource(mConstantBuffer, 0, NULL, &cb, 0, 0);

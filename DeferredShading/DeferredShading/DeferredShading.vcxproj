@@ -88,7 +88,9 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DeferredShading.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Elin.h" />
+    <ClInclude Include="LightManager.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MacroSet.h" />
     <ClInclude Include="ProcessManager.h" />
@@ -103,7 +105,9 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DeferredShading.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Elin.cpp" />
+    <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="Renderer.cpp" />

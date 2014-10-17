@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Timer.h"
-
+#include "Logger.h"
 
 Timer::Timer()
 {
@@ -36,5 +36,8 @@ void Timer::CountFPS()
 		mFPS = (static_cast<float>(mFrameCounter)) / mFPSTimer;
 		mFrameCounter = 0;
 		mFPSTimer = 0.0f;
+
+		Log("DT : %f\n", mDeltaTime);
+		Log("FPS : %f\n", mFPS);
 	}
 }

@@ -25,6 +25,9 @@ struct CubeVertex
 //3. IASetinputlayout, IASetbuffer를 통해서 IA단계에 생성 정보들을 전달
 //4. IASetPrimitiveTopology를 통해 설정
 //5. dpcall
+
+// todo : 상속받아서 쓸 수 있도록
+// todo : 다수의 오브젝트를 모아서 찍도록
 class RenderObj
 {
 public:
