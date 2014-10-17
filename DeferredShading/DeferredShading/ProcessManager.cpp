@@ -42,4 +42,5 @@ void ProcessManager::Destroy() const
 	Renderer::Release();
 	Timer::Release();
 	Camera::Release();
+
 }

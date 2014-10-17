@@ -41,20 +41,20 @@ void RenderObj::Render()
 	D3DXMATRIX matWorld;
 	D3DXMATRIX matView = Camera::GetInstance()->GetMatView();
 	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
-	ConstantBuffer cb;
+	VSConstantBuffer vcb;
 
 	//열 우선배치
 	D3DXMatrixTranspose(&matWorld, &mWorld);
 	D3DXMatrixTranspose(&matView, &matView);
 	D3DXMatrixTranspose(&matProj, &matProj);
-	cb.mWorld = matWorld;
-	cb.mView = matView;
-	cb.mProjection = matProj;
-	mD3DDeviceContext->UpdateSubresource(mConstantBuffer, 0, NULL, &cb, 0, 0);
+	vcb.mWorld = matWorld;
+	vcb.mView = matView;
+	vcb.mProjection = matProj;
+	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
 
 	//draw
 	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
-	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mConstantBuffer);
+	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
 	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
 	mD3DDeviceContext->DrawIndexed(36, 0, 0);
 }
@@ -172,13 +172,19 @@ BOOL RenderObj::CreateConstBuff()
 	ZeroMemory(&bd, sizeof(bd));
 	// Create the constant buffer
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(ConstantBuffer);
+	bd.ByteWidth = sizeof(VSConstantBuffer);
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = 0;
-	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mConstantBuffer);
 
+	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mVSConstBuffer);
 	if (FAILED(hr))
 		return FALSE;
+
+	bd.ByteWidth = sizeof(PSConstantBuffer);
+	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mPSConstBuffer);
+	if (FAILED(hr))
+		return FALSE;
+
 
 	return TRUE;
 }

@@ -6,15 +6,7 @@
 
 
 
-Camera::Camera()
-: mEye(0.0f, 4.0f, -10.0f), mAt(0.0f, 1.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f)
-{
-}
 
-
-Camera::~Camera()
-{
-}
 
 
 void Camera::Update()

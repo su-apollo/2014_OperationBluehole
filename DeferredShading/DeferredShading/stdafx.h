@@ -36,6 +36,7 @@
 #include <d3dx9math.h>
 
 // std
+#include <vector>
 #include <list>
 #include <map>
 #include <Array>

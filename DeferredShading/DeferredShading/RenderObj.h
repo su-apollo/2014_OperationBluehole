@@ -6,11 +6,17 @@ static const LPCSTR	VS_MAIN = "main";
 static const WCHAR* PS_PATH = L"PixelShader.hlsl";
 static const LPCSTR	PS_MAIN = "main";
 
-struct ConstantBuffer
+struct VSConstantBuffer
 {
 	D3DXMATRIX mWorld;
 	D3DXMATRIX mView;
 	D3DXMATRIX mProjection;
+};
+
+struct PSConstantBuffer
+{
+	D3DXVECTOR4 vLightDir[2];
+	D3DXVECTOR4 vLightColor[2];
 };
 
 struct CubeVertex
@@ -61,7 +67,8 @@ private:
 
 	ID3D11Buffer*           mVertexBuffer = NULL;
 	ID3D11Buffer*           mIndexBuffer = NULL;
-	ID3D11Buffer*           mConstantBuffer = NULL;
+	ID3D11Buffer*           mVSConstBuffer = NULL;
+	ID3D11Buffer*			mPSConstBuffer = NULL;
 
 	D3DXMATRIX				mWorld;
 
