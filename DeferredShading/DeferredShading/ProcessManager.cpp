@@ -3,6 +3,7 @@
 #include "Timer.h"
 #include "Logger.h"
 #include "Renderer.h"
+#include "LightManager.h"
 
 ProcessManager::ProcessManager()
 {
@@ -42,5 +43,5 @@ void ProcessManager::Destroy() const
 	Renderer::Release();
 	Timer::Release();
 	Camera::Release();
-
+	LightManager::Release();
 }

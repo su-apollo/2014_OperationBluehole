@@ -1,10 +1,10 @@
 #pragma once
 #include "Singleton.h"
+#include "DirectionalLight.h"
 
 
 
 
-class DirectionalLight;
 typedef std::shared_ptr<DirectionalLight> DLightPointer;
 typedef std::vector<DLightPointer> DLightList;
 
@@ -17,16 +17,9 @@ public:
 	LightManager();
 	~LightManager();
 
-
-
-
-
-
-
-private:
-	
+	void CreateDirectionalLight(int num);
+		
 	DLightList	mDLightList;
-	UINT		mDLightNum;
 	
 
 };

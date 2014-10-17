@@ -6,6 +6,8 @@ static const LPCSTR	VS_MAIN = "main";
 static const WCHAR* PS_PATH = L"PixelShader.hlsl";
 static const LPCSTR	PS_MAIN = "main";
 
+static const int MAX_LIGHT = 2;
+
 struct VSConstantBuffer
 {
 	D3DXMATRIX mWorld;
@@ -22,7 +24,7 @@ struct PSConstantBuffer
 struct CubeVertex
 {
 	D3DXVECTOR3 pos;
-	D3DXVECTOR4 color;
+	D3DXVECTOR3 Normal;
 };
 
 //IA - Input Assembler Stage
