@@ -75,6 +75,9 @@
     <ClInclude Include="GBuffer.h">
       <Filter>Render</Filter>
     </ClInclude>
+    <ClInclude Include="PostProcessor.h">
+      <Filter>Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -114,6 +117,9 @@
       <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="GBuffer.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcessor.cpp">
       <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>

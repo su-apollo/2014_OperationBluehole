@@ -2,6 +2,8 @@
 #include "Singleton.h"
 #include "Camera.h"
 #include "RenderObj.h"
+#include "GBuffer.h"
+
 
 // just draw single obj
 class Renderer : public Singleton<Renderer>
@@ -17,13 +19,18 @@ public:
 	ID3D11Device* GetDevice() { return mD3DDevice; }
 	ID3D11DeviceContext* GetDeviceContext() { return mD3DDeviceContext; }
 
-private:
-
 	void GetWindowSize(HWND hWnd);
+
+private:
 
 	BOOL CreateDevice(HWND hWnd);
 	BOOL CreateStencilBuffer();
+	BOOL CreateGBuffers();
+
 	void DestroyDevice();
+
+	void SetRenderTargetToGBuff();
+	void PostProcess();
 
 	// todo :
 	BOOL SetRasterizerState();
@@ -46,6 +53,11 @@ private:
 
 	UINT					mWinWidth = 0;
 	UINT					mWinHeight = 0;
+
+	// render targets
+	GBuffer mNormalsBuff;
+	GBuffer mAlbedoBuff;
+
 
 	// contents
 	RenderObj				mCube;
