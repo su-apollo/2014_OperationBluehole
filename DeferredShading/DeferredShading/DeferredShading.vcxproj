@@ -91,6 +91,7 @@
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Elin.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="GBuffManager.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MacroSet.h" />
@@ -110,6 +111,7 @@
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Elin.cpp" />
     <ClCompile Include="GBuffer.cpp" />
+    <ClCompile Include="GBuffManager.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="PostProcessor.cpp" />
