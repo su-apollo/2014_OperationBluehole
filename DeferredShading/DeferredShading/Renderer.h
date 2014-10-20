@@ -32,6 +32,8 @@ private:
 	ID3D11DeviceContext*    mD3DDeviceContext = NULL;
 
 	ID3D11RenderTargetView* mRenderTargetView = NULL;
+	ID3D11Texture2D*        mDepthStencil = NULL;
+	ID3D11DepthStencilView* mDepthStencilView = NULL;
 
 	UINT					mDPCallNum = 0;
 

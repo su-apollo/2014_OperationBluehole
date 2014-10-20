@@ -15,6 +15,8 @@ cbuffer ConstantBuffer : register(b0)
 // Textures and Samplers
 //--------------------------------------------------------------------------------------
 
+Texture2D txDiffuse : register(t0);
+SamplerState samLinear : register(s0);
 
 //--------------------------------------------------------------------------------------
 // Input / Output structures
@@ -23,6 +25,7 @@ struct PS_INPUT
 {
 	float4 Pos : SV_POSITION;
 	float3 Norm : TEXCOORD0;
+	float2 Tex : TEXCOORD1;
 };
 
 //--------------------------------------------------------------------------------------
@@ -37,6 +40,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	{
 		finalColor += saturate(dot((float3)vLightDir[i], Input.Norm) * vLightColor[i]);
 	}
+	finalColor *= txDiffuse.Sample(samLinear, Input.Tex);
 	finalColor.a = 1;
 	return finalColor;
 }

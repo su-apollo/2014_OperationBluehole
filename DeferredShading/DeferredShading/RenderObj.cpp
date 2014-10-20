@@ -27,6 +27,9 @@ BOOL RenderObj::Init()
 	if (!CreateBuffer())
 		return FALSE;
 
+	if (!LoadTexture())
+		return FALSE;
+
 	LightManager::GetInstance()->CreateDirectionalLight(MAX_LIGHT);
 
 	return TRUE;
@@ -34,18 +37,18 @@ BOOL RenderObj::Init()
 
 void RenderObj::Render()
 {
-	//rotate
+	// rotate
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
 	mWorld *= matRotate;
 
-	//update constbuff
+	// update constbuff
 	D3DXMATRIX matWorld;
 	D3DXMATRIX matView = Camera::GetInstance()->GetMatView();
 	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
 	VSConstantBuffer vcb;
 
-	//열 우선배치
+	// 열 우선배치
 	D3DXMatrixTranspose(&matWorld, &mWorld);
 	D3DXMatrixTranspose(&matView, &matView);
 	D3DXMatrixTranspose(&matProj, &matProj);
@@ -63,16 +66,23 @@ void RenderObj::Render()
 	pcb.vLightColor[1] = light2->GetColor();
 	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
 
-	//draw
+	// draw
 	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
 	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
 	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
 	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPSConstBuffer);
-	mD3DDeviceContext->DrawIndexed(36, 0, 0);
+
+	mD3DDeviceContext->PSSetShaderResources(0, 1, &mTextureRV);
+	mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
+
+	mD3DDeviceContext->DrawIndexed(mIndexNum, 0, 0);
 }
 
 void RenderObj::Release()
 {
+	SafeRelease(mTextureRV);
+	SafeRelease(mSamplerLinear);
+
 	SafeRelease(mVSConstBuffer);
 	SafeRelease(mPSConstBuffer);
 	SafeRelease(mVertexBuffer);
@@ -120,7 +130,7 @@ HRESULT RenderObj::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint,
 BOOL RenderObj::CompileVertexShader()
 {
 	ID3DBlob* pVSBlob = NULL;
-	hr = CompileShaderFromFile(const_cast<WCHAR*>(VS_PATH), VS_MAIN, "vs_4_0_level_9_1", &pVSBlob);
+	hr = CompileShaderFromFile(const_cast<WCHAR*>(VS_PATH), VS_MAIN, VS_MODEL, &pVSBlob);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -134,10 +144,12 @@ BOOL RenderObj::CompileVertexShader()
 	}
 
 	// input layout
+	// 이거 계산 신경써야함
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = ARRAYSIZE(layout);
 
@@ -157,7 +169,7 @@ BOOL RenderObj::CompileVertexShader()
 BOOL RenderObj::CompilePixelShader()
 {
 	ID3DBlob* pPSBlob = NULL;
-	hr = CompileShaderFromFile(const_cast<WCHAR*>(PS_PATH), PS_MAIN, "ps_4_0_level_9_1", &pPSBlob);
+	hr = CompileShaderFromFile(const_cast<WCHAR*>(PS_PATH), PS_MAIN, PS_MODEL, &pPSBlob);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -185,7 +197,6 @@ BOOL RenderObj::CreateBuffer()
 BOOL RenderObj::CreateConstBuff()
 {
 	D3D11_BUFFER_DESC bd;
-	//아래 zeromemory를 꼭해야함
 	ZeroMemory(&bd, sizeof(bd));
 	// Create the constant buffer
 	bd.Usage = D3D11_USAGE_DEFAULT;
@@ -216,39 +227,39 @@ BOOL RenderObj::CreateVertexBuff()
 	// Create vertex buffer
 	CubeVertex vertices[] =
 	{
-		{ D3DXVECTOR3(-1.0f, 1.0f, -1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f) },
-		{ D3DXVECTOR3(1.0f, 1.0f, -1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f) },
-		{ D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f, 1.0f, -1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, 1.0f, -1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), D3DXVECTOR2(1.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), D3DXVECTOR2(1.0f, 1.0f) },
+		{ D3DXVECTOR3(-1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 1.0f, 0.0f), D3DXVECTOR2(0.0f, 1.0f) },
 
-		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f) },
-		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f) },
-		{ D3DXVECTOR3(1.0f, -1.0f, 1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f, -1.0f, 1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), D3DXVECTOR2(1.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, -1.0f, 1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), D3DXVECTOR2(1.0f, 1.0f) },
+		{ D3DXVECTOR3(-1.0f, -1.0f, 1.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), D3DXVECTOR2(0.0f, 1.0f) },
 
-		{ D3DXVECTOR3(-1.0f, -1.0f, 1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f, 1.0f, -1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f, 1.0f, 1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f, -1.0f, 1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), D3DXVECTOR2(1.0f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f, 1.0f, -1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), D3DXVECTOR2(1.0f, 1.0f) },
+		{ D3DXVECTOR3(-1.0f, 1.0f, 1.0f), D3DXVECTOR3(-1.0f, 0.0f, 0.0f), D3DXVECTOR2(0.0f, 1.0f) },
 
-		{ D3DXVECTOR3(1.0f, -1.0f, 1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f) },
-		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f) },
-		{ D3DXVECTOR3(1.0f, 1.0f, -1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f) },
-		{ D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, -1.0f, 1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), D3DXVECTOR2(1.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, 1.0f, -1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), D3DXVECTOR2(1.0f, 1.0f) },
+		{ D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), D3DXVECTOR2(0.0f, 1.0f) },
 
-		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f) },
-		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f) },
-		{ D3DXVECTOR3(1.0f, 1.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f) },
-		{ D3DXVECTOR3(-1.0f, 1.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f) },
+		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), D3DXVECTOR2(0.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), D3DXVECTOR2(1.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, 1.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), D3DXVECTOR2(1.0f, 1.0f) },
+		{ D3DXVECTOR3(-1.0f, 1.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), D3DXVECTOR2(0.0f, 1.0f) },
 
-		{ D3DXVECTOR3(-1.0f, -1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f) },
-		{ D3DXVECTOR3(1.0f, -1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f) },
-		{ D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f) },
-		{ D3DXVECTOR3(-1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f) },
+		{ D3DXVECTOR3(-1.0f, -1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), D3DXVECTOR2(0.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, -1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), D3DXVECTOR2(1.0f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), D3DXVECTOR2(1.0f, 1.0f) },
+		{ D3DXVECTOR3(-1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), D3DXVECTOR2(0.0f, 1.0f) },
 	};
 
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(CubeVertex)* 24;
+	bd.ByteWidth = sizeof(CubeVertex)* mVertexNum;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	InitData.pSysMem = vertices;
@@ -293,7 +304,7 @@ BOOL RenderObj::CreateIndexBuff()
 		23, 20, 22
 	};
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(WORD)* 36;        // 36 vertices needed for 12 triangles in a triangle list
+	bd.ByteWidth = sizeof(WORD)* mIndexNum;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	InitData.pSysMem = indices;
@@ -306,6 +317,31 @@ BOOL RenderObj::CreateIndexBuff()
 
 	// Set primitive topology
 	Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	return TRUE;
+}
+
+BOOL RenderObj::LoadTexture()
+{
+	// Load the Texture
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, TEXTURE_PATH, NULL, NULL, &mTextureRV, NULL);
+	if (FAILED(hr))
+		return FALSE;
+
+	// Create the sample state
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	// 선형 필터
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	hr = mD3DDevice->CreateSamplerState(&sampDesc, &mSamplerLinear);
+	if (FAILED(hr))
+		return FALSE;
 
 	return TRUE;
 }
