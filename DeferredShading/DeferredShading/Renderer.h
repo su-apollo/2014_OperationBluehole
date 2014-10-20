@@ -22,6 +22,8 @@ private:
 	BOOL CreateDevice(HWND hWnd);
 	void DestroyDevice();
 
+	BOOL InitRasterizerStage();
+
 	D3D_DRIVER_TYPE			mDriverType = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL       mFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 

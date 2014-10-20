@@ -39,6 +39,7 @@ void Renderer::Render()
 	//clear
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; //red,green,blue,alpha
 	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
+	mD3DDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	mCube.Render();
 
@@ -142,8 +143,9 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 		return FALSE;
 
 	// set rendertarget
-	//mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
-	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
+	// om - output merge
+	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
+	//mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
 
 	// Setup the viewport
 	D3D11_VIEWPORT vp;
@@ -169,6 +171,11 @@ void Renderer::DestroyDevice()
 	SafeRelease(mSwapChain);
 	SafeRelease(mD3DDeviceContext);
 	SafeRelease(mD3DDevice);
+}
+
+BOOL Renderer::InitRasterizerStage()
+{
+	return TRUE;
 }
 
 
