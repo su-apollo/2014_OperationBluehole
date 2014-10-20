@@ -72,7 +72,7 @@
     <ClInclude Include="RenderObj.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTarget.h">
+    <ClInclude Include="GBuffer.h">
       <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,7 +113,7 @@
     <ClCompile Include="RenderObj.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="RenderTarget.cpp">
+    <ClCompile Include="GBuffer.cpp">
       <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,6 +122,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="VertexShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PostProcess.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
