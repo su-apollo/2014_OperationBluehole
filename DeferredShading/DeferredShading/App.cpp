@@ -31,7 +31,6 @@ BOOL App::CreateMainWindow(PCWSTR lpWindowName, DWORD dwStyle, DWORD dwExStyle /
 #ifdef _PRINT_CONSOLE
 	Logger::GetInstance()->CreateConsole();
 	Logger::GetInstance()->SetLogStatus(LOG_CONSOLE);
-	Log("test입니다 \n");
 #endif
 	return mHandleMainWindow ? TRUE : FALSE;
 }

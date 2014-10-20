@@ -19,10 +19,15 @@ public:
 
 private:
 
+	void GetWindowSize(HWND hWnd);
+
 	BOOL CreateDevice(HWND hWnd);
+	BOOL CreateStencilBuffer();
 	void DestroyDevice();
 
-	BOOL InitRasterizerStage();
+	// todo :
+	BOOL SetRasterizerState();
+	BOOL SetBlendState();
 
 	D3D_DRIVER_TYPE			mDriverType = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL       mFeatureLevel = D3D_FEATURE_LEVEL_11_0;
@@ -39,7 +44,13 @@ private:
 
 	UINT					mDPCallNum = 0;
 
+	UINT					mWinWidth = 0;
+	UINT					mWinHeight = 0;
+
 	// contents
 	RenderObj				mCube;
+
+	// get last error
+	HRESULT hr = S_OK;
 };
 

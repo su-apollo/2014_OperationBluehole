@@ -144,7 +144,7 @@ BOOL RenderObj::CompileVertexShader()
 	}
 
 	// input layout
-	// 이거 계산 신경써야함
+	// 이거 offset 계산 신경써야함
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },

@@ -17,16 +17,27 @@ Renderer::~Renderer()
 
 BOOL Renderer::Init()
 {
-	if (!CreateDevice(App::GetInstance()->GetHandleMainWindow()))
+	HWND hWnd = App::GetInstance()->GetHandleMainWindow();
+
+	GetWindowSize(hWnd);
+
+	if (!CreateDevice(hWnd))
 	{
-		MessageBox(App::GetInstance()->GetHandleMainWindow(), L"CreateDevice Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		MessageBox(hWnd, L"CreateDevice Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		DestroyDevice();
+		return FALSE;
+	}
+
+	if (!CreateStencilBuffer())
+	{
+		MessageBox(hWnd, L"CreateStencilBuff Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		DestroyDevice();
 		return FALSE;
 	}
 
 	if (!mCube.Init())
 	{
-		MessageBox(App::GetInstance()->GetHandleMainWindow(), L"Cube Init Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		MessageBox(hWnd, L"Cube Init Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		DestroyDevice();
 		return FALSE;
 	}
@@ -36,6 +47,20 @@ BOOL Renderer::Init()
 
 void Renderer::Render()
 {
+	// set rendertarget
+	// om - output merge
+	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
+
+	// Setup the viewport
+	D3D11_VIEWPORT vp;
+	vp.Width = (FLOAT)mWinWidth;
+	vp.Height = (FLOAT)mWinHeight;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	mD3DDeviceContext->RSSetViewports(1, &vp);
+
 	//clear
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; //red,green,blue,alpha
 	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
@@ -49,13 +74,6 @@ void Renderer::Render()
 
 BOOL Renderer::CreateDevice(HWND hWnd)
 {
-	HRESULT hr = S_OK;
-
-	RECT rc;
-	GetClientRect(hWnd, &rc);
-	UINT width = rc.right - rc.left;
-	UINT height = rc.bottom - rc.top;
-
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -80,8 +98,8 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
 	sd.BufferCount = 1;
-	sd.BufferDesc.Width = width;
-	sd.BufferDesc.Height = height;
+	sd.BufferDesc.Width = mWinWidth;
+	sd.BufferDesc.Height = mWinHeight;
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
@@ -114,11 +132,16 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 	if (FAILED(hr))
 		return FALSE;
 
+	return TRUE;
+}
+
+BOOL Renderer::CreateStencilBuffer()
+{
 	// Create depth stencil texture
 	D3D11_TEXTURE2D_DESC descDepth;
 	ZeroMemory(&descDepth, sizeof(descDepth));
-	descDepth.Width = width;
-	descDepth.Height = height;
+	descDepth.Width = mWinWidth;
+	descDepth.Height = mWinHeight;
 	descDepth.MipLevels = 1;
 	descDepth.ArraySize = 1;
 	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -142,21 +165,6 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 	if (FAILED(hr))
 		return FALSE;
 
-	// set rendertarget
-	// om - output merge
-	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
-	//mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
-
-	// Setup the viewport
-	D3D11_VIEWPORT vp;
-	vp.Width = (FLOAT)width;
-	vp.Height = (FLOAT)height;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	mD3DDeviceContext->RSSetViewports(1, &vp);
-
 	return TRUE;
 }
 
@@ -173,9 +181,26 @@ void Renderer::DestroyDevice()
 	SafeRelease(mD3DDevice);
 }
 
-BOOL Renderer::InitRasterizerStage()
+BOOL Renderer::SetRasterizerState()
 {
+
 	return TRUE;
+}
+
+BOOL Renderer::SetBlendState()
+{
+
+	return TRUE;
+}
+
+void Renderer::GetWindowSize(HWND hWnd)
+{
+	HRESULT hr = S_OK;
+
+	RECT rc;
+	GetClientRect(hWnd, &rc);
+	mWinWidth = rc.right - rc.left;
+	mWinHeight = rc.bottom - rc.top;
 }
 
 

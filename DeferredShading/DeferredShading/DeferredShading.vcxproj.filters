@@ -13,11 +13,14 @@
     <Filter Include="PreCompile">
       <UniqueIdentifier>{db430b2f-dbd3-4c23-93ef-443afdbc4eda}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{202d29dd-b6dd-4d9d-ad60-101d850d2925}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Contents">
       <UniqueIdentifier>{558c9b29-abb9-4189-812c-1fe1441f9431}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{2b7e0fb1-24ee-49d5-a77c-f6d29b1f6d2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{202d29dd-b6dd-4d9d-ad60-101d850d2925}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -40,19 +43,16 @@
       <Filter>PreCompile</Filter>
     </ClInclude>
     <ClInclude Include="App.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Core</Filter>
+      <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="Logger.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="DeferredShading.h">
-      <Filter>Core</Filter>
+      <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="ProcessManager.h">
-      <Filter>Core</Filter>
+      <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>PreCompile</Filter>
@@ -63,11 +63,17 @@
     <ClInclude Include="Elin.h">
       <Filter>Contents</Filter>
     </ClInclude>
-    <ClInclude Include="RenderObj.h">
-      <Filter>Contents</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderObj.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTarget.h">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,10 +81,7 @@
       <Filter>PreCompile</Filter>
     </ClCompile>
     <ClCompile Include="App.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Core</Filter>
+      <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="LightManager.cpp">
       <Filter>Light</Filter>
@@ -90,10 +93,10 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="DeferredShading.cpp">
-      <Filter>Core</Filter>
+      <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="ProcessManager.cpp">
-      <Filter>Core</Filter>
+      <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Contents</Filter>
@@ -101,11 +104,17 @@
     <ClCompile Include="Elin.cpp">
       <Filter>Contents</Filter>
     </ClCompile>
-    <ClCompile Include="RenderObj.cpp">
-      <Filter>Contents</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderObj.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTarget.cpp">
+      <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

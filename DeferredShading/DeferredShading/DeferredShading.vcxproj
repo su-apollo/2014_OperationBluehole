@@ -96,6 +96,7 @@
     <ClInclude Include="ProcessManager.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObj.h" />
+    <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -112,6 +113,7 @@
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObj.cpp" />
+    <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
