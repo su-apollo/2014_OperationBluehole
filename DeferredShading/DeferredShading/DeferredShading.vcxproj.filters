@@ -81,6 +81,9 @@
     <ClInclude Include="GBuffManager.h">
       <Filter>Render</Filter>
     </ClInclude>
+    <ClInclude Include="ElinObj.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -127,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="GBuffManager.cpp">
       <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ElinObj.cpp">
+      <Filter>Contents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

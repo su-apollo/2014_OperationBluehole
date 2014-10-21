@@ -40,6 +40,7 @@ BOOL Elin::Init()
 	mPolygonCount = 0;
 
 
+	/*
 	if (!CompileShader())
 		return FALSE;
 
@@ -48,7 +49,7 @@ BOOL Elin::Init()
 
 
 	LightManager::GetInstance()->CreateDirectionalLight(MAX_LIGHT);
-	//
+	*/
 
 	return TRUE;
 
@@ -122,15 +123,16 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 			else
 			{
 				// ========= Get the Vertices ==============================
+				// Fill all the mVertices.
 				int numVerts = pMesh->GetControlPointsCount();
 				Vertex tempVerts;
 
 				for (int j = 0; j < numVerts; j++)
 				{
 					D3DXVECTOR3 currPosition;
-					currPosition.x = static_cast<float>(pMesh->GetControlPointAt(i).mData[0]);
-					currPosition.y = static_cast<float>(pMesh->GetControlPointAt(i).mData[1]);
-					currPosition.z = static_cast<float>(pMesh->GetControlPointAt(i).mData[2]);
+					currPosition.x = static_cast<float>(pMesh->GetControlPointAt(j).mData[0]);
+					currPosition.y = static_cast<float>(pMesh->GetControlPointAt(j).mData[1]);
+					currPosition.z = static_cast<float>(pMesh->GetControlPointAt(j).mData[2]);
 
 					tempVerts.mPos = currPosition;
 
@@ -170,11 +172,14 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						// 					tempVerts[iControlPointIndex].mNormal.x = (float)normal.mData[0];
 						// 					tempVerts[iControlPointIndex].mNormal.y = (float)normal.mData[1];
 						// 					tempVerts[iControlPointIndex].mNormal.z = (float)normal.mData[2];
-						mVertices[iControlPointIndex].mNormal.x = (float)normal.mData[0];
-						mVertices[iControlPointIndex].mNormal.y = (float)normal.mData[1];
-						mVertices[iControlPointIndex].mNormal.z = (float)normal.mData[2];
+						
+						
+						//mVertices[iControlPointIndex].mNormal.x = (float)normal.mData[0];
+						//mVertices[iControlPointIndex].mNormal.y = (float)normal.mData[1];
+						//mVertices[iControlPointIndex].mNormal.z = (float)normal.mData[2];
 
 						// ========= Get the Indices ==============================
+						// 순서 어떻게?
 						switch (k)
 						{
 						case 0:

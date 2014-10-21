@@ -90,6 +90,7 @@
     <ClInclude Include="DeferredShading.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Elin.h" />
+    <ClInclude Include="ElinObj.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="GBuffManager.h" />
     <ClInclude Include="LightManager.h" />
@@ -110,6 +111,7 @@
     <ClCompile Include="DeferredShading.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Elin.cpp" />
+    <ClCompile Include="ElinObj.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="GBuffManager.cpp" />
     <ClCompile Include="LightManager.cpp" />
