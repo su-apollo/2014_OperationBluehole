@@ -263,14 +263,14 @@ BOOL RenderObj::CreateVertexBuff()
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	InitData.pSysMem = vertices;
-	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer);
+	hr = mD3DDevice->CreateBuffer(&bd, &InitData, &mVertexBuffer);
 	if (FAILED(hr))
 		return FALSE;
 
 	// Set vertex buffer
 	UINT stride = sizeof(CubeVertex);
 	UINT offset = 0;
-	Renderer::GetInstance()->GetDeviceContext()->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
+	mD3DDeviceContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
 
 	return TRUE;
 }
@@ -308,15 +308,15 @@ BOOL RenderObj::CreateIndexBuff()
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	InitData.pSysMem = indices;
-	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer);
+	hr = mD3DDevice->CreateBuffer(&bd, &InitData, &mIndexBuffer);
 	if (FAILED(hr))
 		return FALSE;
 
 	// Set index buffer
-	Renderer::GetInstance()->GetDeviceContext()->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	mD3DDeviceContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 	// Set primitive topology
-	Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	mD3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return TRUE;
 }

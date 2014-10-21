@@ -52,4 +52,6 @@ void ProcessManager::Destroy() const
 	Timer::Release();
 	Camera::Release();
 	LightManager::Release();
+	GBuffManager::Release();
+	PostProcessor::Release();
 }

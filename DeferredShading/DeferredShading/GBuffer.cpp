@@ -44,5 +44,7 @@ BOOL GBuffer::Init(UINT width, UINT height, DXGI_FORMAT format)
 	if (FAILED(hr))
 		return FALSE;
 
+	hr = mD3DDevice->CreateShaderResourceView(mTexture, NULL, &mTextureRV);
+
 	return TRUE;
 }

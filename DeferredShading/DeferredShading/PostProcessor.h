@@ -5,7 +5,7 @@
 
 struct QuadVertex
 {
-	D3DXVECTOR4 Pos;
+	D3DXVECTOR3 Pos;
 	D3DXVECTOR2 Tex;
 };
 
@@ -29,15 +29,22 @@ public:
 
 private:
 
-	BOOL					CompilePixelShader();
+	BOOL					CompileShader();
 	BOOL					CreateConstBuffer();
 	BOOL					CreateSamplerLinear();
 	BOOL					CreateQuad();
 
 	HRESULT					CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
+	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11PixelShader*		mPixelShader = NULL;
 	ID3D11Buffer*			mPSConstBuffer = NULL;
+
+	ID3D11InputLayout*      mVertexLayout11 = NULL;
+
+	WCHAR*					mVertexShaderPath = L"Quad.hlsl";
+	LPCSTR					mVertexShaderMain = "main";
+	LPCSTR					mVertexShaderModel = "vs_4_0_level_9_1";
 
 	WCHAR*					mPixelShaderPath = L"PostProcess.hlsl";
 	LPCSTR					mPixelShaderMain = "main";

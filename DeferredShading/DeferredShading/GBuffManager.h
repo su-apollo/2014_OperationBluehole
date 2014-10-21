@@ -18,8 +18,10 @@ public:
 	BOOL CreateGBuffers();
 	void SetRenderTargetToGBuff();
 
-	ID3D11Texture2D* GetNormalBuff() { return mNormalsBuff.GetTexture(); }
-	ID3D11Texture2D* GetAlbedoBuff() { return mAlbedoBuff.GetTexture(); }
+	ID3D11Texture2D* GetNormalTex() { return mNormalsBuff.GetTexture(); }
+	ID3D11Texture2D* GetAlbedoTex() { return mAlbedoBuff.GetTexture(); }
+	ID3D11ShaderResourceView* GetNormalTexRV() { return mNormalsBuff.GetTextureRV(); }
+	ID3D11ShaderResourceView* GetAlbedoTexRV() { return mAlbedoBuff.GetTextureRV(); }
 
 private:
 
