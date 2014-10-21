@@ -5,6 +5,7 @@
 
 
 
+
 // todo : 화면크기가 변경될 경우?
 // todo : depthstendcil은 여기다 두는게 좋을까?
 class GBuffManager : public Singleton<GBuffManager>
@@ -16,6 +17,9 @@ public:
 	BOOL Init();
 	BOOL CreateGBuffers();
 	void SetRenderTargetToGBuff();
+
+	ID3D11Texture2D* GetNormalBuff() { return mNormalsBuff.GetTexture(); }
+	ID3D11Texture2D* GetAlbedoBuff() { return mAlbedoBuff.GetTexture(); }
 
 private:
 

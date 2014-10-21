@@ -145,5 +145,8 @@
     <FxCompile Include="PostProcess.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Quad.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

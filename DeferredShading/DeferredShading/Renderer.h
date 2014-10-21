@@ -20,6 +20,7 @@ public:
 	ID3D11DeviceContext*	GetDeviceContext() { return mD3DDeviceContext; }
 	ID3D11Texture2D*		GetDepthStencil() { return mDepthStencil; }
 	ID3D11DepthStencilView* GetDepthStencilView() { return mDepthStencilView; }
+	ID3D11RenderTargetView*	GetRenderTargetView() { return mRenderTargetView; }
 
 private:
 

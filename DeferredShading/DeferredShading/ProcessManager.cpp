@@ -5,6 +5,7 @@
 #include "Renderer.h"
 #include "LightManager.h"
 #include "GBuffManager.h"
+#include "PostProcessor.h"
 
 ProcessManager::ProcessManager()
 {
@@ -21,6 +22,9 @@ BOOL ProcessManager::Init() const
 		return FALSE;
 
 	if (!GBuffManager::GetInstance()->Init())
+		return FALSE;
+
+	if (!PostProcessor::GetInstance()->Init())
 		return FALSE;
 
 	return TRUE;
