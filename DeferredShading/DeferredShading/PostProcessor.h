@@ -15,6 +15,12 @@ public:
 
 
 
+	void Render();
+
+private:
+
+
+
 
 
 };

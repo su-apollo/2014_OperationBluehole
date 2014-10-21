@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "Renderer.h"
 #include "LightManager.h"
+#include "GBuffManager.h"
 
 ProcessManager::ProcessManager()
 {
@@ -17,6 +18,9 @@ ProcessManager::~ProcessManager()
 BOOL ProcessManager::Init() const
 {
 	if (!Renderer::GetInstance()->Init())
+		return FALSE;
+
+	if (!GBuffManager::GetInstance()->Init())
 		return FALSE;
 
 	return TRUE;

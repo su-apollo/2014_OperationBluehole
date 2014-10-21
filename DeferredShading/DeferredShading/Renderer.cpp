@@ -35,13 +35,6 @@ BOOL Renderer::Init()
 		return FALSE;
 	}
 
-	if (!CreateGBuffers())
-	{
-		MessageBox(hWnd, L"CreateGBuff Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		DestroyDevice();
-		return FALSE;
-	}
-
 	if (!mCube.Init())
 	{
 		MessageBox(hWnd, L"Cube Init Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
@@ -188,18 +181,6 @@ void Renderer::DestroyDevice()
 	SafeRelease(mD3DDevice);
 }
 
-BOOL Renderer::SetRasterizerState()
-{
-
-	return TRUE;
-}
-
-BOOL Renderer::SetBlendState()
-{
-
-	return TRUE;
-}
-
 void Renderer::GetWindowSize(HWND hWnd)
 {
 	HRESULT hr = S_OK;
@@ -208,38 +189,6 @@ void Renderer::GetWindowSize(HWND hWnd)
 	GetClientRect(hWnd, &rc);
 	mWinWidth = rc.right - rc.left;
 	mWinHeight = rc.bottom - rc.top;
-}
-
-BOOL Renderer::CreateGBuffers()
-{
-	if (!mNormalsBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R10G10B10A2_UNORM))
-		return FALSE;
-
-	if (!mAlbedoBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
-		return FALSE;
-
-	return TRUE;
-}
-
-void Renderer::SetRenderTargetToGBuff()
-{
-	ID3D11RenderTargetView* renderTargets[2] = { NULL };
-
-	renderTargets[0] = mNormalsBuff.GetRenderTargetView();
-	renderTargets[1] = mAlbedoBuff.GetRenderTargetView();
-
-	// clear
-	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
-	for (int i = 0; i < 2; ++i)
-		mD3DDeviceContext->ClearRenderTargetView(renderTargets[i], ClearColor);
-	mD3DDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	mD3DDeviceContext->OMSetRenderTargets(2, renderTargets, mDepthStencilView);
-}
-
-void Renderer::PostProcess()
-{
-
 }
 
 

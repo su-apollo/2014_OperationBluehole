@@ -12,3 +12,8 @@ PostProcessor::PostProcessor()
 PostProcessor::~PostProcessor()
 {
 }
+
+void PostProcessor::Render()
+{
+
+}

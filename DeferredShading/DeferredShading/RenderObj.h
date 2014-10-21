@@ -92,7 +92,7 @@ private:
 	ID3D11ShaderResourceView*	mTextureRV = NULL;
 	ID3D11SamplerState*			mSamplerLinear = NULL;
 
-	// get to Renderer
+	// get from Renderer
 	ID3D11Device*           mD3DDevice = NULL;
 	ID3D11DeviceContext*    mD3DDeviceContext = NULL;
 

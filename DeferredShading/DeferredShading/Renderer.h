@@ -16,25 +16,19 @@ public:
 
 	void Render();
 
-	ID3D11Device* GetDevice() { return mD3DDevice; }
-	ID3D11DeviceContext* GetDeviceContext() { return mD3DDeviceContext; }
-
-	void GetWindowSize(HWND hWnd);
+	ID3D11Device*			GetDevice() { return mD3DDevice; }
+	ID3D11DeviceContext*	GetDeviceContext() { return mD3DDeviceContext; }
+	ID3D11Texture2D*		GetDepthStencil() { return mDepthStencil; }
+	ID3D11DepthStencilView* GetDepthStencilView() { return mDepthStencilView; }
 
 private:
 
+	void GetWindowSize(HWND hWnd);
+
 	BOOL CreateDevice(HWND hWnd);
 	BOOL CreateStencilBuffer();
-	BOOL CreateGBuffers();
 
 	void DestroyDevice();
-
-	void SetRenderTargetToGBuff();
-	void PostProcess();
-
-	// todo :
-	BOOL SetRasterizerState();
-	BOOL SetBlendState();
 
 	D3D_DRIVER_TYPE			mDriverType = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL       mFeatureLevel = D3D_FEATURE_LEVEL_11_0;
@@ -53,11 +47,6 @@ private:
 
 	UINT					mWinWidth = 0;
 	UINT					mWinHeight = 0;
-
-	// render targets
-	GBuffer mNormalsBuff;
-	GBuffer mAlbedoBuff;
-
 
 	// contents
 	RenderObj				mCube;
