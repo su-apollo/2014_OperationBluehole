@@ -89,8 +89,6 @@ BOOL Elin::LoadFBX()
 
 void Elin::ProcessGeometry(FbxNode* inNode)
 {
-	FbxMesh *pNewMesh = nullptr;
-
 	if (inNode)
 	{
 		int ChildCount = inNode->GetChildCount();
@@ -104,8 +102,9 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 
 			if (childNode->GetNodeAttribute()->GetAttributeType() != FbxNodeAttribute::eMesh)
 				continue;
-
+			Mesh pNewMesh;
 			FbxMesh* pMesh = (FbxMesh*)childNode->GetNodeAttribute();
+
 
 			FbxLayerElementArrayTemplate<FbxVector4>* normal = 0;
 			pMesh->GetNormals(&normal);
@@ -144,14 +143,19 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 					tempVerts.mTU = tU;
 					tempVerts.mTV = tV;
 
-					mVertices.push_back(tempVerts);
+					//mVertices.push_back(tempVerts);
+					pNewMesh.mVertex.push_back(tempVerts);
 				}
 
 				if (numVerts == 0)
 					return;
 
+				pNewMesh.mNumPolygon = pMesh->GetPolygonCount();
+				
 				for (int j = 0; j < pMesh->GetPolygonCount(); j++)
 				{
+					
+
 					int iNumVertices = pMesh->GetPolygonSize(j);
 
 					if (iNumVertices != 3)
@@ -172,11 +176,11 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						// 					tempVerts[iControlPointIndex].mNormal.x = (float)normal.mData[0];
 						// 					tempVerts[iControlPointIndex].mNormal.y = (float)normal.mData[1];
 						// 					tempVerts[iControlPointIndex].mNormal.z = (float)normal.mData[2];
-						
-						
-						//mVertices[iControlPointIndex].mNormal.x = (float)normal.mData[0];
-						//mVertices[iControlPointIndex].mNormal.y = (float)normal.mData[1];
-						//mVertices[iControlPointIndex].mNormal.z = (float)normal.mData[2];
+
+						pNewMesh.mVertex[iControlPointIndex].mNormal.x = (float)normal.mData[0];
+						pNewMesh.mVertex[iControlPointIndex].mNormal.y = (float)normal.mData[1];
+						pNewMesh.mVertex[iControlPointIndex].mNormal.z = (float)normal.mData[2];
+
 
 						// ========= Get the Indices ==============================
 						// 순서 어떻게?
@@ -196,12 +200,13 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						}
 					}
 					//mIndex.push_back(tempIndex);
-					mIndices.push_back(tempIndex.i0);
-					mIndices.push_back(tempIndex.i1);
-					mIndices.push_back(tempIndex.i2);
-
+					pNewMesh.mIndices.push_back(tempIndex.i0);
+					pNewMesh.mIndices.push_back(tempIndex.i1);
+					pNewMesh.mIndices.push_back(tempIndex.i2);
 				}
+				mModel.push_back(pNewMesh);
 			} // else
+			//조심해! 이거 위치가 ?
 			ProcessGeometry(childNode);
 		}
 	}

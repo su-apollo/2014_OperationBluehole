@@ -2,6 +2,8 @@
 
 #include <fbxsdk.h>
 #include <xnamath.h>
+#include "Singleton.h"
+#include "ElinObj.h"
 
 struct Vertex
 {
@@ -12,11 +14,17 @@ struct Vertex
 
 };
 
+struct Mesh
+{
+	std::vector<Vertex> mVertex;
+	std::vector<unsigned int> mIndices;
+	int mNumPolygon;
+};
+
 struct Indices
 {
 	int i0, i1, i2;
 };
-
 
 static const int EMAX_LIGHT = 2;
 
@@ -35,7 +43,7 @@ struct EPSConstantBuffer
 
 
 
-class Elin
+class Elin :public Singleton<Elin>
 {
 public:
 	Elin();
@@ -65,6 +73,8 @@ private:
 	//std::vector<Indices> mIndex;
 	std::vector<int>mIndices;
 	unsigned int mPolygonCount;
+	
+	std::vector<Mesh> mModel;
 
 	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 	BOOL	CompileVertexShader();
