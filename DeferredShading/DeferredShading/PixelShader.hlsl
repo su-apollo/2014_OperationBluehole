@@ -45,7 +45,10 @@ GBuffer main(PS_INPUT Input)
 {
 	GBuffer output;
 
-	output.normal = float4(Input.Norm, 1);
+	float3 normal = Input.Norm;
+	normal = normal* 0.5f + 0.5f;
+
+	output.normal = float4(normal, 1);
 	output.albedo = txDiffuse.Sample(samLinear, Input.Tex);
 	
 	return output;

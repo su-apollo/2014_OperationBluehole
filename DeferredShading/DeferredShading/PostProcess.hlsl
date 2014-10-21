@@ -20,6 +20,7 @@ cbuffer ConstantBuffer : register(b0)
 
 Texture2D txNormal : register(t0);
 Texture2D txAlbedo : register(t1);
+Texture2D txDepth : register(t2);
 SamplerState samLinear : register(s0);
 
 //--------------------------------------------------------------------------------------
@@ -40,6 +41,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 {
 	float4 normal = txNormal.Sample(samLinear, Input.Tex);
 	float4 albedo = txAlbedo.Sample(samLinear, Input.Tex);
+	float4 depth = txDepth.Sample(samLinear, Input.Tex);
 
 	float4 finalColor = 0;
 
@@ -53,10 +55,11 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	finalColor.a = 1;
 	*/
 
-	//finalColor = normal;
-	finalColor = albedo;
-	//finalColor.a = 1;
-	
+	finalColor = normal;
+	//finalColor = albedo;
+	//finalColor = float4(depth.x, depth.y, depth.z, 1);
+	finalColor.a = 1;
+
 	return finalColor;
 }
 

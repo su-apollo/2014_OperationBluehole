@@ -12,10 +12,11 @@ public:
 		: mEye(0.0f, 4.0f, -10.0f), mAt(0.0f, 1.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f) {};
 	~Camera() {}
 
-	void Update();
+	void		Update();
+	D3DXVECTOR3	GetPosition() { return mEye; }
 
-	D3DXMATRIX GetMatView() { return mMatView; };
-	D3DXMATRIX GetMatProj() { return mMatProj; };
+	D3DXMATRIX	GetMatView() { return mMatView; }
+	D3DXMATRIX	GetMatProj() { return mMatProj; }
 
 private:
 

@@ -88,12 +88,13 @@ void PostProcessor::Render()
 	// set Gbuff
 	ID3D11ShaderResourceView* normalTexRV = GBuffManager::GetInstance()->GetNormalTexRV();
 	ID3D11ShaderResourceView* albedoTexRV = GBuffManager::GetInstance()->GetAlbedoTexRV();
+	ID3D11ShaderResourceView* depthTexRV = GBuffManager::GetInstance()->GetDepthTexRV();
 
 	// set constbuff
 	PostProcessorConstantBuffer pcb;
 	DLightPointer light1 = LightManager::GetInstance()->mDLightList[0];
 	DLightPointer light2 = LightManager::GetInstance()->mDLightList[1];
-	pcb.vEye = D3DXVECTOR4(0, 0, 0, 1);
+	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
 	pcb.vLightDir[0] = light1->GetDirection();
 	pcb.vLightDir[1] = light2->GetDirection();
 	pcb.vLightColor[0] = light1->GetColor();
@@ -102,6 +103,7 @@ void PostProcessor::Render()
 
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &normalTexRV);
 	mD3DDeviceContext->PSSetShaderResources(1, 1, &albedoTexRV);
+	mD3DDeviceContext->PSSetShaderResources(2, 1, &depthTexRV);
 	mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
 
 	// draw

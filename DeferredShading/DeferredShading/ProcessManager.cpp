@@ -42,8 +42,8 @@ BOOL ProcessManager::Process() const
 	Camera::GetInstance()->Update();
 
 	GBuffManager::GetInstance()->SetRenderTargetToGBuff();
-
 	Renderer::GetInstance()->SetupViewPort();
+
 	Renderer::GetInstance()->Render();
 
 	PostProcessor::GetInstance()->Render();
