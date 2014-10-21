@@ -40,16 +40,16 @@ BOOL Elin::Init()
 	mPolygonCount = 0;
 
 
-	/*
+	
 	if (!CompileShader())
 		return FALSE;
 
-	if (!CreateBuffer())
+	if (!CreateMeshBuffer(mModel[2]))
 		return FALSE;
 
 
 	LightManager::GetInstance()->CreateDirectionalLight(MAX_LIGHT);
-	*/
+	
 
 	return TRUE;
 
@@ -102,7 +102,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 
 			if (childNode->GetNodeAttribute()->GetAttributeType() != FbxNodeAttribute::eMesh)
 				continue;
-			Mesh pNewMesh;
+			Mesh* pNewMesh = new Mesh();
 			FbxMesh* pMesh = (FbxMesh*)childNode->GetNodeAttribute();
 
 
@@ -124,6 +124,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 				// ========= Get the Vertices ==============================
 				// Fill all the mVertices.
 				int numVerts = pMesh->GetControlPointsCount();
+				pNewMesh->mNumVertex = numVerts;
 				Vertex tempVerts;
 
 				for (int j = 0; j < numVerts; j++)
@@ -140,17 +141,17 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 
 					tU = (float)(*uv)[j].mData[0];
 					tV = (float)(*uv)[j].mData[1];
-					tempVerts.mTU = tU;
-					tempVerts.mTV = tV;
+					tempVerts.mUV.x = tU;
+					tempVerts.mUV.y = tV;
 
 					//mVertices.push_back(tempVerts);
-					pNewMesh.mVertex.push_back(tempVerts);
+					pNewMesh->mVertex.push_back(tempVerts);
 				}
 
 				if (numVerts == 0)
 					return;
 
-				pNewMesh.mNumPolygon = pMesh->GetPolygonCount();
+				pNewMesh->mNumPolygon = pMesh->GetPolygonCount();
 				
 				for (int j = 0; j < pMesh->GetPolygonCount(); j++)
 				{
@@ -177,13 +178,12 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						// 					tempVerts[iControlPointIndex].mNormal.y = (float)normal.mData[1];
 						// 					tempVerts[iControlPointIndex].mNormal.z = (float)normal.mData[2];
 
-						pNewMesh.mVertex[iControlPointIndex].mNormal.x = (float)normal.mData[0];
-						pNewMesh.mVertex[iControlPointIndex].mNormal.y = (float)normal.mData[1];
-						pNewMesh.mVertex[iControlPointIndex].mNormal.z = (float)normal.mData[2];
+						pNewMesh->mVertex[iControlPointIndex].mNormal.x = (float)normal.mData[0];
+						pNewMesh->mVertex[iControlPointIndex].mNormal.y = (float)normal.mData[1];
+						pNewMesh->mVertex[iControlPointIndex].mNormal.z = (float)normal.mData[2];
 
 
 						// ========= Get the Indices ==============================
-						// 순서 어떻게?
 						switch (k)
 						{
 						case 0:
@@ -200,13 +200,14 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						}
 					}
 					//mIndex.push_back(tempIndex);
-					pNewMesh.mIndices.push_back(tempIndex.i0);
-					pNewMesh.mIndices.push_back(tempIndex.i1);
-					pNewMesh.mIndices.push_back(tempIndex.i2);
+					//이거 순서 어떻게?
+					pNewMesh->mIndices.push_back(tempIndex.i2);
+					pNewMesh->mIndices.push_back(tempIndex.i1);
+					pNewMesh->mIndices.push_back(tempIndex.i0);
 				}
+				pNewMesh->mNumIndex = pNewMesh->mIndices.size();
 				mModel.push_back(pNewMesh);
 			} // else
-			//조심해! 이거 위치가 ?
 			ProcessGeometry(childNode);
 		}
 	}
@@ -242,7 +243,7 @@ void Elin::CleanUp()
 	mIndices.clear();
 
 	mVertices.clear();
-
+	mModel.clear();
 }
 
 BOOL Elin::CompileShader()
@@ -269,18 +270,18 @@ BOOL Elin::CreateBuffer()
 
 void Elin::Render()
 {
-	//rotate
+	// rotate
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
 	mWorld *= matRotate;
 
-	//update constbuff
+	// update constbuff
 	D3DXMATRIX matWorld;
 	D3DXMATRIX matView = Camera::GetInstance()->GetMatView();
 	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
-	EVSConstantBuffer vcb;
+	VSConstantBuffer vcb;
 
-	//열 우선배치
+	// 열 우선배치
 	D3DXMatrixTranspose(&matWorld, &mWorld);
 	D3DXMatrixTranspose(&matView, &matView);
 	D3DXMatrixTranspose(&matProj, &matProj);
@@ -289,7 +290,7 @@ void Elin::Render()
 	vcb.mProjection = matProj;
 	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
 
-	EPSConstantBuffer pcb;
+	PSConstantBuffer pcb;
 	DLightPointer light1 = LightManager::GetInstance()->mDLightList[0];
 	DLightPointer light2 = LightManager::GetInstance()->mDLightList[1];
 	pcb.vLightDir[0] = light1->GetDirection();
@@ -298,13 +299,17 @@ void Elin::Render()
 	pcb.vLightColor[1] = light2->GetColor();
 	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
 
-	//draw
+	// draw
 	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
 	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
 	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
 	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPSConstBuffer);
-	mD3DDeviceContext->DrawIndexed(mIndices.size(), 0, 0);
 
+	//mD3DDeviceContext->PSSetShaderResources(0, 1, &mTextureRV);
+	//mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
+
+	int numIndex = mModel[2]->mNumIndex;
+	mD3DDeviceContext->DrawIndexed(numIndex, 0, 0);
 }
 
 HRESULT Elin::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut)
@@ -332,13 +337,57 @@ HRESULT Elin::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCS
 
 BOOL Elin::CompileVertexShader()
 {
-	//
+	ID3DBlob* pVSBlob = NULL;
+	hr = CompileShaderFromFile(L"VertexShader1.hlsl", "main", "vs_4_0_level_9_1", &pVSBlob);
+	if (FAILED(hr))
+		return FALSE;
+
+	hr = mD3DDevice->CreateVertexShader(pVSBlob->GetBufferPointer(),
+		pVSBlob->GetBufferSize(), NULL, &mVertexShader);
+
+	if (FAILED(hr))
+	{
+		SafeRelease(pVSBlob);
+		return FALSE;
+	}
+
+	// input layout
+	// 이거 offset 계산 신경써야함
+	const D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	UINT numElements = ARRAYSIZE(layout);
+
+	hr = mD3DDevice->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(),
+		pVSBlob->GetBufferSize(), &mVertexLayout11);
+
+	SafeRelease(pVSBlob);
+
+	if (FAILED(hr))
+		return FALSE;
+
+	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
+
 	return TRUE;
 }
 
 BOOL Elin::CompilePixelShader()
 {
-	//
+	ID3DBlob* pPSBlob = NULL;
+	hr = CompileShaderFromFile(L"PixelShader1.hlsl", "main", "ps_4_0_level_9_1", &pPSBlob);
+	if (FAILED(hr))
+		return FALSE;
+
+	hr = mD3DDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
+		pPSBlob->GetBufferSize(), NULL, &mPixelShader);
+
+	SafeRelease(pPSBlob);
+	if (FAILED(hr))
+		return FALSE;
+
 	return TRUE;
 }
 
@@ -423,13 +472,137 @@ BOOL Elin::CreateConstBuff()
 
 void Elin::Release()
 {
-	// 	Saferelease(mVSConstBuffer);
-	// 	Saferelease(mPSConstBuffer);
-	// 	Saferelease(mVertexBuffer);
-	// 	Saferelease(mIndexBuffer);
-	// 
-	// 	Saferelease(mVertexLayout11);
-	// 	Saferelease(mVertexShader);
-	// 	Saferelease(mPixelShader);
+	CleanUp();
+// 	Saferelease(mVSConstBuffer);
+// 	Saferelease(mPSConstBuffer);
+// 	Saferelease(mVertexBuffer);
+// 	Saferelease(mIndexBuffer);
+// 	
+// 	Saferelease(mVertexLayout11);
+// 	Saferelease(mVertexShader);
+// 	Saferelease(mPixelShader);
+
+
+}
+
+BOOL Elin::CreateMeshBuffer(Mesh* mesh)
+{
+	if (!CreateMeshVB(mesh))
+		return FALSE;
+	if (!CreateMeshIB(mesh))
+		return FALSE;
+	if (!CreateMeshCB(mesh))
+		return FALSE;
+
+	return TRUE;
+}
+
+BOOL Elin::CreateMeshVB(Mesh* mesh)
+{
+D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	D3D11_SUBRESOURCE_DATA InitData;
+	ZeroMemory(&InitData, sizeof(InitData));
+
+	// Create vertex buffer
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	//문제
+	int numVertices = mesh->mNumVertex;
+	bd.ByteWidth = sizeof(Vertex) * numVertices;
+
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	InitData.pSysMem = &(mesh->mVertex);
+	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer);
+	if (FAILED(hr))
+		return FALSE;
+
+	// Set vertex buffer
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	Renderer::GetInstance()->GetDeviceContext()->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
+
+	return TRUE;
+}
+
+
+BOOL Elin::CreateMeshIB(Mesh* mesh)
+{
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	D3D11_SUBRESOURCE_DATA InitData;
+	ZeroMemory(&InitData, sizeof(InitData));
+
+	// Create index buffer
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(unsigned int)* mesh->mNumIndex;        // 36 vertices needed for 12 triangles in a triangle list
+	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	InitData.pSysMem = &(mesh->mIndices);
+	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer);
+	if (FAILED(hr))
+		return FALSE;
+
+	// Set index buffer
+	Renderer::GetInstance()->GetDeviceContext()->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+	// Set primitive topology
+	//Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	return TRUE;
+
+}
+
+
+BOOL Elin::CreateMeshCB(Mesh* mesh)
+{
+	D3D11_BUFFER_DESC bd;
+	//아래 zeromemory를 꼭해야함
+	ZeroMemory(&bd, sizeof(bd));
+	// Create the constant buffer
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(VSConstantBuffer);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+
+	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mVSConstBuffer);
+	if (FAILED(hr))
+		return FALSE;
+
+	bd.ByteWidth = sizeof(PSConstantBuffer);
+	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mPSConstBuffer);
+	if (FAILED(hr))
+		return FALSE;
+
+
+	return TRUE;
+
+}
+
+BOOL Elin::LoadTexture()
+{
+	// Load the Texture
+
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, L"Popori_F_H00_Hand_diff.TGA", NULL, NULL, &mTextureRV, NULL);
+	if (FAILED(hr))
+		return FALSE;
+
+	// Create the sample state
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	// 선형 필터
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	hr = mD3DDevice->CreateSamplerState(&sampDesc, &mSamplerLinear);
+	if (FAILED(hr))
+		return FALSE;
+
+	return TRUE;
 }
 
