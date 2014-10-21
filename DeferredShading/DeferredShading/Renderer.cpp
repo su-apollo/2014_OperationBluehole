@@ -49,27 +49,16 @@ void Renderer::Render()
 {
 	// set rendertarget
 	// om - output merge
-	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
+	//mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
 
-	// Setup the viewport
-	D3D11_VIEWPORT vp;
-	vp.Width = (FLOAT)mWinWidth;
-	vp.Height = (FLOAT)mWinHeight;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	mD3DDeviceContext->RSSetViewports(1, &vp);
-
+	/*
 	//clear
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; //red,green,blue,alpha
 	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
 	mD3DDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	*/
 
 	mCube.Render();
-
-	// backbuffer to front
-	mSwapChain->Present(0, 0);
 }
 
 BOOL Renderer::CreateDevice(HWND hWnd)
@@ -189,6 +178,19 @@ void Renderer::GetWindowSize(HWND hWnd)
 	GetClientRect(hWnd, &rc);
 	mWinWidth = rc.right - rc.left;
 	mWinHeight = rc.bottom - rc.top;
+}
+
+void Renderer::SetupViewPort()
+{
+	// Setup the viewport
+	D3D11_VIEWPORT vp;
+	vp.Width = (FLOAT)mWinWidth;
+	vp.Height = (FLOAT)mWinHeight;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	mD3DDeviceContext->RSSetViewports(1, &vp);
 }
 
 

@@ -26,6 +26,7 @@ BOOL PostProcessor::Init()
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
 	mRenderTargetView = Renderer::GetInstance()->GetRenderTargetView();
+	mDepthStencilView = Renderer::GetInstance()->GetDepthStencilView();
 	HWND hWnd = App::GetInstance()->GetHandleMainWindow();
 
 	if (!CompileShader())
@@ -58,14 +59,18 @@ BOOL PostProcessor::Init()
 
 void PostProcessor::Render()
 {
-	// set rendertargetview
+	// set render target view
 	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
+
+	// clear
+	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
+	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
 
 	// set lay out
 	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
 
 	// set vertex
-	UINT stride = sizeof(CubeVertex);
+	UINT stride = sizeof(QuadVertex);
 	UINT offset = 0;
 	mD3DDeviceContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
 
@@ -139,7 +144,7 @@ BOOL PostProcessor::CompileShader()
 	// input layout
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = ARRAYSIZE(layout);

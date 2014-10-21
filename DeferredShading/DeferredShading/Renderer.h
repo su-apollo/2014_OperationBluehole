@@ -15,6 +15,8 @@ public:
 	BOOL Init();
 
 	void Render();
+	void SetupViewPort();
+	void SwapChain() { mSwapChain->Present(0, 0); }
 
 	ID3D11Device*			GetDevice() { return mD3DDevice; }
 	ID3D11DeviceContext*	GetDeviceContext() { return mD3DDeviceContext; }

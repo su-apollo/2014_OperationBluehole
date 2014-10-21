@@ -29,8 +29,30 @@ struct PS_INPUT
 };
 
 //--------------------------------------------------------------------------------------
+// Render Target
+//--------------------------------------------------------------------------------------
+struct GBuffer
+{
+	float4 normal : SV_TARGET0;
+	float4 albedo : SV_TARGET1;
+};
+
+//--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+
+GBuffer main(PS_INPUT Input)
+{
+	GBuffer output;
+
+	output.normal = float4(Input.Norm, 1);
+	output.albedo = txDiffuse.Sample(samLinear, Input.Tex);
+	
+	return output;
+}
+
+/*
+
 float4 main(PS_INPUT Input) : SV_TARGET
 {
 	float4 finalColor = 0;
@@ -45,3 +67,4 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	return finalColor;
 }
 
+*/

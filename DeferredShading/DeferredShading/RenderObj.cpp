@@ -37,6 +37,20 @@ BOOL RenderObj::Init()
 
 void RenderObj::Render()
 {
+	// Set layout
+	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
+
+	// Set vertex buffer
+	UINT stride = sizeof(CubeVertex);
+	UINT offset = 0;
+	mD3DDeviceContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
+
+	// Set index buffer
+	mD3DDeviceContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+	// Set primitive topology
+	mD3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	// rotate
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
@@ -66,7 +80,7 @@ void RenderObj::Render()
 	pcb.vLightColor[1] = light2->GetColor();
 	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
 
-	// draw
+	// set shader
 	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
 	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
 	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
@@ -75,6 +89,7 @@ void RenderObj::Render()
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &mTextureRV);
 	mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
 
+	// draw
 	mD3DDeviceContext->DrawIndexed(mIndexNum, 0, 0);
 }
 
@@ -160,8 +175,6 @@ BOOL RenderObj::CompileVertexShader()
 
 	if (FAILED(hr))
 		return FALSE;
-
-	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
 
 	return TRUE;
 }
@@ -267,11 +280,6 @@ BOOL RenderObj::CreateVertexBuff()
 	if (FAILED(hr))
 		return FALSE;
 
-	// Set vertex buffer
-	UINT stride = sizeof(CubeVertex);
-	UINT offset = 0;
-	mD3DDeviceContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
-
 	return TRUE;
 }
 
@@ -311,12 +319,6 @@ BOOL RenderObj::CreateIndexBuff()
 	hr = mD3DDevice->CreateBuffer(&bd, &InitData, &mIndexBuffer);
 	if (FAILED(hr))
 		return FALSE;
-
-	// Set index buffer
-	mD3DDeviceContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	// Set primitive topology
-	mD3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return TRUE;
 }
