@@ -253,12 +253,6 @@ void Elin::CleanUp()
 {
 	mFbxScene->Destroy();
 	mFbxManager->Destroy();
-
-	//vector의 경우 그냥 .clear하면 안된다는 점을 명심하자.
-
-	mModel.clear();
-
-
 }
 
 BOOL Elin::CompileShader()
@@ -426,7 +420,6 @@ void Elin::Release()
 	SafeRelease(mVertexShader);
 	SafeRelease(mPixelShader);
 
-	mMeshData.clear();
 
 }
 

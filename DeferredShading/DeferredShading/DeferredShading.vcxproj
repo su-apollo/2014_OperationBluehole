@@ -95,6 +95,7 @@
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MacroSet.h" />
+    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="ProcessManager.h" />
     <ClInclude Include="Renderer.h" />
@@ -114,6 +115,7 @@
     <ClCompile Include="GBuffManager.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
