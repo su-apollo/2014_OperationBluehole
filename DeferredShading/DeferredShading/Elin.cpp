@@ -253,6 +253,20 @@ BOOL Elin::CompileShader()
 
 void Elin::Render()
 {
+	// Set layout
+	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
+
+	// Set vertex buffer
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	mD3DDeviceContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
+
+	// Set index buffer
+	mD3DDeviceContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	// Set primitive topology
+	mD3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	// rotate
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
