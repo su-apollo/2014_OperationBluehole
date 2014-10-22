@@ -10,6 +10,7 @@ GBuffManager::GBuffManager()
 
 GBuffManager::~GBuffManager()
 {
+	SafeRelease(mDepthStencilRV);
 }
 
 

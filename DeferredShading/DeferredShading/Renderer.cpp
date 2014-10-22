@@ -28,7 +28,7 @@ BOOL Renderer::Init()
 		return FALSE;
 	}
 
-	if (!CreateStencilBuffer())
+	if (!CreateDepthStencilBuffer())
 	{
 		MessageBox(hWnd, L"CreateStencilBuff Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		DestroyDevice();
@@ -124,7 +124,7 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 	return TRUE;
 }
 
-BOOL Renderer::CreateStencilBuffer()
+BOOL Renderer::CreateDepthStencilBuffer()
 {
 	// Create depth stencil texture
 	D3D11_TEXTURE2D_DESC descDepth;

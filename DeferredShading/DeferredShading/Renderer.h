@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "RenderObj.h"
 #include "GBuffer.h"
-
+#include "Elin.h"
 
 // just draw single obj
 class Renderer : public Singleton<Renderer>
@@ -29,7 +29,7 @@ private:
 	void GetWindowSize(HWND hWnd);
 
 	BOOL CreateDevice(HWND hWnd);
-	BOOL CreateStencilBuffer();
+	BOOL CreateDepthStencilBuffer();
 
 	void DestroyDevice();
 
@@ -52,7 +52,7 @@ private:
 	UINT					mWinHeight = 0;
 
 	// contents
-	RenderObj				mCube;
+	Elin					mCube;
 
 	// get last error
 	HRESULT hr = S_OK;
