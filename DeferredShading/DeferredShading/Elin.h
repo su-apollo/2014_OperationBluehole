@@ -3,7 +3,6 @@
 #include <fbxsdk.h>
 #include <xnamath.h>
 #include "Singleton.h"
-#include "ElinObj.h"
 
 struct Vertex
 {

@@ -60,7 +60,7 @@ BOOL Elin::LoadFBX()
 		return false;
 	}
 
-	const char* filePath = "C:\\cone.FBX";
+	const char* filePath = "cone.FBX";
 
 	if (!fbxImporter->Initialize(filePath, -1, mFbxManager->GetIOSettings()))
 	{
