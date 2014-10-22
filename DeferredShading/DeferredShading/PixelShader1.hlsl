@@ -24,13 +24,26 @@ struct PS_INPUT
 	float4 Color : COLOR0;
 };
 
+//--------------------------------------------------------------------------------------
+// Render Target
+//--------------------------------------------------------------------------------------
+struct GBuffer
+{
+	float4 normal : SV_TARGET0;
+	float4 albedo : SV_TARGET1;
+};
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 main(PS_INPUT Input) : SV_TARGET
+GBuffer main(PS_INPUT Input) : SV_TARGET
 {
-	return float4(1,1,1,1);
-	//return Input.Color;
+	GBuffer output;
+
+
+	output.normal = 0;
+	output.albedo = float4(0, 0.25, 0.5, 0);
+
+	return output;
 }
 
