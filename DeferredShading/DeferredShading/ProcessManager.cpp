@@ -41,13 +41,17 @@ BOOL ProcessManager::Process() const
 
 	Camera::GetInstance()->Update();
 
-	GBuffManager::GetInstance()->SetRenderTargetToGBuff();
+	// clear
 	Renderer::GetInstance()->SetupViewPort();
+	Renderer::GetInstance()->ClearBackBuff();
+	Renderer::GetInstance()->ClearDepthStencilBuff();
+	GBuffManager::GetInstance()->SetRenderTargetToGBuff();
 
+	// render line
 	Renderer::GetInstance()->Render();
-
 	PostProcessor::GetInstance()->Render();
 
+	// end
 	Renderer::GetInstance()->SwapChain();
 
 	return TRUE;

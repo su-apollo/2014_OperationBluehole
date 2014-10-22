@@ -20,6 +20,8 @@ BOOL RenderObj::Init()
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
 	D3DXMatrixIdentity(&mWorld);
+	D3DXMatrixIdentity(&mWorld2);
+	D3DXMatrixTranslation(&mWorld2, 0, 1, 0);
 
 	if (!CompileShader())
 		return FALSE;
@@ -90,6 +92,17 @@ void RenderObj::Render()
 	mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
 
 	// draw
+	mD3DDeviceContext->DrawIndexed(mIndexNum, 0, 0);
+
+	// test
+	VSConstantBuffer vcb2;
+
+	D3DXMatrixTranspose(&matWorld, &mWorld2);
+	vcb2.mWorld = matWorld;
+	vcb2.mView = matView;
+	vcb2.mProjection = matProj;
+	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb2, 0, 0);
+
 	mD3DDeviceContext->DrawIndexed(mIndexNum, 0, 0);
 }
 

@@ -15,6 +15,8 @@ public:
 	BOOL Init();
 
 	void Render();
+	void ClearBackBuff();
+	void ClearDepthStencilBuff();
 	void SetupViewPort();
 	void SwapChain() { mSwapChain->Present(0, 0); }
 
@@ -53,6 +55,7 @@ private:
 
 	// contents
 	Elin					mCube;
+	//RenderObj				mCube;
 
 	// get last error
 	HRESULT hr = S_OK;

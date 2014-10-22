@@ -16,6 +16,7 @@ public:
 
 	BOOL Init();
 	BOOL CreateGBuffers();
+	void ClearRenderTargets();
 	void SetRenderTargetToGBuff();
 
 	ID3D11Texture2D* GetNormalTex() { return mNormalsBuff.GetTexture(); }

@@ -62,9 +62,11 @@ void PostProcessor::Render()
 	// set render target view
 	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
 
+	/*
 	// clear
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
 	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
+	*/
 
 	// set lay out
 	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);

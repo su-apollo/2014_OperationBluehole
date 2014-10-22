@@ -57,12 +57,9 @@ void GBuffManager::SetRenderTargetToGBuff()
 	renderTargets[0] = mNormalsBuff.GetRenderTargetView();
 	renderTargets[1] = mAlbedoBuff.GetRenderTargetView();
 
-	// clear
-	//float ClearColor[4] = { 0.0f, 0.3f, 0.0f, 1.0f };
 	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	for (int i = 0; i < 2; ++i)
 		mD3DDeviceContext->ClearRenderTargetView(renderTargets[i], ClearColor);
-	mD3DDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	mD3DDeviceContext->OMSetRenderTargets(2, renderTargets, mDepthStencilView);
 }

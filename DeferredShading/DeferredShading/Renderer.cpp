@@ -51,13 +51,6 @@ void Renderer::Render()
 	// om - output merge
 	//mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
 
-	/*
-	//clear
-	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; //red,green,blue,alpha
-	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
-	mD3DDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	*/
-
 	mCube.Render();
 }
 
@@ -193,6 +186,18 @@ void Renderer::SetupViewPort()
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	mD3DDeviceContext->RSSetViewports(1, &vp);
+}
+
+void Renderer::ClearBackBuff()
+{
+	//clear
+	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
+	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
+}
+
+void Renderer::ClearDepthStencilBuff()
+{
+	mD3DDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 

@@ -88,6 +88,7 @@ private:
 	UINT					mIndexNum = 36;
 
 	D3DXMATRIX				mWorld;
+	D3DXMATRIX				mWorld2;
 
 	ID3D11ShaderResourceView*	mTextureRV = NULL;
 	ID3D11SamplerState*			mSamplerLinear = NULL;
