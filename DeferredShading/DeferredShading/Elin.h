@@ -8,8 +8,10 @@
 struct Vertex
 {
 	D3DXVECTOR3 mPos;
-	D3DXVECTOR3 mNormal;
-	D3DXVECTOR2 mUV;
+	D3DXVECTOR4 Color;
+
+	//D3DXVECTOR3 mNormal;
+	//D3DXVECTOR2 mUV;
 
 };
 
@@ -37,42 +39,31 @@ public:
 	~Elin();
 
 	BOOL Init();
-	BOOL LoadFBX();
-	void CleanUp();
-
-	BOOL CompileShader();
-	BOOL CreateMeshBuffer(Mesh* mesh);
-	BOOL LoadTexture();
-
-
 	void Render();
 	void Release();
-
+	void CleanUp();
 
 private:
-	FbxManager* mFbxManager = nullptr;
-	FbxImporter* mImporter = nullptr;
-	FbxScene* mFbxScene = nullptr;
 
+	BOOL LoadFBX();
 	void ProcessGeometry(FbxNode* inNode);
-
-	std::string GetFileName(const char* fileName);
-
-	std::vector<Vertex> mVertices;
-	std::vector<int>mIndices;
 	
-	std::vector<Mesh*> mModel;
-
-	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+	BOOL CompileShader();
 	BOOL	CompileVertexShader();
 	BOOL	CompilePixelShader();
+	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
+	BOOL	CreateModelBuffer();
+	BOOL	CreateMeshBuffer(Mesh* mesh);
 	BOOL	CreateMeshVB(Mesh* mesh);
 	BOOL	CreateMeshIB(Mesh* mesh);
 	BOOL	CreateMeshCB(Mesh* mesh);
 
-	void RenderMesh();
+	BOOL LoadTexture();
 
+	std::string GetFileName(const char* fileName);
+
+	void RenderMesh();
 
 	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11PixelShader*      mPixelShader = NULL;
@@ -95,6 +86,13 @@ private:
 
 	// get last error
 	HRESULT hr = S_OK;
+
+	FbxManager* mFbxManager = nullptr;
+	FbxImporter* mImporter = nullptr;
+	FbxScene* mFbxScene = nullptr;
+
+	//여러 매쉬를 포함하고 있는 전체 모델
+	std::vector<Mesh*> mModel;
 
 };
 

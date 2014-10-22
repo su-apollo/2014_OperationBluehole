@@ -28,19 +28,20 @@ BOOL Elin::Init()
 
 	mFbxScene = FbxScene::Create(mFbxManager, "myScene");
 
+	mD3DDevice = Renderer::GetInstance()->GetDevice();
+	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
+	D3DXMatrixIdentity(&mWorld);
+
+	//fbx로부터 정보를 가져와 mModel을 채운다. 
 	if (!LoadFBX())
 	{
 		return false;
 	}
 
-	mD3DDevice = Renderer::GetInstance()->GetDevice();
-	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
-	D3DXMatrixIdentity(&mWorld);
-
-
 	if (!CompileShader())
 		return FALSE;
 
+	//매쉬 전체로 바꿔야함 위험함.
 	if (!CreateMeshBuffer(mModel[0]))
 		return FALSE;
 
@@ -60,7 +61,6 @@ BOOL Elin::LoadFBX()
 	}
 
 	const char* filePath = "C:\\cone.FBX";
-	//const char* filePath = "C:\\kim\\MI.FBX";
 
 	if (!fbxImporter->Initialize(filePath, -1, mFbxManager->GetIOSettings()))
 	{
@@ -72,8 +72,6 @@ BOOL Elin::LoadFBX()
 		return false;
 	}
 	fbxImporter->Destroy();
-
-	//std::string onlyFileName = GetFileName(filePath);
 
 	ProcessGeometry(mFbxScene->GetRootNode());
 
@@ -129,6 +127,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 
 					tempVerts.mPos = currPosition;
 
+					/*
 					float tU;
 					float tV;
 
@@ -136,6 +135,11 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 					tV = (float)(*uv)[j].mData[1];
 					tempVerts.mUV.x = tU;
 					tempVerts.mUV.y = tV;
+
+					*/
+					D3DXVECTOR4 currColor;
+					currColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+					tempVerts.Color = currColor;
 
 					pNewMesh->mVertex.push_back(tempVerts);
 				}
@@ -170,9 +174,9 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						// 					tempVerts[iControlPointIndex].mNormal.y = (float)normal.mData[1];
 						// 					tempVerts[iControlPointIndex].mNormal.z = (float)normal.mData[2];
 
-						pNewMesh->mVertex[iControlPointIndex].mNormal.x = (float)normal.mData[0];
-						pNewMesh->mVertex[iControlPointIndex].mNormal.y = (float)normal.mData[1];
-						pNewMesh->mVertex[iControlPointIndex].mNormal.z = (float)normal.mData[2];
+						//pNewMesh->mVertex[iControlPointIndex].mNormal.x = (float)normal.mData[0];
+						//pNewMesh->mVertex[iControlPointIndex].mNormal.y = (float)normal.mData[1];
+						//pNewMesh->mVertex[iControlPointIndex].mNormal.z = (float)normal.mData[2];
 
 
 						// ========= Get the Indices ==============================
@@ -232,9 +236,6 @@ void Elin::CleanUp()
 	mFbxScene->Destroy();
 	mFbxManager->Destroy();
 
-	mIndices.clear();
-
-	mVertices.clear();
 	mModel.clear();
 }
 
@@ -253,9 +254,9 @@ BOOL Elin::CompileShader()
 void Elin::Render()
 {
 	// rotate
-	//D3DXMATRIX matRotate;
-	//D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
-	//mWorld *= matRotate;
+	D3DXMATRIX matRotate;
+	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
+	mWorld *= matRotate;
 
 	// update constbuff
 	D3DXMATRIX matWorld;
@@ -325,7 +326,7 @@ HRESULT Elin::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCS
 BOOL Elin::CompileVertexShader()
 {
 	ID3DBlob* pVSBlob = NULL;
-	hr = CompileShaderFromFile(const_cast<WCHAR*>(VS_PATH), VS_MAIN, VS_MODEL, &pVSBlob);
+	hr = CompileShaderFromFile(L"VertexShader1.hlsl", "main", VS_MODEL, &pVSBlob);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -343,8 +344,7 @@ BOOL Elin::CompileVertexShader()
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	UINT numElements = ARRAYSIZE(layout);
 
@@ -362,7 +362,8 @@ BOOL Elin::CompileVertexShader()
 BOOL Elin::CompilePixelShader()
 {
 	ID3DBlob* pPSBlob = NULL;
-	hr = CompileShaderFromFile(const_cast<WCHAR*>(PS_PATH), PS_MAIN, PS_MODEL, &pPSBlob);
+	//hr = CompileShaderFromFile(const_cast<WCHAR*>(PS_PATH), PS_MAIN, PS_MODEL, &pPSBlob);
+	hr = CompileShaderFromFile(L"PixelShader1.hlsl", "main", PS_MODEL, &pPSBlob);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -392,6 +393,14 @@ void Elin::Release()
 
 
 }
+
+
+BOOL Elin::CreateModelBuffer()
+{
+	//
+	return TRUE;
+}
+
 
 BOOL Elin::CreateMeshBuffer(Mesh* mesh)
 {
@@ -479,34 +488,6 @@ BOOL Elin::CreateMeshCB(Mesh* mesh)
 	if (FAILED(hr))
 		return FALSE;
 
-
 	return TRUE;
 
 }
-
-BOOL Elin::LoadTexture()
-{
-	// Load the Texture
-
-	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, L"Popori_F_H00_Hand_diff.TGA", NULL, NULL, &mTextureRV, NULL);
-	if (FAILED(hr))
-		return FALSE;
-
-	// Create the sample state
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	// 선형 필터
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = mD3DDevice->CreateSamplerState(&sampDesc, &mSamplerLinear);
-	if (FAILED(hr))
-		return FALSE;
-
-	return TRUE;
-}
-
