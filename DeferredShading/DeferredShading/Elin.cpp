@@ -38,12 +38,15 @@ BOOL Elin::Init()
 		return false;
 	}
 
+
 	if (!CompileShader())
 		return FALSE;
 
 	//매쉬 전체로 바꿔야함 위험함.
 	if (!CreateMeshBuffer(mModel[0]))
 		return FALSE;
+
+
 
 	LightManager::GetInstance()->CreateDirectionalLight(MAX_LIGHT);
 
@@ -203,6 +206,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 				}
 				pNewMesh->mNumIndex = pNewMesh->mIndices.size();
 				mModel.push_back(pNewMesh);
+
 			} // else
 			ProcessGeometry(childNode);
 		}
@@ -236,7 +240,15 @@ void Elin::CleanUp()
 	mFbxScene->Destroy();
 	mFbxManager->Destroy();
 
+	//vector의 경우 그냥 .clear하면 안된다는 점을 명심하자.
+	std::vector<Mesh*>::iterator iter;
+	for (iter = mModel.begin(); iter != mModel.end(); ++iter)
+	{
+		delete (*iter);
+	}
 	mModel.clear();
+
+
 }
 
 BOOL Elin::CompileShader()
@@ -399,14 +411,13 @@ BOOL Elin::CompilePixelShader()
 void Elin::Release()
 {
 	CleanUp();
-	// 	Saferelease(mVSConstBuffer);
-	// 	Saferelease(mPSConstBuffer);
-	// 	Saferelease(mVertexBuffer);
-	// 	Saferelease(mIndexBuffer);
-	// 	
-	// 	Saferelease(mVertexLayout11);
-	// 	Saferelease(mVertexShader);
-	// 	Saferelease(mPixelShader);
+	SafeRelease(mVSConstBuffer);
+	SafeRelease(mPSConstBuffer);
+	SafeRelease(mVertexBuffer);
+	SafeRelease(mIndexBuffer);	
+	SafeRelease(mVertexLayout11);
+	SafeRelease(mVertexShader);
+	SafeRelease(mPixelShader);
 
 
 }

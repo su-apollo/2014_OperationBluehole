@@ -31,11 +31,11 @@ struct Indices
 
 
 
-class Elin :public Singleton<Elin>
+class Elin
 {
 public:
 	Elin();
-	~Elin();
+	virtual ~Elin();
 
 	BOOL Init();
 	void Render();
@@ -74,8 +74,8 @@ private:
 	ID3D11Buffer*           mVSConstBuffer = NULL;
 	ID3D11Buffer*			mPSConstBuffer = NULL;
 
-	ID3D11ShaderResourceView*	mTextureRV = NULL;
-	ID3D11SamplerState*			mSamplerLinear = NULL;
+	//ID3D11ShaderResourceView*	mTextureRV = NULL;
+	//ID3D11SamplerState*			mSamplerLinear = NULL;
 
 	D3DXMATRIX				mWorld;
 
