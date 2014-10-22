@@ -33,23 +33,18 @@ BOOL Elin::Init()
 		return false;
 	}
 
-	//
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
 	D3DXMatrixIdentity(&mWorld);
-	mPolygonCount = 0;
 
 
-	
 	if (!CompileShader())
 		return FALSE;
 
-	if (!CreateMeshBuffer(mModel[2]))
+	if (!CreateMeshBuffer(mModel[0]))
 		return FALSE;
 
-
 	LightManager::GetInstance()->CreateDirectionalLight(MAX_LIGHT);
-	
 
 	return TRUE;
 
@@ -64,7 +59,7 @@ BOOL Elin::LoadFBX()
 		return false;
 	}
 
-	const char* filePath = "C:\\ElinModel\\Popori_F_H00_dance.FBX";
+	const char* filePath = "C:\\cone.FBX";
 	//const char* filePath = "C:\\kim\\MI.FBX";
 
 	if (!fbxImporter->Initialize(filePath, -1, mFbxManager->GetIOSettings()))
@@ -111,8 +106,6 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 			FbxLayerElementArrayTemplate<FbxVector2>* uv = 0;
 			pMesh->GetTextureUV(&uv, FbxLayerElement::eTextureDiffuse);
 
-			FbxVector4* pVertices = pMesh->GetControlPoints();
-			const int lVertexCount = pMesh->GetControlPointsCount();
 
 			//fbx매쉬 생성
 			if (pMesh == NULL)
@@ -144,7 +137,6 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 					tempVerts.mUV.x = tU;
 					tempVerts.mUV.y = tV;
 
-					//mVertices.push_back(tempVerts);
 					pNewMesh->mVertex.push_back(tempVerts);
 				}
 
@@ -152,10 +144,10 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 					return;
 
 				pNewMesh->mNumPolygon = pMesh->GetPolygonCount();
-				
+
 				for (int j = 0; j < pMesh->GetPolygonCount(); j++)
 				{
-					
+
 
 					int iNumVertices = pMesh->GetPolygonSize(j);
 
@@ -201,9 +193,9 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 					}
 					//mIndex.push_back(tempIndex);
 					//이거 순서 어떻게?
-					pNewMesh->mIndices.push_back(tempIndex.i2);
-					pNewMesh->mIndices.push_back(tempIndex.i1);
 					pNewMesh->mIndices.push_back(tempIndex.i0);
+					pNewMesh->mIndices.push_back(tempIndex.i1);
+					pNewMesh->mIndices.push_back(tempIndex.i2);
 				}
 				pNewMesh->mNumIndex = pNewMesh->mIndices.size();
 				mModel.push_back(pNewMesh);
@@ -257,23 +249,13 @@ BOOL Elin::CompileShader()
 	return TRUE;
 }
 
-BOOL Elin::CreateBuffer()
-{
-	if (!CreateVertexBuff())
-		return FALSE;
-	if (!CreateIndexBuff())
-		return FALSE;
-	if (!CreateConstBuff())
-		return FALSE;
-	return TRUE;
-}
 
 void Elin::Render()
 {
 	// rotate
-	D3DXMATRIX matRotate;
-	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
-	mWorld *= matRotate;
+	//D3DXMATRIX matRotate;
+	//D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
+	//mWorld *= matRotate;
 
 	// update constbuff
 	D3DXMATRIX matWorld;
@@ -308,8 +290,13 @@ void Elin::Render()
 	//mD3DDeviceContext->PSSetShaderResources(0, 1, &mTextureRV);
 	//mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
 
-	int numIndex = mModel[2]->mNumIndex;
+	int numIndex = mModel[0]->mNumIndex;
 	mD3DDeviceContext->DrawIndexed(numIndex, 0, 0);
+}
+
+void Elin::RenderMesh()
+{
+
 }
 
 HRESULT Elin::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut)
@@ -338,7 +325,7 @@ HRESULT Elin::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCS
 BOOL Elin::CompileVertexShader()
 {
 	ID3DBlob* pVSBlob = NULL;
-	hr = CompileShaderFromFile(L"VertexShader1.hlsl", "main", "vs_4_0_level_9_1", &pVSBlob);
+	hr = CompileShaderFromFile(const_cast<WCHAR*>(VS_PATH), VS_MAIN, VS_MODEL, &pVSBlob);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -369,15 +356,13 @@ BOOL Elin::CompileVertexShader()
 	if (FAILED(hr))
 		return FALSE;
 
-	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
-
 	return TRUE;
 }
 
 BOOL Elin::CompilePixelShader()
 {
 	ID3DBlob* pPSBlob = NULL;
-	hr = CompileShaderFromFile(L"PixelShader1.hlsl", "main", "ps_4_0_level_9_1", &pPSBlob);
+	hr = CompileShaderFromFile(const_cast<WCHAR*>(PS_PATH), PS_MAIN, PS_MODEL, &pPSBlob);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -391,96 +376,19 @@ BOOL Elin::CompilePixelShader()
 	return TRUE;
 }
 
-BOOL Elin::CreateVertexBuff()
-{
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
 
-	// Create vertex buffer
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	//문제
-	int numVertices = mVertices.size();
-	bd.ByteWidth = sizeof(Vertex) * numVertices;
-
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	InitData.pSysMem = &mVertices;
-	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer);
-	if (FAILED(hr))
-		return FALSE;
-
-	// Set vertex buffer
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
-	Renderer::GetInstance()->GetDeviceContext()->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
-
-	return TRUE;
-}
-
-BOOL Elin::CreateIndexBuff()
-{
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-
-	// Create index buffer
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	int numTriangle = mIndices.size();
-	bd.ByteWidth = sizeof(int) * numTriangle;        // 36 vertices needed for 12 triangles in a triangle list
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	InitData.pSysMem = &mIndices;
-	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer);
-	if (FAILED(hr))
-		return FALSE;
-
-	// Set index buffer
-	Renderer::GetInstance()->GetDeviceContext()->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	// Set primitive topology
-	Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	return TRUE;
-}
-
-BOOL Elin::CreateConstBuff()
-{
-	D3D11_BUFFER_DESC bd;
-	//아래 zeromemory를 꼭해야함
-	ZeroMemory(&bd, sizeof(bd));
-	// Create the constant buffer
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(VSConstantBuffer);
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mVSConstBuffer);
-	if (FAILED(hr))
-		return FALSE;
-
-	bd.ByteWidth = sizeof(PSConstantBuffer);
-	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mPSConstBuffer);
-	if (FAILED(hr))
-		return FALSE;
-
-
-	return TRUE;
-}
 
 void Elin::Release()
 {
 	CleanUp();
-// 	Saferelease(mVSConstBuffer);
-// 	Saferelease(mPSConstBuffer);
-// 	Saferelease(mVertexBuffer);
-// 	Saferelease(mIndexBuffer);
-// 	
-// 	Saferelease(mVertexLayout11);
-// 	Saferelease(mVertexShader);
-// 	Saferelease(mPixelShader);
+	// 	Saferelease(mVSConstBuffer);
+	// 	Saferelease(mPSConstBuffer);
+	// 	Saferelease(mVertexBuffer);
+	// 	Saferelease(mIndexBuffer);
+	// 	
+	// 	Saferelease(mVertexLayout11);
+	// 	Saferelease(mVertexShader);
+	// 	Saferelease(mPixelShader);
 
 
 }
@@ -499,20 +407,17 @@ BOOL Elin::CreateMeshBuffer(Mesh* mesh)
 
 BOOL Elin::CreateMeshVB(Mesh* mesh)
 {
-D3D11_BUFFER_DESC bd;
+	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 
 	// Create vertex buffer
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	//문제
-	int numVertices = mesh->mNumVertex;
-	bd.ByteWidth = sizeof(Vertex) * numVertices;
-
+	bd.ByteWidth = sizeof(Vertex)* mesh->mNumVertex;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
-	InitData.pSysMem = &(mesh->mVertex);
+	InitData.pSysMem = &(mesh->mVertex.front());
 	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer);
 	if (FAILED(hr))
 		return FALSE;
@@ -535,19 +440,18 @@ BOOL Elin::CreateMeshIB(Mesh* mesh)
 
 	// Create index buffer
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(unsigned int)* mesh->mNumIndex;        // 36 vertices needed for 12 triangles in a triangle list
+	bd.ByteWidth = sizeof(unsigned int)* mesh->mNumIndex;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
-	InitData.pSysMem = &(mesh->mIndices);
+	InitData.pSysMem = &(mesh->mIndices.front());
 	hr = Renderer::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer);
 	if (FAILED(hr))
 		return FALSE;
 
 	// Set index buffer
-	Renderer::GetInstance()->GetDeviceContext()->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	Renderer::GetInstance()->GetDeviceContext()->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	// Set primitive topology
-	//Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	Renderer::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return TRUE;

@@ -41,7 +41,6 @@ public:
 	void CleanUp();
 
 	BOOL CompileShader();
-	BOOL CreateBuffer();
 	BOOL CreateMeshBuffer(Mesh* mesh);
 	BOOL LoadTexture();
 
@@ -60,9 +59,7 @@ private:
 	std::string GetFileName(const char* fileName);
 
 	std::vector<Vertex> mVertices;
-	//std::vector<Indices> mIndex;
 	std::vector<int>mIndices;
-	unsigned int mPolygonCount;
 	
 	std::vector<Mesh*> mModel;
 
@@ -70,13 +67,11 @@ private:
 	BOOL	CompileVertexShader();
 	BOOL	CompilePixelShader();
 
-	BOOL	CreateVertexBuff();
-	BOOL	CreateIndexBuff();
-	BOOL	CreateConstBuff();
-
 	BOOL	CreateMeshVB(Mesh* mesh);
 	BOOL	CreateMeshIB(Mesh* mesh);
 	BOOL	CreateMeshCB(Mesh* mesh);
+
+	void RenderMesh();
 
 
 	ID3D11VertexShader*     mVertexShader = NULL;
