@@ -90,7 +90,6 @@
     <ClInclude Include="DeferredShading.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Elin.h" />
-    <ClInclude Include="ElinObj.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="GBuffManager.h" />
     <ClInclude Include="LightManager.h" />
@@ -111,7 +110,6 @@
     <ClCompile Include="DeferredShading.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Elin.cpp" />
-    <ClCompile Include="ElinObj.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="GBuffManager.cpp" />
     <ClCompile Include="LightManager.cpp" />
@@ -132,6 +130,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <FileType>Document</FileType>
     </FxCompile>
+    <FxCompile Include="PixelShader1.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="PostProcess.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -145,6 +146,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <FileType>Document</FileType>
     </FxCompile>
+    <FxCompile Include="VertexShader1.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

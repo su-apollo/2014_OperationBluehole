@@ -81,9 +81,6 @@
     <ClInclude Include="GBuffManager.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="ElinObj.h">
-      <Filter>Contents</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -131,9 +128,6 @@
     <ClCompile Include="GBuffManager.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="ElinObj.cpp">
-      <Filter>Contents</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
@@ -146,6 +140,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Quad.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader1.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader1.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
