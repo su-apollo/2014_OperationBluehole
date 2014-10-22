@@ -32,8 +32,8 @@ BOOL Elin::Init()
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
 	D3DXMatrixIdentity(&mWorld);
 
-	
-	
+
+
 	//fbx로부터 정보를 가져와 mModel을 채운다. 
 	if (!LoadFBX())
 	{
@@ -46,15 +46,15 @@ BOOL Elin::Init()
 
 	//매쉬 전체로 바꿔야함 위험함.
 
-	
+
 	for (int i = 0; i < mModel.size(); ++i)
 	{
 		if (!CreateMeshBuffer(mModel[i]))
 			return FALSE;
 	}
-	
+
 	D3DXMATRIX matRotate;
-	D3DXMatrixRotationY(&matRotate, 180.0*(3.14/180.0));
+	D3DXMatrixRotationY(&matRotate, 180.0*(3.14 / 180.0));
 	D3DXMatrixRotationX(&matRotate, -90.0*(3.14 / 180.0));
 
 	mWorld *= matRotate;
@@ -112,7 +112,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 
 			if (childNode->GetNodeAttribute()->GetAttributeType() != FbxNodeAttribute::eMesh)
 				continue;
-			Mesh* pNewMesh = new Mesh();
+			EMesh pNewMesh (new Mesh);
 			FbxMesh* pMesh = (FbxMesh*)childNode->GetNodeAttribute();
 
 
@@ -255,11 +255,7 @@ void Elin::CleanUp()
 	mFbxManager->Destroy();
 
 	//vector의 경우 그냥 .clear하면 안된다는 점을 명심하자.
-	std::vector<Mesh*>::iterator iter;
-	for (iter = mModel.begin(); iter != mModel.end(); ++iter)
-	{
-		delete (*iter);
-	}
+
 	mModel.clear();
 
 
@@ -279,7 +275,7 @@ BOOL Elin::CompileShader()
 
 void Elin::Render()
 {
-	
+
 	// rotate
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
@@ -324,7 +320,7 @@ void Elin::Render()
 	}
 }
 
-void Elin::RenderMesh(MeshData* meshData)
+void Elin::RenderMesh(EMeshData meshData)
 {
 	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
 
@@ -426,12 +422,11 @@ void Elin::Release()
 	CleanUp();
 	SafeRelease(mVSConstBuffer);
 	SafeRelease(mPSConstBuffer);
-	SafeRelease(mVertexBuffer);
-	SafeRelease(mIndexBuffer);
 	SafeRelease(mVertexLayout11);
 	SafeRelease(mVertexShader);
 	SafeRelease(mPixelShader);
 
+	mMeshData.clear();
 
 }
 
@@ -443,9 +438,9 @@ BOOL Elin::CreateModelBuffer()
 }
 
 
-BOOL Elin::CreateMeshBuffer(Mesh* mesh)
+BOOL Elin::CreateMeshBuffer(EMesh mesh)
 {
-	MeshData* pMeshData = new MeshData;
+	EMeshData pMeshData(new MeshData);
 	mMeshData.push_back(pMeshData);
 	if (!CreateMeshVB(mesh, mMeshData.back()))
 		return FALSE;
@@ -457,7 +452,7 @@ BOOL Elin::CreateMeshBuffer(Mesh* mesh)
 	return TRUE;
 }
 
-BOOL Elin::CreateMeshVB(Mesh* mesh, MeshData* meshData)
+BOOL Elin::CreateMeshVB(EMesh mesh, EMeshData meshData)
 {
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -478,7 +473,7 @@ BOOL Elin::CreateMeshVB(Mesh* mesh, MeshData* meshData)
 }
 
 
-BOOL Elin::CreateMeshIB(Mesh* mesh, MeshData* meshData)
+BOOL Elin::CreateMeshIB(EMesh mesh, EMeshData meshData)
 {
 	meshData->mNumIndex = mesh->mNumIndex;
 
@@ -502,7 +497,7 @@ BOOL Elin::CreateMeshIB(Mesh* mesh, MeshData* meshData)
 }
 
 
-BOOL Elin::CreateMeshCB(Mesh* mesh, MeshData* meshData)
+BOOL Elin::CreateMeshCB(EMesh mesh, EMeshData meshData)
 {
 	D3D11_BUFFER_DESC bd;
 	//아래 zeromemory를 꼭해야함

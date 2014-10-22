@@ -37,6 +37,9 @@ struct MeshData
 	int						mNumIndex = 0;
 };
 
+typedef std::shared_ptr<Mesh> EMesh;
+typedef std::shared_ptr<MeshData> EMeshData;
+
 class Elin
 {
 public:
@@ -59,24 +62,22 @@ private:
 	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
 	BOOL	CreateModelBuffer();
-	BOOL	CreateMeshBuffer(Mesh* mesh);
-	BOOL	CreateMeshVB(Mesh* mesh, MeshData* meshData);
-	BOOL	CreateMeshIB(Mesh* mesh, MeshData* meshData);
-	BOOL	CreateMeshCB(Mesh* mesh, MeshData* meshData);
+	BOOL	CreateMeshBuffer(EMesh mesh);
+	BOOL	CreateMeshVB(EMesh mesh, EMeshData meshData);
+	BOOL	CreateMeshIB(EMesh mesh, EMeshData meshData);
+	BOOL	CreateMeshCB(EMesh mesh, EMeshData meshData);
 
 	BOOL LoadTexture();
 
 	std::string GetFileName(const char* fileName);
 
-	void RenderMesh(MeshData* meshData);
+	void RenderMesh(EMeshData meshData);
 
 	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11PixelShader*      mPixelShader = NULL;
 
 	ID3D11InputLayout*      mVertexLayout11 = NULL;
 
-	ID3D11Buffer*           mVertexBuffer = NULL;
-	ID3D11Buffer*           mIndexBuffer = NULL;
 	ID3D11Buffer*           mVSConstBuffer = NULL;
 	ID3D11Buffer*			mPSConstBuffer = NULL;
 
@@ -99,9 +100,9 @@ private:
 	FbxScene* mFbxScene = nullptr;
 
 	//여러 매쉬를 포함하고 있는 전체 모델
-	std::vector<Mesh*> mModel;
+	std::vector<EMesh> mModel;
 
-	std::vector <MeshData*>	mMeshData;
+	std::vector <EMeshData>	mMeshData;
 
 
 };
