@@ -9,7 +9,7 @@ class Camera : public Singleton<Camera>
 {
 public:
 	Camera()
-		: mEye(0.0f, 4.0f, -10.0f), mAt(0.0f, 1.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f) {};
+		: mEye(0.0f, 50.0f, -80.0f), mAt(0.0f, 0.0f, 1.0f), mUp(0.0f, 1.0f, 0.0f) {};
 	~Camera() {}
 
 	void		Update();

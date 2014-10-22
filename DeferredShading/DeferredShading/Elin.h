@@ -29,6 +29,13 @@ struct Indices
 	int i0, i1, i2;
 };
 
+struct MeshData
+{
+	ID3D11Buffer*           mVertexBuffer = NULL;
+	ID3D11Buffer*           mIndexBuffer = NULL;
+
+	int						mNumIndex = 0;
+};
 
 
 class Elin
@@ -46,7 +53,7 @@ private:
 
 	BOOL LoadFBX();
 	void ProcessGeometry(FbxNode* inNode);
-	
+
 	BOOL CompileShader();
 	BOOL	CompileVertexShader();
 	BOOL	CompilePixelShader();
@@ -54,15 +61,15 @@ private:
 
 	BOOL	CreateModelBuffer();
 	BOOL	CreateMeshBuffer(Mesh* mesh);
-	BOOL	CreateMeshVB(Mesh* mesh);
-	BOOL	CreateMeshIB(Mesh* mesh);
-	BOOL	CreateMeshCB(Mesh* mesh);
+	BOOL	CreateMeshVB(Mesh* mesh, MeshData* meshData);
+	BOOL	CreateMeshIB(Mesh* mesh, MeshData* meshData);
+	BOOL	CreateMeshCB(Mesh* mesh, MeshData* meshData);
 
 	BOOL LoadTexture();
 
 	std::string GetFileName(const char* fileName);
 
-	void RenderMesh();
+	void RenderMesh(MeshData* meshData);
 
 	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11PixelShader*      mPixelShader = NULL;
@@ -73,6 +80,8 @@ private:
 	ID3D11Buffer*           mIndexBuffer = NULL;
 	ID3D11Buffer*           mVSConstBuffer = NULL;
 	ID3D11Buffer*			mPSConstBuffer = NULL;
+
+
 
 	//ID3D11ShaderResourceView*	mTextureRV = NULL;
 	//ID3D11SamplerState*			mSamplerLinear = NULL;
@@ -92,6 +101,9 @@ private:
 
 	//여러 매쉬를 포함하고 있는 전체 모델
 	std::vector<Mesh*> mModel;
+
+	std::vector <MeshData*>	mMeshData;
+
 
 };
 
