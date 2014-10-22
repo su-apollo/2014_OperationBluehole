@@ -20,11 +20,12 @@ public:
 	void SetupViewPort();
 	void SwapChain() { mSwapChain->Present(0, 0); }
 
-	ID3D11Device*			GetDevice() { return mD3DDevice; }
-	ID3D11DeviceContext*	GetDeviceContext() { return mD3DDeviceContext; }
-	ID3D11Texture2D*		GetDepthStencil() { return mDepthStencil; }
-	ID3D11DepthStencilView* GetDepthStencilView() { return mDepthStencilView; }
-	ID3D11RenderTargetView*	GetRenderTargetView() { return mRenderTargetView; }
+	ID3D11Device*				GetDevice() { return mD3DDevice; }
+	ID3D11DeviceContext*		GetDeviceContext() { return mD3DDeviceContext; }
+	ID3D11Texture2D*			GetDepthStencil() { return mDepthStencil; }
+	ID3D11DepthStencilView*		GetDepthStencilView() { return mDepthStencilView; }
+	ID3D11RenderTargetView*		GetRenderTargetView() { return mRenderTargetView; }
+	ID3D11ShaderResourceView*	GetDepthStencilRV() { return mDepthStencilRV; }
 
 private:
 
@@ -35,18 +36,19 @@ private:
 
 	void DestroyDevice();
 
-	D3D_DRIVER_TYPE			mDriverType = D3D_DRIVER_TYPE_NULL;
-	D3D_FEATURE_LEVEL       mFeatureLevel = D3D_FEATURE_LEVEL_11_0;
+	D3D_DRIVER_TYPE				mDriverType = D3D_DRIVER_TYPE_NULL;
+	D3D_FEATURE_LEVEL			mFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 
 	// render 된 결과물이 backbuffer에 쓰기전 하나 이상의 surface에 저장
-	IDXGISwapChain*			mSwapChain = NULL;
+	IDXGISwapChain*				mSwapChain = NULL;
 
-	ID3D11Device*           mD3DDevice = NULL;
-	ID3D11DeviceContext*    mD3DDeviceContext = NULL;
+	ID3D11Device*				mD3DDevice = NULL;
+	ID3D11DeviceContext*		mD3DDeviceContext = NULL;
 
-	ID3D11RenderTargetView* mRenderTargetView = NULL;
-	ID3D11Texture2D*        mDepthStencil = NULL;
-	ID3D11DepthStencilView* mDepthStencilView = NULL;
+	ID3D11RenderTargetView*		mRenderTargetView = NULL;
+	ID3D11Texture2D*			mDepthStencil = NULL;
+	ID3D11DepthStencilView*		mDepthStencilView = NULL;
+	ID3D11ShaderResourceView*	mDepthStencilRV = NULL;
 
 	UINT					mDPCallNum = 0;
 

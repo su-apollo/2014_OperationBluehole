@@ -11,12 +11,14 @@ public:
 	~Timer();
 
 	void OnTick();
-	void CountFPS();
 
 	float GetDeltaTime() { return mDeltaTime; }
 	float GetFPS() { return mFPS; }
 
 private:
+
+	void CountFPS();
+	void CountDeltaTime();
 
 	UINT mPrevTime = 0;
 	UINT mNowTime = 0;

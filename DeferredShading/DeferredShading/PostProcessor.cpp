@@ -62,12 +62,6 @@ void PostProcessor::Render()
 	// set render target view
 	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
 
-	/*
-	// clear
-	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
-	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
-	*/
-
 	// set lay out
 	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
 
@@ -90,7 +84,7 @@ void PostProcessor::Render()
 	// set Gbuff
 	ID3D11ShaderResourceView* normalTexRV = GBuffManager::GetInstance()->GetNormalTexRV();
 	ID3D11ShaderResourceView* albedoTexRV = GBuffManager::GetInstance()->GetAlbedoTexRV();
-	ID3D11ShaderResourceView* depthTexRV = GBuffManager::GetInstance()->GetDepthTexRV();
+	ID3D11ShaderResourceView* depthTexRV = Renderer::GetInstance()->GetDepthStencilRV();
 
 	// set constbuff
 	PostProcessorConstantBuffer pcb;

@@ -23,18 +23,14 @@ public:
 	ID3D11Texture2D* GetAlbedoTex() { return mAlbedoBuff.GetTexture(); }
 	ID3D11ShaderResourceView* GetNormalTexRV() { return mNormalsBuff.GetTextureRV(); }
 	ID3D11ShaderResourceView* GetAlbedoTexRV() { return mAlbedoBuff.GetTextureRV(); }
-	ID3D11ShaderResourceView* GetDepthTexRV(){ return mDepthStencilRV; }
 
 private:
 
 	void GetWindowSize(HWND hWnd);
-	BOOL SetDepthStencilRV();
 
 	// render targets
 	GBuffer						mNormalsBuff;
 	GBuffer						mAlbedoBuff;
-
-	ID3D11ShaderResourceView*	mDepthStencilRV = NULL;
 
 	// get from renderer
 	UINT					mWinWidth = 0;

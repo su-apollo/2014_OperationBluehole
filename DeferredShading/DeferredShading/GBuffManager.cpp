@@ -10,7 +10,6 @@ GBuffManager::GBuffManager()
 
 GBuffManager::~GBuffManager()
 {
-	SafeRelease(mDepthStencilRV);
 }
 
 
@@ -25,12 +24,6 @@ BOOL GBuffManager::Init()
 	if (!CreateGBuffers())
 	{
 		MessageBox(hWnd, L"CreateGBuff Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		return FALSE;
-	}
-
-	if (!SetDepthStencilRV())
-	{
-		MessageBox(hWnd, L"SetDepthStencilRV Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		return FALSE;
 	}
 
@@ -72,27 +65,6 @@ void GBuffManager::GetWindowSize(HWND hWnd)
 	GetClientRect(hWnd, &rc);
 	mWinWidth = rc.right - rc.left;
 	mWinHeight = rc.bottom - rc.top;
-}
-
-BOOL GBuffManager::SetDepthStencilRV()
-{
-	HRESULT hr = S_OK;
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	//desc.Format = DXGI_FORMAT_R32_FLOAT;
-	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	desc.Texture2D.MipLevels = 1;
-	desc.Texture2D.MostDetailedMip = 0;
-
-	ID3D11Texture2D* depthStencil = Renderer::GetInstance()->GetDepthStencil();
-	hr = mD3DDevice->CreateShaderResourceView(depthStencil, &desc, &mDepthStencilRV);
-
-	if (FAILED(hr))
-		return FALSE;
-
-	return TRUE;
 }
 
 

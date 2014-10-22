@@ -149,6 +149,20 @@ BOOL Renderer::CreateDepthStencilBuffer()
 	if (FAILED(hr))
 		return FALSE;
 
+	D3D11_SHADER_RESOURCE_VIEW_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	desc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	//desc.Format = DXGI_FORMAT_R32_FLOAT;
+	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	desc.Texture2D.MipLevels = 1;
+	desc.Texture2D.MostDetailedMip = 0;
+
+	ID3D11Texture2D* depthStencil = Renderer::GetInstance()->GetDepthStencil();
+	hr = mD3DDevice->CreateShaderResourceView(depthStencil, &desc, &mDepthStencilRV);
+
+	if (FAILED(hr))
+		return FALSE;
+
 	return TRUE;
 }
 

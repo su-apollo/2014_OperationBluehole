@@ -13,6 +13,12 @@ Timer::~Timer()
 
 void Timer::OnTick()
 {
+	CountDeltaTime();
+	CountFPS();
+}
+
+void Timer::CountDeltaTime()
+{
 	mNowTime = timeGetTime();
 
 	if (mPrevTime == 0)
@@ -21,8 +27,6 @@ void Timer::OnTick()
 	mDeltaTime = (static_cast<float>(mNowTime - mPrevTime)) / 1000.0f;
 
 	mPrevTime = mNowTime;
-
-	CountFPS();
 }
 
 void Timer::CountFPS()
@@ -31,7 +35,7 @@ void Timer::CountFPS()
 
 	mFPSTimer += mDeltaTime;
 
-	if (mFPSTimer > 0.1f)
+	if (mFPSTimer > 1.0f)
 	{
 		mFPS = (static_cast<float>(mFrameCounter)) / mFPSTimer;
 		mFrameCounter = 0;
@@ -41,3 +45,5 @@ void Timer::CountFPS()
 		Log("FPS : %f\n", mFPS);
 	}
 }
+
+
