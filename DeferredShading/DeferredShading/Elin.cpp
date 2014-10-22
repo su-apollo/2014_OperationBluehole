@@ -351,6 +351,9 @@ BOOL Elin::CompileVertexShader()
 	hr = mD3DDevice->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(),
 		pVSBlob->GetBufferSize(), &mVertexLayout11);
 
+	//이게 왜 빠졌지?
+	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
+
 	SafeRelease(pVSBlob);
 
 	if (FAILED(hr))
