@@ -77,7 +77,7 @@ BOOL Elin::LoadFBX()
 		return false;
 	}
 
-	const char* filePath = "C:\\ElinModel\\Popori_F_H00_dance.FBX";
+	const char* filePath = "ElinModel/Popori_F_H00_dance.FBX";
 
 	if (!fbxImporter->Initialize(filePath, -1, mFbxManager->GetIOSettings()))
 	{

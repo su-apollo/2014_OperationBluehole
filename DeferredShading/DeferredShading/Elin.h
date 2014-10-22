@@ -37,7 +37,6 @@ struct MeshData
 	int						mNumIndex = 0;
 };
 
-
 class Elin
 {
 public:

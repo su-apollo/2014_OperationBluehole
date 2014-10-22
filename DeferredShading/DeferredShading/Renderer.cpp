@@ -133,8 +133,8 @@ BOOL Renderer::CreateDepthStencilBuffer()
 	descDepth.Height = mWinHeight;
 	descDepth.MipLevels = 1;
 	descDepth.ArraySize = 1;
-	// depth정보를 srv로 변경하기 위한 포멧
 	descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	//descDepth.Format = DXGI_FORMAT_R32_TYPELESS;
 	descDepth.SampleDesc.Count = 1;
 	descDepth.SampleDesc.Quality = 0;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
@@ -149,6 +149,7 @@ BOOL Renderer::CreateDepthStencilBuffer()
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
 	ZeroMemory(&descDSV, sizeof(descDSV));
 	descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	//descDSV.Format = DXGI_FORMAT_D32_FLOAT;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0;
 	hr = mD3DDevice->CreateDepthStencilView(mDepthStencil, &descDSV, &mDepthStencilView);
