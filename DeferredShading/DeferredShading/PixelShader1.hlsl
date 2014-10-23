@@ -37,7 +37,7 @@ struct GBuffer
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-GBuffer main(PS_INPUT Input) : SV_TARGET
+GBuffer main(PS_INPUT Input)
 {
 	GBuffer output;
 
