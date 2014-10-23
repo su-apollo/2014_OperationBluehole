@@ -30,6 +30,7 @@ struct Vertex
 {
 	D3DXVECTOR3 mPos;
 	D3DXVECTOR3 mNormal;
+	D3DXVECTOR3 mTangent;
 	D3DXVECTOR2 mUV;
 };
 

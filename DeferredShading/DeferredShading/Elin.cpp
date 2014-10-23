@@ -164,8 +164,6 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 				pMesh->GetUVSetNames(lUVSetNameList);
 
 
-
-
 				for (int j = 0; j < pMesh->GetPolygonCount(); j++)
 				{
 
@@ -206,6 +204,8 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						pNewMesh->mVertex[iControlPointIndex].mUV.x = tex[0];
 						pNewMesh->mVertex[iControlPointIndex].mUV.y = -tex[1];
 
+						
+
 
 						switch (k)
 						{
@@ -223,6 +223,28 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						}
 
 					}
+
+					// ========= Get the Tangents ==============================
+					D3DXVECTOR3 tangent;
+					int ControlPointIndexStart = pMesh->GetPolygonVertex(j, 0);
+
+					if (ControlPointIndexStart + 2 < pNewMesh->mVertex.size())
+					{
+						D3DXVECTOR3 deltaPos1 = pNewMesh->mVertex[ControlPointIndexStart + 1].mPos - pNewMesh->mVertex[ControlPointIndexStart].mPos;
+						D3DXVECTOR3 deltaPos2 = pNewMesh->mVertex[ControlPointIndexStart + 2].mPos - pNewMesh->mVertex[ControlPointIndexStart + 1].mPos;
+						D3DXVECTOR2 deltaUV1 = pNewMesh->mVertex[ControlPointIndexStart + 1].mUV - pNewMesh->mVertex[ControlPointIndexStart].mUV;
+						D3DXVECTOR2 deltaUV2 = pNewMesh->mVertex[ControlPointIndexStart + 2].mUV - pNewMesh->mVertex[ControlPointIndexStart + 1].mUV;;
+
+						float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+						tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y)*r;
+
+						pNewMesh->mVertex[ControlPointIndexStart].mTangent = tangent;
+						pNewMesh->mVertex[ControlPointIndexStart + 1].mTangent = tangent;
+						pNewMesh->mVertex[ControlPointIndexStart + 2].mTangent = tangent;
+					}
+
+
+
 					//mIndex.push_back(tempIndex);
 					//이거 순서 어떻게?
 					pNewMesh->mIndices.push_back(tempIndex.i0);
@@ -393,7 +415,8 @@ BOOL Elin::CompileVertexShader()
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	UINT numElements = ARRAYSIZE(layout);
 
