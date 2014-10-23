@@ -191,9 +191,10 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						// 					tempVerts[iControlPointIndex].mNormal.y = (float)normal.mData[1];
 						// 					tempVerts[iControlPointIndex].mNormal.z = (float)normal.mData[2];
 
-						//pNewMesh->mVertex[iControlPointIndex].mNormal.x = (float)normal.mData[0];
-						//pNewMesh->mVertex[iControlPointIndex].mNormal.y = (float)normal.mData[1];
-						//pNewMesh->mVertex[iControlPointIndex].mNormal.z = (float)normal.mData[2];
+						//순서 찾아볼 것.
+						pNewMesh->mVertex[iControlPointIndex].mNormal.x = (float)normal.mData[0];
+						pNewMesh->mVertex[iControlPointIndex].mNormal.y = (float)normal.mData[1];
+						pNewMesh->mVertex[iControlPointIndex].mNormal.z = (float)normal.mData[2];
 
 
 						// ========= Get the Indices ==============================
@@ -391,7 +392,8 @@ BOOL Elin::CompileVertexShader()
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	UINT numElements = ARRAYSIZE(layout);
 

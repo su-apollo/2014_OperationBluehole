@@ -29,11 +29,8 @@ static const LPCWSTR	ELIN_TEXTURE_HAIR_SPEC = L"ElinModel/popori_F_hair07_spec.b
 struct Vertex
 {
 	D3DXVECTOR3 mPos;
-	//D3DXVECTOR4 Color;
+	D3DXVECTOR3 mNormal;
 	D3DXVECTOR2 mUV;
-
-	//D3DXVECTOR3 mNormal;
-
 };
 
 struct Mesh
