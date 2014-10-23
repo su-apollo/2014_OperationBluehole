@@ -57,8 +57,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	// todo : unpack
 	//finalColor = normal;
-	//finalColor = albedo;
-	finalColor = float4(depth.x, depth.y, depth.z, 1);
+	finalColor = albedo;
+	//finalColor = float4(depth.x, depth.y, depth.z, 1);
 	finalColor.a = 1;
 
 	return finalColor;

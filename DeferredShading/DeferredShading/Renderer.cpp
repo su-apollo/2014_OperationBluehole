@@ -157,8 +157,7 @@ BOOL Renderer::CreateDepthStencilBuffer()
 	desc.Texture2D.MipLevels = 1;
 	desc.Texture2D.MostDetailedMip = 0;
 
-	ID3D11Texture2D* depthStencil = Renderer::GetInstance()->GetDepthStencil();
-	hr = mD3DDevice->CreateShaderResourceView(depthStencil, &desc, &mDepthStencilRV);
+	hr = mD3DDevice->CreateShaderResourceView(mDepthStencil, &desc, &mDepthStencilRV);
 
 	if (FAILED(hr))
 		return FALSE;
@@ -211,7 +210,7 @@ void Renderer::ClearBackBuff()
 
 void Renderer::ClearDepthStencilBuff()
 {
-	mD3DDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	mD3DDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 
