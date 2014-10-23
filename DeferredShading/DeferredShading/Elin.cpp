@@ -223,7 +223,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						}
 
 					}
-
+					/*
 					// ========= Get the Tangents ==============================
 					D3DXVECTOR3 tangent;
 					int ControlPointIndexStart = pMesh->GetPolygonVertex(j, 0);
@@ -242,7 +242,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						pNewMesh->mVertex[ControlPointIndexStart + 1].mTangent = tangent;
 						pNewMesh->mVertex[ControlPointIndexStart + 2].mTangent = tangent;
 					}
-
+					*/
 
 
 					//mIndex.push_back(tempIndex);
