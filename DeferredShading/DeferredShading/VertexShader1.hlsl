@@ -15,7 +15,7 @@ cbuffer ConstantBuffer : register(b0)
 struct VS_INPUT
 {
 	float4 Pos : POSITION;
-	float3 Nomr : NORMAL;
+	float3 Norm : NORMAL;
 	float3 Tangent : TANGENT;
 	float2 Tex : TEXCOORD0;
 };
@@ -24,6 +24,8 @@ struct VS_OUTPUT
 {
 	float4 Pos : SV_POSITION;
 	float2 Tex : TEXCOORD0;
+	float3 Tang : TEXCOORD1;
+	float3 Norm : TEXCOORD2;
 };
 
 //--------------------------------------------------------------------------------------
@@ -36,5 +38,12 @@ VS_OUTPUT main(VS_INPUT Input)
 	output.Pos = mul(output.Pos, View);
 	output.Pos = mul(output.Pos, Projection);
 	output.Tex = Input.Tex;
+
+	float3 worldNormal = mul(Input.Norm, (float3x3)World);
+	output.Norm = normalize(worldNormal);
+
+	float3 worldTangent = mul(Input.Tangent, (float3x3)World);
+	output.Tang = normalize(worldTangent);
+
 	return output;
 }

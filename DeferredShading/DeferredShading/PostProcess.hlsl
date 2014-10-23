@@ -48,9 +48,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 finalColor = 0;
 
 	// todo : unpack
-	//finalColor = normal;
-	finalColor = diffuse;
-	//finalColor = specular;
+	finalColor = normal;
+	//finalColor = diffuse + specular;
 	//finalColor = float4(depth.x, depth.y, depth.z, 1);
 	finalColor.a = 1;
 

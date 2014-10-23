@@ -28,6 +28,8 @@ struct PS_INPUT
 {
 	float4 Pos : SV_POSITION;
 	float2 Tex : TEXCOORD0;
+	float3 Tang : TEXCOORD1;
+	float3 Norm : TEXCOORD2;
 };
 
 //--------------------------------------------------------------------------------------
@@ -45,10 +47,17 @@ struct GBuffer
 //--------------------------------------------------------------------------------------
 GBuffer main(PS_INPUT Input)
 {
-	GBuffer output;
+	float3 tangentNormal = txNormal.Sample(samLinear, Input.Tex).xyz;
+	//convert 0 ~ 1 to -1 ~ +1
+	tangentNormal = normalize(tangentNormal * 2 - 1);
 
-	// todo : 
-	output.normal = txNormal.Sample(samLinear,Input.Tex);
+	float3 bitangent = cross(Input.Norm, Input.Tang);
+	float3x3 TBN = float3x3(normalize(Input.Tang), normalize(bitangent), normalize(Input.Norm));
+	float4 normal = float4(mul(tangentNormal, TBN), 1);
+	normal = normal * 0.5 + 0.5;
+
+	GBuffer output;
+	output.normal = normal;
 	output.diffuse = txDiffuse.Sample(samLinear, Input.Tex);
 	output.specular = txSpecular.Sample(samLinear, Input.Tex);
 

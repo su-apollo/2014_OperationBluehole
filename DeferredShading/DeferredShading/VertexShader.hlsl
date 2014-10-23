@@ -38,7 +38,7 @@ VS_OUTPUT main( VS_INPUT Input )
 	output.Pos = mul(Input.Pos, World);
 	output.Pos = mul(output.Pos, View);
 	output.Pos = mul(output.Pos, Projection);
-	output.Norm = mul(Input.Norm, World);
+	output.Norm = mul(Input.Norm, (float3x3)World);
 	output.Tex = Input.Tex;
 	return output;
 }
