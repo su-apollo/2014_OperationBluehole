@@ -12,6 +12,13 @@
 // Windows Header Files:
 #include <windows.h>
 
+// C RunTime Header Files
+#include <stdlib.h>
+#include <malloc.h>
+#include <tchar.h>
+#include <atlconv.h>
+#include <assert.h>
+
 // for memory leak check
 #include <memory>
 
@@ -22,15 +29,7 @@
 // timer
 #include <timeapi.h>
 
-// C RunTime Header Files
-#include <stdlib.h>
-#include <malloc.h>
-#include <tchar.h>
-#include <atlconv.h>
-#include <assert.h>
-
-// direct x
-#include <d3d11.h>
+// directx
 #include <d3dx11.h>
 #include <d3dcompiler.h>
 #include <d3dx9math.h>
