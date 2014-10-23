@@ -37,7 +37,10 @@ BOOL GBuffManager::CreateGBuffers()
 		return FALSE;
 		
 
-	if (!mAlbedoBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
+	if (!mDiffuseBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
+		return FALSE;
+
+	if (!mSpecularBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
 		return FALSE;
 
 	return TRUE;
@@ -45,16 +48,17 @@ BOOL GBuffManager::CreateGBuffers()
 
 void GBuffManager::SetRenderTargetToGBuff()
 {
-	ID3D11RenderTargetView* renderTargets[2] = { NULL };
+	ID3D11RenderTargetView* renderTargets[GBUFFERNUM] = { NULL };
 
 	renderTargets[0] = mNormalsBuff.GetRenderTargetView();
-	renderTargets[1] = mAlbedoBuff.GetRenderTargetView();
+	renderTargets[1] = mDiffuseBuff.GetRenderTargetView();
+	renderTargets[2] = mSpecularBuff.GetRenderTargetView();
 
 	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < GBUFFERNUM; ++i)
 		mD3DDeviceContext->ClearRenderTargetView(renderTargets[i], ClearColor);
 
-	mD3DDeviceContext->OMSetRenderTargets(2, renderTargets, mDepthStencilView);
+	mD3DDeviceContext->OMSetRenderTargets(3, renderTargets, mDepthStencilView);
 }
 
 void GBuffManager::GetWindowSize(HWND hWnd)

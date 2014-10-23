@@ -83,7 +83,8 @@ void PostProcessor::Render()
 
 	// set Gbuff
 	ID3D11ShaderResourceView* normalTexRV = GBuffManager::GetInstance()->GetNormalTexRV();
-	ID3D11ShaderResourceView* albedoTexRV = GBuffManager::GetInstance()->GetAlbedoTexRV();
+	ID3D11ShaderResourceView* diffuseTexRV = GBuffManager::GetInstance()->GetDiffuseTexRV();
+	ID3D11ShaderResourceView* specularTexRV = GBuffManager::GetInstance()->GetSpecularTexRV();
 	ID3D11ShaderResourceView* depthTexRV = Renderer::GetInstance()->GetDepthStencilRV();
 
 	// set constbuff
@@ -98,8 +99,9 @@ void PostProcessor::Render()
 	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
 
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &normalTexRV);
-	mD3DDeviceContext->PSSetShaderResources(1, 1, &albedoTexRV);
-	mD3DDeviceContext->PSSetShaderResources(2, 1, &depthTexRV);
+	mD3DDeviceContext->PSSetShaderResources(1, 1, &diffuseTexRV);
+	mD3DDeviceContext->PSSetShaderResources(2, 1, &specularTexRV);
+	mD3DDeviceContext->PSSetShaderResources(3, 1, &depthTexRV);
 	mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
 
 	// draw

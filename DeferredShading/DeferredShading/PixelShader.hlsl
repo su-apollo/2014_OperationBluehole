@@ -34,7 +34,8 @@ struct PS_INPUT
 struct GBuffer
 {
 	float4 normal : SV_TARGET0;
-	float4 albedo : SV_TARGET1;
+	float4 diffuse : SV_TARGET1;
+	float4 specular : SV_TARGET2;
 };
 
 //--------------------------------------------------------------------------------------
@@ -49,7 +50,8 @@ GBuffer main(PS_INPUT Input)
 	normal = normal* 0.5f + 0.5f;
 
 	output.normal = float4(normal, 1);
-	output.albedo = txDiffuse.Sample(samLinear, Input.Tex);
+	output.diffuse = txDiffuse.Sample(samLinear, Input.Tex);
+	output.specular = 0;
 	
 	return output;
 }

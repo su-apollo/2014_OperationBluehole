@@ -19,8 +19,9 @@ cbuffer ConstantBuffer : register(b0)
 //--------------------------------------------------------------------------------------
 
 Texture2D txNormal : register(t0);
-Texture2D txAlbedo : register(t1);
-Texture2D txDepth : register(t2);
+Texture2D txDiffuse : register(t1);
+Texture2D txSpecular : register(t2);
+Texture2D txDepth : register(t3);
 SamplerState samLinear : register(s0);
 
 //--------------------------------------------------------------------------------------
@@ -40,24 +41,16 @@ struct PS_INPUT
 float4 main(PS_INPUT Input) : SV_TARGET
 {
 	float4 normal = txNormal.Sample(samLinear, Input.Tex);
-	float4 albedo = txAlbedo.Sample(samLinear, Input.Tex);
+	float4 diffuse = txDiffuse.Sample(samLinear, Input.Tex);
+	float4 specular = txSpecular.Sample(samLinear, Input.Tex);
 	float4 depth = txDepth.Sample(samLinear, Input.Tex);
 
 	float4 finalColor = 0;
 
-	/*
-	//do NdotL lighting for 2 lights
-	for (int i = 0; i<2; i++)
-	{
-	finalColor += saturate(dot(vLightDir[i], normal) * vLightColor[i]);
-	}
-	finalColor *= albedo;
-	finalColor.a = 1;
-	*/
-
 	// todo : unpack
 	//finalColor = normal;
-	finalColor = albedo;
+	finalColor = diffuse;
+	//finalColor = specular;
 	//finalColor = float4(depth.x, depth.y, depth.z, 1);
 	finalColor.a = 1;
 

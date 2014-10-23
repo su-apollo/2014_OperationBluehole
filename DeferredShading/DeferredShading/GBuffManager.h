@@ -1,10 +1,7 @@
 #pragma once
 #include "Singleton.h"
 #include "GBuffer.h"
-
-
-
-
+#define GBUFFERNUM 3
 
 // todo : 화면크기가 변경될 경우?
 // todo : depthstendcil은 여기다 두는게 좋을까?
@@ -20,9 +17,11 @@ public:
 	void SetRenderTargetToGBuff();
 
 	ID3D11Texture2D* GetNormalTex() { return mNormalsBuff.GetTexture(); }
-	ID3D11Texture2D* GetAlbedoTex() { return mAlbedoBuff.GetTexture(); }
+	ID3D11Texture2D* GetDiffuseTex() { return mDiffuseBuff.GetTexture(); }
+	ID3D11Texture2D* GetSpecularTex() { return mSpecularBuff.GetTexture(); }
 	ID3D11ShaderResourceView* GetNormalTexRV() { return mNormalsBuff.GetTextureRV(); }
-	ID3D11ShaderResourceView* GetAlbedoTexRV() { return mAlbedoBuff.GetTextureRV(); }
+	ID3D11ShaderResourceView* GetDiffuseTexRV() { return mDiffuseBuff.GetTextureRV(); }
+	ID3D11ShaderResourceView* GetSpecularTexRV() { return mSpecularBuff.GetTextureRV(); }
 
 private:
 
@@ -30,7 +29,8 @@ private:
 
 	// render targets
 	GBuffer						mNormalsBuff;
-	GBuffer						mAlbedoBuff;
+	GBuffer						mDiffuseBuff;
+	GBuffer						mSpecularBuff;
 
 	// get from renderer
 	UINT					mWinWidth = 0;

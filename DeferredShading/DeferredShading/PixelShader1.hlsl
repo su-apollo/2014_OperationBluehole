@@ -30,7 +30,8 @@ struct PS_INPUT
 struct GBuffer
 {
 	float4 normal : SV_TARGET0;
-	float4 albedo : SV_TARGET1;
+	float4 diffuse : SV_TARGET1;
+	float4 specular : SV_TARGET2;
 };
 
 //--------------------------------------------------------------------------------------
@@ -40,9 +41,10 @@ GBuffer main(PS_INPUT Input) : SV_TARGET
 {
 	GBuffer output;
 
-
+	// todo : 
 	output.normal = 0;
-	output.albedo = float4(0, 0.25, 0.5, 0);
+	output.diffuse = float4(0, 0.25, 0.5, 0);
+	output.specular = 0;
 
 	return output;
 }
