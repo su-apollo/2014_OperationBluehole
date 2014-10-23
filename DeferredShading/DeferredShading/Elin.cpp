@@ -203,7 +203,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						bool isMapped;
 						pMesh->GetPolygonVertexUV(j,k, lUVSetName, tex, isMapped);
 						pNewMesh->mVertex[iControlPointIndex].mUV.x = tex[0];
-						pNewMesh->mVertex[iControlPointIndex].mUV.y = tex[1];
+						pNewMesh->mVertex[iControlPointIndex].mUV.y = -tex[1];
 
 
 						switch (k)
