@@ -146,14 +146,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 
 					tempVerts.mPos = currPosition;
 
-					
-					float tU;
-					float tV;
 
-					tU = (float)(*uv)[j].mData[0];
-					tV = (float)(*uv)[j].mData[1];
-					tempVerts.mUV.x = tU;
-					tempVerts.mUV.y = tV;
 
 					pNewMesh->mVertex.push_back(tempVerts);
 				}
@@ -162,6 +155,16 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 					return;
 
 				pNewMesh->mNumPolygon = pMesh->GetPolygonCount();
+
+
+				
+
+				//get all UV set names
+				FbxStringList lUVSetNameList;
+				pMesh->GetUVSetNames(lUVSetNameList);
+
+
+
 
 				for (int j = 0; j < pMesh->GetPolygonCount(); j++)
 				{
@@ -194,6 +197,15 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 
 
 						// ========= Get the Indices ==============================
+
+						const char* lUVSetName = lUVSetNameList.GetStringAt(0);
+						FbxVector2 tex;
+						bool isMapped;
+						pMesh->GetPolygonVertexUV(j,k, lUVSetName, tex, isMapped);
+						pNewMesh->mVertex[iControlPointIndex].mUV.x = tex[0];
+						pNewMesh->mVertex[iControlPointIndex].mUV.y = tex[1];
+
+
 						switch (k)
 						{
 						case 0:
@@ -208,6 +220,7 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						default:
 							break;
 						}
+
 					}
 					//mIndex.push_back(tempIndex);
 					//이거 순서 어떻게?
