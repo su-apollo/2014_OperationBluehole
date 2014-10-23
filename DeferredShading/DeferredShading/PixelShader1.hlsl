@@ -14,6 +14,9 @@ cbuffer ConstantBuffer : register(b0)
 //--------------------------------------------------------------------------------------
 // Textures and Samplers
 //--------------------------------------------------------------------------------------
+Texture2D txDiffuse : register(t0);
+SamplerState samLinear : register(s0);
+
 
 //--------------------------------------------------------------------------------------
 // Input / Output structures
@@ -21,7 +24,7 @@ cbuffer ConstantBuffer : register(b0)
 struct PS_INPUT
 {
 	float4 Pos : SV_POSITION;
-	float4 Color : COLOR0;
+	float2 Tex : TEXCOORD1;
 };
 
 //--------------------------------------------------------------------------------------
@@ -43,7 +46,7 @@ GBuffer main(PS_INPUT Input)
 
 	// todo : 
 	output.normal = 0;
-	output.diffuse = float4(0, 0.25, 0.5, 0);
+	output.diffuse = txDiffuse.Sample(samLinear, Input.Tex);
 	output.specular = 0;
 
 	return output;

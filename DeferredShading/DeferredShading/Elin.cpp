@@ -53,6 +53,8 @@ BOOL Elin::Init()
 			return FALSE;
 	}
 
+	LoadTexture();
+
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationY(&matRotate, static_cast<float>(180.0*(3.14 / 180.0)));
 	D3DXMatrixRotationX(&matRotate, static_cast<float>(-90.0*(3.14 / 180.0)));
@@ -152,11 +154,6 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 					tV = (float)(*uv)[j].mData[1];
 					tempVerts.mUV.x = tU;
 					tempVerts.mUV.y = tV;
-
-					
-					D3DXVECTOR4 currColor;
-					currColor = { 1.0f, 0.0f, 0.0f, 1.0f };
-					tempVerts.Color = currColor;
 
 					pNewMesh->mVertex.push_back(tempVerts);
 				}
@@ -305,9 +302,7 @@ void Elin::Render()
 	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
 	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPSConstBuffer);
 
-	//여기서 텍스쳐 그릴거 갱신하는거냐
-	//mD3DDeviceContext->PSSetShaderResources(0, 1, &mTextureRV);
-	//mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
+
 
 	for (unsigned int i = 0; i < mMeshData.size(); ++i)
 	{
@@ -329,6 +324,9 @@ void Elin::RenderMesh(EMeshData meshData)
 
 	// Set primitive topology
 	mD3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	mD3DDeviceContext->PSSetShaderResources(0, 1, &meshData->mTextureRV);
+	mD3DDeviceContext->PSSetSamplers(0, 1, &meshData->mSamplerLinear);
 
 	mD3DDeviceContext->DrawIndexed(meshData->mNumIndex, 0, 0);
 }
@@ -377,7 +375,7 @@ BOOL Elin::CompileVertexShader()
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	UINT numElements = ARRAYSIZE(layout);
 
