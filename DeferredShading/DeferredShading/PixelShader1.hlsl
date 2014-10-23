@@ -15,7 +15,7 @@ cbuffer ConstantBuffer : register(b0)
 // Textures and Samplers
 //--------------------------------------------------------------------------------------
 Texture2D txDiffuse : register(t0);
-Texture2D txNorm : register(t1);
+Texture2D txNormal : register(t1);
 Texture2D txSpecular : register(t2);
 
 SamplerState samLinear : register(s0);
@@ -48,9 +48,9 @@ GBuffer main(PS_INPUT Input)
 	GBuffer output;
 
 	// todo : 
-	output.normal = 0;
+	output.normal = txNormal.Sample(samLinear,Input.Tex);
 	output.diffuse = txDiffuse.Sample(samLinear, Input.Tex);
-	output.specular = 0;
+	output.specular = txSpecular.Sample(samLinear, Input.Tex);
 
 	return output;
 }
