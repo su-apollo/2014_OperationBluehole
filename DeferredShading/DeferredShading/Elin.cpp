@@ -338,7 +338,10 @@ void Elin::RenderMesh(EMeshData meshData)
 	// Set primitive topology
 	mD3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	mD3DDeviceContext->PSSetShaderResources(0, 1, &meshData->mTextureRV);
+	mD3DDeviceContext->PSSetShaderResources(0, 1, &meshData->mTextureRVDiff);
+	mD3DDeviceContext->PSSetShaderResources(1, 1, &meshData->mTextureRVNorm);
+	mD3DDeviceContext->PSSetShaderResources(2, 1, &meshData->mTextureRVSpec);
+
 	mD3DDeviceContext->PSSetSamplers(0, 1, &meshData->mSamplerLinear);
 
 	mD3DDeviceContext->DrawIndexed(meshData->mNumIndex, 0, 0);
@@ -560,7 +563,15 @@ BOOL Elin::LoadTexture()
 BOOL Elin::LoadMeshTexture(EMesh mesh, EMeshData meshData)
 {
 	// Load the Texture
-	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mesh->mTexutreDiff, NULL, NULL, &meshData->mTextureRV, NULL);
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mesh->mTexutreDiff, NULL, NULL, &meshData->mTextureRVDiff, NULL);
+	if (FAILED(hr))
+		return FALSE;
+
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mesh->mTexutreNorm, NULL, NULL, &meshData->mTextureRVNorm, NULL);
+	if (FAILED(hr))
+		return FALSE;
+
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mesh->mTexutreSpec, NULL, NULL, &meshData->mTextureRVSpec, NULL);
 	if (FAILED(hr))
 		return FALSE;
 

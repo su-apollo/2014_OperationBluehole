@@ -61,7 +61,10 @@ struct MeshData
 
 	int						mNumIndex = 0;
 
-	ID3D11ShaderResourceView*	mTextureRV = NULL;
+	ID3D11ShaderResourceView*	mTextureRVDiff = NULL;
+	ID3D11ShaderResourceView*	mTextureRVNorm = NULL;
+	ID3D11ShaderResourceView*	mTextureRVSpec = NULL;
+
 	ID3D11SamplerState*			mSamplerLinear = NULL;
 };
 
