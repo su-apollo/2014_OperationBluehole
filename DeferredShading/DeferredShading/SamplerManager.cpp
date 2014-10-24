@@ -10,6 +10,7 @@ SamplerManager::SamplerManager()
 
 SamplerManager::~SamplerManager()
 {
+	SafeRelease(mSamplerLinear);
 }
 
 BOOL SamplerManager::Init()

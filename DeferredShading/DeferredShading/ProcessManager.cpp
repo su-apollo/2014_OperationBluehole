@@ -76,4 +76,5 @@ void ProcessManager::Destroy() const
 	LightManager::Release();
 	RTManager::Release();
 	PostProcessor::Release();
+	SamplerManager::Release();
 }
