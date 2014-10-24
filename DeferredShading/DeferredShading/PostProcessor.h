@@ -32,6 +32,7 @@ private:
 	BOOL					CompileShader();
 	BOOL					CreateConstBuffer();
 	BOOL					CreateSamplerLinear();
+	BOOL					CreateSamplerPoint();
 	BOOL					CreateQuad();
 
 	HRESULT					CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
@@ -50,6 +51,7 @@ private:
 	LPCSTR					mPixelShaderMain = "main";
 	LPCSTR					mPixelShaderModel = "ps_4_0_level_9_1";
 
+	ID3D11SamplerState*		mSamplerPoint = NULL;
 	ID3D11SamplerState*		mSamplerLinear = NULL;
 
 	// draw quad

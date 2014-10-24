@@ -58,6 +58,8 @@ GBuffer main(PS_INPUT Input)
 
 	GBuffer output;
 	output.normal = normal;
+	//output.normal = float4(Input.Norm, 1);
+	//output.normal = float4(Input.Tang, 1);
 	output.diffuse = txDiffuse.Sample(samLinear, Input.Tex);
 	output.specular = txSpecular.Sample(samLinear, Input.Tex);
 

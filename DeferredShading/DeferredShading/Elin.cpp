@@ -181,7 +181,7 @@ HRESULT Elin::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCS
 BOOL Elin::CompileVertexShader()
 {
 	ID3DBlob* pVSBlob = NULL;
-	hr = CompileShaderFromFile(L"VertexShader1.hlsl", "main", VS_MODEL, &pVSBlob);
+	hr = CompileShaderFromFile(L"ElinVertexShader.hlsl", "main", VS_MODEL, &pVSBlob);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -219,7 +219,7 @@ BOOL Elin::CompilePixelShader()
 {
 	ID3DBlob* pPSBlob = NULL;
 	//hr = CompileShaderFromFile(const_cast<WCHAR*>(PS_PATH), PS_MAIN, PS_MODEL, &pPSBlob);
-	hr = CompileShaderFromFile(L"PixelShader1.hlsl", "main", PS_MODEL, &pPSBlob);
+	hr = CompileShaderFromFile(L"ElinPixelShader.hlsl", "main", PS_MODEL, &pPSBlob);
 	if (FAILED(hr))
 		return FALSE;
 

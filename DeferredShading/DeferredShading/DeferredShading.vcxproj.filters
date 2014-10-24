@@ -82,7 +82,7 @@
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="ModelManager.h">
-      <Filter>Render</Filter>
+      <Filter>Contents</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -132,7 +132,7 @@
       <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="ModelManager.cpp">
-      <Filter>Render</Filter>
+      <Filter>Contents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -148,10 +148,10 @@
     <FxCompile Include="Quad.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader1.hlsl">
+    <FxCompile Include="ElinPixelShader.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="VertexShader1.hlsl">
+    <FxCompile Include="ElinVertexShader.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

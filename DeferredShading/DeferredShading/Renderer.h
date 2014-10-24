@@ -18,6 +18,7 @@ public:
 	void ClearBackBuff();
 	void ClearDepthStencilBuff();
 	void SetupViewPort();
+	void SetRasterizeStage();
 	void SwapChain() { mSwapChain->Present(0, 0); }
 
 	ID3D11Device*				GetDevice() { return mD3DDevice; }
@@ -32,6 +33,7 @@ private:
 	void GetWindowSize(HWND hWnd);
 
 	BOOL CreateDevice(HWND hWnd);
+	BOOL CreateRasterizeState();
 	BOOL CreateDepthStencilBuffer();
 
 	void DestroyDevice();
@@ -44,6 +46,8 @@ private:
 
 	ID3D11Device*				mD3DDevice = NULL;
 	ID3D11DeviceContext*		mD3DDeviceContext = NULL;
+
+	ID3D11RasterizerState*		mRasterizerState = NULL;
 
 	ID3D11RenderTargetView*		mRenderTargetView = NULL;
 	ID3D11Texture2D*			mDepthStencil = NULL;

@@ -42,6 +42,7 @@ BOOL ProcessManager::Process() const
 	Camera::GetInstance()->Update();
 
 	// clear
+	Renderer::GetInstance()->SetRasterizeStage();
 	Renderer::GetInstance()->SetupViewPort();
 	Renderer::GetInstance()->ClearBackBuff();
 	Renderer::GetInstance()->ClearDepthStencilBuff();
