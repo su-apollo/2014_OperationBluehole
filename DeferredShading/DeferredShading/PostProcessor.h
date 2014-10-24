@@ -25,7 +25,7 @@ public:
 	BOOL Init();
 
 	void Render();
-
+	void RenderCleanUp();
 
 private:
 

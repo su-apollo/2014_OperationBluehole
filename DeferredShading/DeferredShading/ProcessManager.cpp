@@ -53,6 +53,8 @@ BOOL ProcessManager::Process() const
 	Renderer::GetInstance()->Render();
 	PostProcessor::GetInstance()->Render();
 
+	// render stage clean up
+	PostProcessor::GetInstance()->RenderCleanUp();
 	// end
 	Renderer::GetInstance()->SwapChain();
 
