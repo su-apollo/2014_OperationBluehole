@@ -3,6 +3,7 @@
 #include <fbxsdk.h>
 #include <xnamath.h>
 #include "Singleton.h"
+#include "ModelManager.h"
 
 static const LPCWSTR	ELIN_TEXTURE_FACE_DIFF = L"ElinModel/Popori_F_Face01_diff.bmp";
 static const LPCWSTR	ELIN_TEXTURE_FACE_NORM = L"ElinModel/Popori_F_Face01_norm.bmp";
@@ -24,33 +25,8 @@ static const LPCWSTR	ELIN_TEXTURE_HAIR_DIFF = L"ElinModel/popori_F_hair07_diff.b
 static const LPCWSTR	ELIN_TEXTURE_HAIR_NORM = L"ElinModel/popori_F_hair07_norm.bmp";
 static const LPCWSTR	ELIN_TEXTURE_HAIR_SPEC = L"ElinModel/popori_F_hair07_spec.bmp";
 
+static const CHAR* ELIN_PATH = "ElinModel/Popori_F_H00_dance.FBX";
 
-
-struct Vertex
-{
-	D3DXVECTOR3 mPos;
-	D3DXVECTOR3 mNormal;
-	D3DXVECTOR3 mTangent;
-	D3DXVECTOR2 mUV;
-};
-
-struct Mesh
-{
-	std::vector<Vertex> mVertex;
-	std::vector<unsigned int> mIndices;
-	int mNumPolygon;
-	int mNumVertex;
-	int mNumIndex;
-
-	const WCHAR* mTexutreDiff;
-	const WCHAR* mTexutreNorm;
-	const WCHAR* mTexutreSpec;
-};
-
-struct Indices
-{
-	int i0, i1, i2;
-};
 
 struct MeshData
 {
@@ -66,7 +42,6 @@ struct MeshData
 	ID3D11SamplerState*			mSamplerLinear = NULL;
 };
 
-typedef std::shared_ptr<Mesh> EMesh;
 typedef std::shared_ptr<MeshData> EMeshData;
 
 class Elin
@@ -82,8 +57,8 @@ public:
 
 private:
 
-	BOOL LoadFBX();
-	void ProcessGeometry(FbxNode* inNode);
+	void GetModelMeshData();
+	void GetMeshData(FbxNode* inNode);
 
 	BOOL CompileShader();
 	BOOL	CompileVertexShader();
@@ -99,7 +74,6 @@ private:
 	BOOL LoadTexture();
 	BOOL LoadMeshTexture(EMesh mesh, EMeshData meshData);
 
-	std::string GetFileName(const char* fileName);
 
 	void RenderMesh(EMeshData meshData);
 
@@ -120,8 +94,6 @@ private:
 	// get last error
 	HRESULT hr = S_OK;
 
-	FbxManager* mFbxManager = nullptr;
-	FbxImporter* mImporter = nullptr;
 	FbxScene* mFbxScene = nullptr;
 
 	//여러 매쉬를 포함하고 있는 전체 모델

@@ -17,42 +17,21 @@ Elin::~Elin()
 
 BOOL Elin::Init()
 {
-	mFbxManager = FbxManager::Create();
-	if (!mFbxManager)
-	{
-		return false;
-	}
-
-	FbxIOSettings* fbxIOSettings = FbxIOSettings::Create(mFbxManager, IOSROOT);
-	mFbxManager->SetIOSettings(fbxIOSettings);
-
-	mFbxScene = FbxScene::Create(mFbxManager, "myScene");
-
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
 	D3DXMatrixIdentity(&mWorld);
 
+	mFbxScene = ModelManager::GetInstance()->MakeFbxSceneFromFile(ELIN_PATH);
 
+	if (mFbxScene == NULL)
+		return FALSE;
 
-	//fbx로부터 정보를 가져와 mModel을 채운다. 
-	if (!LoadFBX())
-	{
-		return false;
-	}
-
+	GetMeshData(mFbxScene->GetRootNode());
 
 	if (!CompileShader())
 		return FALSE;
 
-	//매쉬 전체로 바꿔야함 위험함.
-
-
-	for (unsigned int i = 0; i < mModel.size(); ++i)
-	{
-		if (!CreateMeshBuffer(mModel[i]))
-			return FALSE;
-	}
-
+	CreateModelBuffer();
 	LoadTexture();
 
 	D3DXMATRIX matRotate;
@@ -63,43 +42,11 @@ BOOL Elin::Init()
 
 	LightManager::GetInstance()->CreateDirectionalLight(MAX_LIGHT);
 
-
-
-
-	return TRUE;
-
-}
-
-BOOL Elin::LoadFBX()
-{
-	FbxImporter* fbxImporter = FbxImporter::Create(mFbxManager, "myImporter");
-
-	if (!fbxImporter)
-	{
-		return false;
-	}
-
-	const char* filePath = "ElinModel/Popori_F_H00_dance.FBX";
-
-	if (!fbxImporter->Initialize(filePath, -1, mFbxManager->GetIOSettings()))
-	{
-		return false;
-	}
-
-	if (!fbxImporter->Import(mFbxScene))
-	{
-		return false;
-	}
-	fbxImporter->Destroy();
-
-	ProcessGeometry(mFbxScene->GetRootNode());
-
 	return TRUE;
 }
 
 
-
-void Elin::ProcessGeometry(FbxNode* inNode)
+void Elin::GetMeshData(FbxNode* inNode)
 {
 	if (inNode)
 	{
@@ -114,181 +61,19 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 
 			if (childNode->GetNodeAttribute()->GetAttributeType() != FbxNodeAttribute::eMesh)
 				continue;
-			EMesh pNewMesh (new Mesh);
-			FbxMesh* pMesh = (FbxMesh*)childNode->GetNodeAttribute();
 
-
-			FbxLayerElementArrayTemplate<FbxVector4>* normal = 0;
-			pMesh->GetNormals(&normal);
-			FbxLayerElementArrayTemplate<FbxVector2>* uv = 0;
-			pMesh->GetTextureUV(&uv, FbxLayerElement::eTextureDiffuse);
-
-
-			//fbx매쉬 생성
-			if (pMesh == NULL)
-			{
-				Log("Mesh is null\n");
-			}
-			else
-			{
-				// ========= Get the Vertices ==============================
-				// Fill all the mVertices.
-				int numVerts = pMesh->GetControlPointsCount();
-				pNewMesh->mNumVertex = numVerts;
-				Vertex tempVerts;
-
-				for (int j = 0; j < numVerts; j++)
-				{
-					D3DXVECTOR3 currPosition;
-					currPosition.x = static_cast<float>(pMesh->GetControlPointAt(j).mData[0]);
-					currPosition.y = static_cast<float>(pMesh->GetControlPointAt(j).mData[1]);
-					currPosition.z = static_cast<float>(pMesh->GetControlPointAt(j).mData[2]);
-
-					tempVerts.mPos = currPosition;
-
-
-
-					pNewMesh->mVertex.push_back(tempVerts);
-				}
-
-				if (numVerts == 0)
-					return;
-
-				pNewMesh->mNumPolygon = pMesh->GetPolygonCount();
-
-
-				
-
-				//get all UV set names
-				FbxStringList lUVSetNameList;
-				pMesh->GetUVSetNames(lUVSetNameList);
-
-
-				for (int j = 0; j < pMesh->GetPolygonCount(); j++)
-				{
-
-
-					int iNumVertices = pMesh->GetPolygonSize(j);
-
-					if (iNumVertices != 3)
-						return;
-
-					Indices tempIndex;
-
-					for (int k = 0; k < iNumVertices; k++)
-					{
-						int iControlPointIndex = pMesh->GetPolygonVertex(j, k);
-
-						FbxVector4 normal;
-						pMesh->GetPolygonVertexNormal(j, k, normal);
-
-						// ========= Get the Normals ==============================
-						D3DXVECTOR3 currNormal;
-						//이게 좀 많이 헷갈림
-						// 					tempVerts[iControlPointIndex].mNormal.x = (float)normal.mData[0];
-						// 					tempVerts[iControlPointIndex].mNormal.y = (float)normal.mData[1];
-						// 					tempVerts[iControlPointIndex].mNormal.z = (float)normal.mData[2];
-
-						//순서 찾아볼 것.
-						pNewMesh->mVertex[iControlPointIndex].mNormal.x = (float)normal.mData[0];
-						pNewMesh->mVertex[iControlPointIndex].mNormal.y = (float)normal.mData[1];
-						pNewMesh->mVertex[iControlPointIndex].mNormal.z = (float)normal.mData[2];
-
-
-						// ========= Get the Indices ==============================
-
-						const char* lUVSetName = lUVSetNameList.GetStringAt(0);
-						FbxVector2 tex;
-						bool isMapped;
-						pMesh->GetPolygonVertexUV(j,k, lUVSetName, tex, isMapped);
-						pNewMesh->mVertex[iControlPointIndex].mUV.x = static_cast<float>(tex[0]);
-						pNewMesh->mVertex[iControlPointIndex].mUV.y = static_cast<float>(-tex[1]);
-
-
-						switch (k)
-						{
-						case 0:
-							tempIndex.i0 = iControlPointIndex;
-							break;
-						case 1:
-							tempIndex.i1 = iControlPointIndex;
-							break;
-						case 2:
-							tempIndex.i2 = iControlPointIndex;
-							break;
-						default:
-							break;
-						}
-
-					}
-
-					//이거 순서 어떻게?
-					pNewMesh->mIndices.push_back(tempIndex.i0);
-					pNewMesh->mIndices.push_back(tempIndex.i1);
-					pNewMesh->mIndices.push_back(tempIndex.i2);
-				}
-
-				// ========= Get the Tangents =============================
-				// 삼각형을 돌면서 각 꼭지점의 tangent를 계산
-
-				int polycount = pMesh->GetPolygonCount();
-				int numv = pNewMesh->mVertex.size();
-				int numi = pNewMesh->mIndices.size();
-
-				for (int polygonNum = 0; polygonNum < pMesh->GetPolygonCount(); polygonNum++)
-				{
-					D3DXVECTOR3 tangent;
-					int ControlPointIndexStart = pMesh->GetPolygonVertex(polygonNum, 0);
-					int ControlPointIndexStart1 = pMesh->GetPolygonVertex(polygonNum, 1);
-					int ControlPointIndexStart2 = pMesh->GetPolygonVertex(polygonNum, 2);
-
-					D3DXVECTOR3 deltaPos1 = pNewMesh->mVertex[ControlPointIndexStart1].mPos - pNewMesh->mVertex[ControlPointIndexStart].mPos;
-					D3DXVECTOR3 deltaPos2 = pNewMesh->mVertex[ControlPointIndexStart2].mPos - pNewMesh->mVertex[ControlPointIndexStart1].mPos;
-					D3DXVECTOR2 deltaUV1 = pNewMesh->mVertex[ControlPointIndexStart1].mUV - pNewMesh->mVertex[ControlPointIndexStart].mUV;
-					D3DXVECTOR2 deltaUV2 = pNewMesh->mVertex[ControlPointIndexStart2].mUV - pNewMesh->mVertex[ControlPointIndexStart1].mUV;;
-
-					float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-					tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y)*r;
-
-					pNewMesh->mVertex[ControlPointIndexStart].mTangent = tangent;
-					pNewMesh->mVertex[ControlPointIndexStart1].mTangent = tangent;
-					pNewMesh->mVertex[ControlPointIndexStart2].mTangent = tangent;
-				}
-				pNewMesh->mNumIndex = pNewMesh->mIndices.size();
-				mModel.push_back(pNewMesh);
-
-			} // else
-			ProcessGeometry(childNode);
+			mModel.push_back(ModelManager::GetInstance()->ProcessMesh(childNode));
+			GetMeshData(childNode);
 		}
 	}
 }
 
-std::string Elin::GetFileName(const char* filePath)
-{
-	//get pure file name
-	std::string fileName = filePath;
-	std::string seperator("\\");
-	unsigned int pos = fileName.find_last_of(seperator);
-	if (pos != std::string::npos)
-	{
-		fileName = fileName.substr(pos + 1);
-	}
-	seperator = ".";
-	pos = fileName.find_last_of(seperator);
-	if (pos != std::string::npos)
-	{
-		return fileName.substr(0, pos);
-	}
-	else
-	{
-		return fileName;
-	}
-}
+
+
 
 void Elin::CleanUp()
 {
-	mFbxScene->Destroy();
-	mFbxManager->Destroy();
+	ModelManager::GetInstance()->CleanUp();
 }
 
 BOOL Elin::CompileShader()
@@ -305,7 +90,6 @@ BOOL Elin::CompileShader()
 
 void Elin::Render()
 {
-
 	// rotate
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
@@ -340,8 +124,6 @@ void Elin::Render()
 	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
 	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
 	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPSConstBuffer);
-
-
 
 	for (unsigned int i = 0; i < mMeshData.size(); ++i)
 	{
@@ -413,7 +195,6 @@ BOOL Elin::CompileVertexShader()
 	}
 
 	// input layout
-	// 이거 offset 계산 신경써야함
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -457,6 +238,7 @@ BOOL Elin::CompilePixelShader()
 void Elin::Release()
 {
 	CleanUp();
+	ModelManager::Release();
 	SafeRelease(mVSConstBuffer);
 	SafeRelease(mPSConstBuffer);
 	SafeRelease(mVertexLayout11);
@@ -467,7 +249,12 @@ void Elin::Release()
 
 BOOL Elin::CreateModelBuffer()
 {
-	//
+		for (unsigned int i = 0; i < mModel.size(); ++i)
+	{
+		if (!CreateMeshBuffer(mModel[i]))
+			return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -618,3 +405,5 @@ BOOL Elin::LoadMeshTexture(EMesh mesh, EMeshData meshData)
 
 	return TRUE;
 }
+
+
