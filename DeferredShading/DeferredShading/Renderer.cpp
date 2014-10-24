@@ -19,8 +19,6 @@ BOOL Renderer::Init()
 {
 	HWND hWnd = App::GetInstance()->GetHandleMainWindow();
 
-	GetWindowSize(hWnd);
-
 	if (!CreateDevice(hWnd))
 	{
 		MessageBox(hWnd, L"CreateDevice Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
@@ -28,12 +26,14 @@ BOOL Renderer::Init()
 		return FALSE;
 	}
 
+	/*
 	if (!CreateRasterizeState())
 	{
 		MessageBox(hWnd, L"CreateRasterizeState Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		DestroyDevice();
 		return FALSE;
 	}
+	*/
 
 	if (!mCube.Init())
 	{
@@ -80,8 +80,8 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
 	sd.BufferCount = 1;
-	sd.BufferDesc.Width = mWinWidth;
-	sd.BufferDesc.Height = mWinHeight;
+	sd.BufferDesc.Width = App::GetInstance()->GetWindowWidth();
+	sd.BufferDesc.Height = App::GetInstance()->GetWindowHeight();
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
@@ -130,22 +130,12 @@ void Renderer::DestroyDevice()
 	SafeRelease(mD3DDevice);
 }
 
-void Renderer::GetWindowSize(HWND hWnd)
-{
-	HRESULT hr = S_OK;
-
-	RECT rc;
-	GetClientRect(hWnd, &rc);
-	mWinWidth = rc.right - rc.left;
-	mWinHeight = rc.bottom - rc.top;
-}
-
 void Renderer::SetupViewPort()
 {
 	// Setup the viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = (FLOAT)mWinWidth;
-	vp.Height = (FLOAT)mWinHeight;
+	vp.Width = (FLOAT)App::GetInstance()->GetWindowWidth();
+	vp.Height = (FLOAT)App::GetInstance()->GetWindowHeight();
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0;
@@ -160,6 +150,7 @@ void Renderer::ClearBackBuff()
 	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
 }
 
+/*
 BOOL Renderer::CreateRasterizeState()
 {
 	D3D11_RASTERIZER_DESC desc;
@@ -180,6 +171,6 @@ void Renderer::SetRasterizeStage()
 {
 	mD3DDeviceContext->RSSetState(mRasterizerState);
 }
-
+*/
 
 

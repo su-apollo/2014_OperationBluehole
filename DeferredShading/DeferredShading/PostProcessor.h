@@ -30,6 +30,7 @@ public:
 private:
 
 	BOOL					CompileShader();
+	BOOL					CreateDepthBuffer();
 	BOOL					CreateConstBuffer();
 	BOOL					CreateQuad();
 
@@ -49,6 +50,8 @@ private:
 	LPCSTR					mPixelShaderMain = "main";
 	LPCSTR					mPixelShaderModel = "ps_4_0_level_9_1";
 
+	ID3D11DepthStencilView*	mDepthBuffDSV = NULL;
+
 	// draw quad
 	ID3D11Buffer*           mVertexBuffer = NULL;
 	ID3D11Buffer*           mIndexBuffer = NULL;
@@ -56,7 +59,7 @@ private:
 	// get from renderer
 	ID3D11Device*           mD3DDevice = NULL;
 	ID3D11DeviceContext*    mD3DDeviceContext = NULL;
-	ID3D11RenderTargetView* mRenderTargetView = NULL;
+	ID3D11RenderTargetView* mBackBuffRTV = NULL;
 
 	// get last error
 	HRESULT hr = S_OK;

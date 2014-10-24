@@ -18,7 +18,6 @@ BOOL RTManager::Init()
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
 	HWND hWnd = App::GetInstance()->GetHandleMainWindow();
-	GetWindowSize(hWnd);
 
 	if (!CreateRenderTargets())
 	{
@@ -31,17 +30,19 @@ BOOL RTManager::Init()
 
 BOOL RTManager::CreateRenderTargets()
 {
+	UINT width = App::GetInstance()->GetWindowWidth();
+	UINT height = App::GetInstance()->GetWindowHeight();
 
-	if (!mNormalsBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R10G10B10A2_UNORM))
+	if (!mNormalsBuff.Init(width, height, DXGI_FORMAT_R10G10B10A2_UNORM))
 		return FALSE;
 
-	if (!mDiffuseBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
+	if (!mDiffuseBuff.Init(width, height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
 		return FALSE;
 
-	if (!mSpecularBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
+	if (!mSpecularBuff.Init(width, height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
 		return FALSE;
 
-	if (!mDepthBuff.Init(mWinWidth, mWinHeight))
+	if (!mDepthBuff.Init(width, height))
 		return FALSE;
 
 	return TRUE;
@@ -73,15 +74,6 @@ void RTManager::SetRenderTargetToGBuff()
 	mD3DDeviceContext->OMSetRenderTargets(3, renderTargets, mDepthBuff.GetDepthStencilView());
 }
 
-void RTManager::GetWindowSize(HWND hWnd)
-{
-	HRESULT hr = S_OK;
-
-	RECT rc;
-	GetClientRect(hWnd, &rc);
-	mWinWidth = rc.right - rc.left;
-	mWinHeight = rc.bottom - rc.top;
-}
 
 
 

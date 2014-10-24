@@ -24,8 +24,14 @@ BOOL PostProcessor::Init()
 {
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
-	mRenderTargetView = Renderer::GetInstance()->GetRenderTargetView();
+	mBackBuffRTV = Renderer::GetInstance()->GetRenderTargetView();
 	HWND hWnd = App::GetInstance()->GetHandleMainWindow();
+
+	if (!CreateDepthBuffer())
+	{
+		MessageBox(hWnd, L"PostProcessor CreateDepthBufferr Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		return FALSE;
+	}
 
 	if (!CompileShader())
 	{
@@ -52,7 +58,8 @@ BOOL PostProcessor::Init()
 void PostProcessor::Render()
 {
 	// set render target view
-	mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
+	mD3DDeviceContext->ClearDepthStencilView(mDepthBuffDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	mD3DDeviceContext->OMSetRenderTargets(1, &mBackBuffRTV, NULL);
 
 	// set lay out
 	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
@@ -236,6 +243,45 @@ void PostProcessor::RenderCleanUp()
 	mD3DDeviceContext->VSSetShaderResources(0, 8, nullSRV);
 	mD3DDeviceContext->PSSetShaderResources(0, 8, nullSRV);
 }
+
+BOOL PostProcessor::CreateDepthBuffer()
+{
+	ID3D11Texture2D* pDepthStencil = NULL;
+
+	// Create depth stencil texture
+	D3D11_TEXTURE2D_DESC descDepth;
+	ZeroMemory(&descDepth, sizeof(descDepth));
+	descDepth.Width = App::GetInstance()->GetWindowWidth();
+	descDepth.Height = App::GetInstance()->GetWindowHeight();
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	//descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	descDepth.Format = DXGI_FORMAT_R32_TYPELESS;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+	hr = mD3DDevice->CreateTexture2D(&descDepth, NULL, &pDepthStencil);
+	if (FAILED(hr))
+		return FALSE;
+
+	// Create the depth stencil view
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+	ZeroMemory(&descDSV, sizeof(descDSV));
+	//descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0;
+	//descDSV.Flags = D3D11_DSV_READ_ONLY_DEPTH;
+	hr = mD3DDevice->CreateDepthStencilView(pDepthStencil, &descDSV, &mDepthBuffDSV);
+	if (FAILED(hr))
+		return FALSE;
+
+	return TRUE;
+}
+
 
 
 

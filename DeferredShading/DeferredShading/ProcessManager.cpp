@@ -46,7 +46,7 @@ BOOL ProcessManager::Process() const
 	Camera::GetInstance()->Update();
 
 	// clear
-	Renderer::GetInstance()->SetRasterizeStage();
+	//Renderer::GetInstance()->SetRasterizeStage();
 	Renderer::GetInstance()->SetupViewPort();
 	RTManager::GetInstance()->ClearRenderTargets();
 	RTManager::GetInstance()->SetRenderTargetToGBuff();

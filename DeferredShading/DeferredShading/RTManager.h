@@ -24,8 +24,6 @@ public:
 
 private:
 
-	void GetWindowSize(HWND hWnd);
-
 	// render targets
 	RenderTarget			mNormalsBuff;
 	RenderTarget			mDiffuseBuff;
@@ -33,8 +31,6 @@ private:
 	DepthRenderTarget		mDepthBuff;
 
 	// get from renderer
-	UINT					mWinWidth = 0;
-	UINT					mWinHeight = 0;
 	ID3D11Device*			mD3DDevice = NULL;
 	ID3D11DeviceContext*	mD3DDeviceContext = NULL;
 };

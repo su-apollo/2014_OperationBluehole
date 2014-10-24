@@ -27,13 +27,18 @@ public:
 
 	HWND	GetHandleMainWindow() { return mHandleMainWindow; };
 
+	UINT	GetWindowWidth() { return mWinWidth; }
+	UINT	GetWindowHeight() { return mWinHeight; }
+
 private:
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)const;
+	LRESULT					HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)const;
 
-	HWND mHandleMainWindow = nullptr;
-	HACCEL mHandleAccelTable = nullptr;
+	HWND		mHandleMainWindow = nullptr;
+	HACCEL		mHandleAccelTable = nullptr;
 
+	UINT		mWinWidth = 0;
+	UINT		mWinHeight = 0;
 };
 

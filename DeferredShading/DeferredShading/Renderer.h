@@ -17,7 +17,7 @@ public:
 	void Render();
 	void ClearBackBuff();
 	void SetupViewPort();
-	void SetRasterizeStage();
+	//void SetRasterizeStage();
 	void SwapChain() { mSwapChain->Present(0, 0); }
 
 	ID3D11Device*				GetDevice() { return mD3DDevice; }
@@ -26,10 +26,8 @@ public:
 
 private:
 
-	void GetWindowSize(HWND hWnd);
-
 	BOOL CreateDevice(HWND hWnd);
-	BOOL CreateRasterizeState();
+	//BOOL CreateRasterizeState();
 	BOOL CreateDepthStencilBuffer();
 
 	void DestroyDevice();
@@ -43,14 +41,9 @@ private:
 	ID3D11Device*				mD3DDevice = NULL;
 	ID3D11DeviceContext*		mD3DDeviceContext = NULL;
 
-	ID3D11RasterizerState*		mRasterizerState = NULL;
+	//ID3D11RasterizerState*		mRasterizerState = NULL;
 
 	ID3D11RenderTargetView*		mRenderTargetView = NULL;
-
-	UINT					mDPCallNum = 0;
-
-	UINT					mWinWidth = 0;
-	UINT					mWinHeight = 0;
 
 	// contents
 	Elin					mCube;

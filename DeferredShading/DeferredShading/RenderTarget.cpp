@@ -60,7 +60,6 @@ DepthRenderTarget::DepthRenderTarget()
 DepthRenderTarget::~DepthRenderTarget()
 {
 	SafeRelease(mDepthStencilView);
-	SafeRelease(mRenderTargetView);
 	SafeRelease(mShaderResourceView);
 }
 
