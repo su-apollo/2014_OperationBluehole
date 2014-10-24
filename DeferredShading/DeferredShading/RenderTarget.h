@@ -17,7 +17,6 @@ public:
 
 	ID3D11RenderTargetView*		GetRenderTargetView(){ return mRenderTargetView; }
 	ID3D11ShaderResourceView*	GetTextureRV() { return mTextureRV; }
-	ID3D11Texture2D*			GetTexture() { return mTexture; }
 
 private:
 
@@ -29,7 +28,6 @@ private:
 
 	ID3D11RenderTargetView*		mRenderTargetView = NULL;
 	ID3D11ShaderResourceView*	mTextureRV = NULL;
-	ID3D11Texture2D*			mTexture = NULL;
 
 
 	// get last error

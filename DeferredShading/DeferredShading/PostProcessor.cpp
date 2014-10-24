@@ -47,12 +47,6 @@ BOOL PostProcessor::Init()
 		return FALSE;
 	}
 
-	if (!CreateSamplerPoint())
-	{
-		MessageBox(hWnd, L"PostProcessor CreateSamplerPoint Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		return FALSE;
-	}
-
 	if (!CreateQuad())
 	{
 		MessageBox(hWnd, L"PostProcessor Quad Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
@@ -109,7 +103,6 @@ void PostProcessor::Render()
 	mD3DDeviceContext->PSSetShaderResources(2, 1, &specularTexRV);
 	mD3DDeviceContext->PSSetShaderResources(3, 1, &depthTexRV);
 	mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
-	mD3DDeviceContext->PSSetSamplers(1, 1, &mSamplerPoint);
 
 	// draw
 	mD3DDeviceContext->DrawIndexed(6, 0, 0);
@@ -214,31 +207,6 @@ BOOL PostProcessor::CreateSamplerLinear()
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = mD3DDevice->CreateSamplerState(&sampDesc, &mSamplerLinear);
-	if (FAILED(hr))
-		return FALSE;
-
-	return TRUE;
-}
-
-BOOL PostProcessor::CreateSamplerPoint()
-{
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-	sampDesc.BorderColor[0] = 1.0f;
-	sampDesc.BorderColor[1] = 1.0f;
-	sampDesc.BorderColor[2] = 1.0f;
-	sampDesc.BorderColor[3] = 1.0f;
-	sampDesc.MinLOD = 0.f;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	sampDesc.MipLODBias = 0.f;
-	sampDesc.MaxAnisotropy = 0;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
-	sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
-
 	hr = mD3DDevice->CreateSamplerState(&sampDesc, &mSamplerLinear);
 	if (FAILED(hr))
 		return FALSE;

@@ -126,6 +126,8 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 
 BOOL Renderer::CreateDepthStencilBuffer()
 {
+	ID3D11Texture2D* pDepthStencil = NULL;
+
 	// Create depth stencil texture
 	D3D11_TEXTURE2D_DESC descDepth;
 	ZeroMemory(&descDepth, sizeof(descDepth));
@@ -141,7 +143,7 @@ BOOL Renderer::CreateDepthStencilBuffer()
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
-	hr = mD3DDevice->CreateTexture2D(&descDepth, NULL, &mDepthStencil);
+	hr = mD3DDevice->CreateTexture2D(&descDepth, NULL, &pDepthStencil);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -152,7 +154,7 @@ BOOL Renderer::CreateDepthStencilBuffer()
 	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0;
-	hr = mD3DDevice->CreateDepthStencilView(mDepthStencil, &descDSV, &mDepthStencilView);
+	hr = mD3DDevice->CreateDepthStencilView(pDepthStencil, &descDSV, &mDepthStencilView);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -164,7 +166,8 @@ BOOL Renderer::CreateDepthStencilBuffer()
 	descSRV.Texture2D.MipLevels = 1;
 	descSRV.Texture2D.MostDetailedMip = 0;
 
-	hr = mD3DDevice->CreateShaderResourceView(mDepthStencil, &descSRV, &mDepthStencilRV);
+	hr = mD3DDevice->CreateShaderResourceView(pDepthStencil, &descSRV, &mDepthStencilRV);
+	pDepthStencil->Release();
 
 	if (FAILED(hr))
 		return FALSE;

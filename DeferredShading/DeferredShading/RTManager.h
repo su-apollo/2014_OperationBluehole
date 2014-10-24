@@ -12,13 +12,10 @@ public:
 	~RTManager();
 
 	BOOL Init();
-	BOOL CreateGBuffers();
+	BOOL CreateRenderTargets();
 	void ClearRenderTargets();
 	void SetRenderTargetToGBuff();
 
-	ID3D11Texture2D* GetNormalTex() { return mNormalsBuff.GetTexture(); }
-	ID3D11Texture2D* GetDiffuseTex() { return mDiffuseBuff.GetTexture(); }
-	ID3D11Texture2D* GetSpecularTex() { return mSpecularBuff.GetTexture(); }
 	ID3D11ShaderResourceView* GetNormalTexRV() { return mNormalsBuff.GetTextureRV(); }
 	ID3D11ShaderResourceView* GetDiffuseTexRV() { return mDiffuseBuff.GetTextureRV(); }
 	ID3D11ShaderResourceView* GetSpecularTexRV() { return mSpecularBuff.GetTextureRV(); }

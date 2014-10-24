@@ -12,12 +12,13 @@ RenderTarget::RenderTarget()
 RenderTarget::~RenderTarget()
 {
 	SafeRelease(mRenderTargetView);
-	SafeRelease(mTexture);
 }
 
 
 BOOL RenderTarget::Init(UINT width, UINT height, DXGI_FORMAT format)
 {
+	ID3D11Texture2D* pTexture = NULL;
+
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mWidth = width;
 	mHeight = height;
@@ -36,15 +37,16 @@ BOOL RenderTarget::Init(UINT width, UINT height, DXGI_FORMAT format)
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
 
-	hr = mD3DDevice->CreateTexture2D(&desc, NULL, &mTexture);
+	hr = mD3DDevice->CreateTexture2D(&desc, NULL, &pTexture);
 	if (FAILED(hr))
 		return FALSE;
 
-	hr = mD3DDevice->CreateRenderTargetView(mTexture, NULL, &mRenderTargetView);
+	hr = mD3DDevice->CreateRenderTargetView(pTexture, NULL, &mRenderTargetView);
 	if (FAILED(hr))
 		return FALSE;
 
-	hr = mD3DDevice->CreateShaderResourceView(mTexture, NULL, &mTextureRV);
+	hr = mD3DDevice->CreateShaderResourceView(pTexture, NULL, &mTextureRV);
+	pTexture->Release();
 
 	return TRUE;
 }

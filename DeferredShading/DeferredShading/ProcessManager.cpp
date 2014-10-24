@@ -46,6 +46,7 @@ BOOL ProcessManager::Process() const
 	Renderer::GetInstance()->SetupViewPort();
 	Renderer::GetInstance()->ClearBackBuff();
 	Renderer::GetInstance()->ClearDepthStencilBuff();
+	RTManager::GetInstance()->ClearRenderTargets();
 	RTManager::GetInstance()->SetRenderTargetToGBuff();
 
 	// render line

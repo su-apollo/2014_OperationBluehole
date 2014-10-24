@@ -23,7 +23,6 @@ Texture2D txDiffuse : register(t1);
 Texture2D txSpecular : register(t2);
 Texture2D txDepth : register(t3);
 SamplerState samLinear : register(s0);
-SamplerState samPoint : register(s1);
 
 //--------------------------------------------------------------------------------------
 // Input / Output structures
@@ -41,10 +40,10 @@ struct PS_INPUT
 
 float4 main(PS_INPUT Input) : SV_TARGET
 {
-	float4 normal = txNormal.Sample(samPoint, Input.Tex);
-	float4 diffuse = txDiffuse.Sample(samPoint, Input.Tex);
-	float4 specular = txSpecular.Sample(samPoint, Input.Tex);
-	float4 depth = txDepth.Sample(samPoint, Input.Tex);
+	float4 normal = txNormal.Sample(samLinear, Input.Tex);
+	float4 diffuse = txDiffuse.Sample(samLinear, Input.Tex);
+	float4 specular = txSpecular.Sample(samLinear, Input.Tex);
+	float4 depth = txDepth.Sample(samLinear, Input.Tex);
 
 	normal = (normal - 0.5) * 2;
 

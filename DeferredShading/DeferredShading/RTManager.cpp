@@ -21,7 +21,7 @@ BOOL RTManager::Init()
 	HWND hWnd = App::GetInstance()->GetHandleMainWindow();
 	GetWindowSize(hWnd);
 
-	if (!CreateGBuffers())
+	if (!CreateRenderTargets())
 	{
 		MessageBox(hWnd, L"CreateGBuff Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		return FALSE;
@@ -30,7 +30,7 @@ BOOL RTManager::Init()
 	return TRUE;
 }
 
-BOOL RTManager::CreateGBuffers()
+BOOL RTManager::CreateRenderTargets()
 {
 
 	if (!mNormalsBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R10G10B10A2_UNORM))
@@ -46,7 +46,7 @@ BOOL RTManager::CreateGBuffers()
 	return TRUE;
 }
 
-void RTManager::SetRenderTargetToGBuff()
+void RTManager::ClearRenderTargets()
 {
 	ID3D11RenderTargetView* renderTargets[GBUFFERNUM] = { NULL };
 
@@ -57,6 +57,15 @@ void RTManager::SetRenderTargetToGBuff()
 	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	for (int i = 0; i < GBUFFERNUM; ++i)
 		mD3DDeviceContext->ClearRenderTargetView(renderTargets[i], ClearColor);
+}
+
+void RTManager::SetRenderTargetToGBuff()
+{
+	ID3D11RenderTargetView* renderTargets[GBUFFERNUM] = { NULL };
+
+	renderTargets[0] = mNormalsBuff.GetRenderTargetView();
+	renderTargets[1] = mDiffuseBuff.GetRenderTargetView();
+	renderTargets[2] = mSpecularBuff.GetRenderTargetView();
 
 	mD3DDeviceContext->OMSetRenderTargets(3, renderTargets, mDepthStencilView);
 }
@@ -70,6 +79,8 @@ void RTManager::GetWindowSize(HWND hWnd)
 	mWinWidth = rc.right - rc.left;
 	mWinHeight = rc.bottom - rc.top;
 }
+
+
 
 
 

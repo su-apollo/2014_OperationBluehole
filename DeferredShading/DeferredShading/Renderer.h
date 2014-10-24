@@ -23,7 +23,6 @@ public:
 
 	ID3D11Device*				GetDevice() { return mD3DDevice; }
 	ID3D11DeviceContext*		GetDeviceContext() { return mD3DDeviceContext; }
-	ID3D11Texture2D*			GetDepthStencil() { return mDepthStencil; }
 	ID3D11DepthStencilView*		GetDepthStencilView() { return mDepthStencilView; }
 	ID3D11RenderTargetView*		GetRenderTargetView() { return mRenderTargetView; }
 	ID3D11ShaderResourceView*	GetDepthStencilRV() { return mDepthStencilRV; }
@@ -50,7 +49,6 @@ private:
 	ID3D11RasterizerState*		mRasterizerState = NULL;
 
 	ID3D11RenderTargetView*		mRenderTargetView = NULL;
-	ID3D11Texture2D*			mDepthStencil = NULL;
 	ID3D11DepthStencilView*		mDepthStencilView = NULL;
 	ID3D11ShaderResourceView*	mDepthStencilRV = NULL;
 
