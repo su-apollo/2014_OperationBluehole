@@ -4,7 +4,7 @@
 #include "Logger.h"
 #include "Renderer.h"
 #include "LightManager.h"
-#include "GBuffManager.h"
+#include "RTManager.h"
 #include "PostProcessor.h"
 
 ProcessManager::ProcessManager()
@@ -21,7 +21,7 @@ BOOL ProcessManager::Init() const
 	if (!Renderer::GetInstance()->Init())
 		return FALSE;
 
-	if (!GBuffManager::GetInstance()->Init())
+	if (!RTManager::GetInstance()->Init())
 		return FALSE;
 
 	if (!PostProcessor::GetInstance()->Init())
@@ -46,7 +46,7 @@ BOOL ProcessManager::Process() const
 	Renderer::GetInstance()->SetupViewPort();
 	Renderer::GetInstance()->ClearBackBuff();
 	Renderer::GetInstance()->ClearDepthStencilBuff();
-	GBuffManager::GetInstance()->SetRenderTargetToGBuff();
+	RTManager::GetInstance()->SetRenderTargetToGBuff();
 
 	// render line
 	Renderer::GetInstance()->Render();
@@ -64,6 +64,6 @@ void ProcessManager::Destroy() const
 	Timer::Release();
 	Camera::Release();
 	LightManager::Release();
-	GBuffManager::Release();
+	RTManager::Release();
 	PostProcessor::Release();
 }

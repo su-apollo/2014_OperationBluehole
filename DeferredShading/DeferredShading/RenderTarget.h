@@ -6,11 +6,11 @@
 
 
 
-class GBuffer
+class RenderTarget
 {
 public:
-	GBuffer();
-	~GBuffer();
+	RenderTarget();
+	~RenderTarget();
 
 
 	BOOL Init(UINT width, UINT height, DXGI_FORMAT format);

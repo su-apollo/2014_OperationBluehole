@@ -1,19 +1,19 @@
 #include "stdafx.h"
-#include "GBuffManager.h"
+#include "RTManager.h"
 #include "Renderer.h"
 #include "App.h"
 
-GBuffManager::GBuffManager()
+RTManager::RTManager()
 {
 }
 
 
-GBuffManager::~GBuffManager()
+RTManager::~RTManager()
 {
 }
 
 
-BOOL GBuffManager::Init()
+BOOL RTManager::Init()
 {
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
@@ -30,7 +30,7 @@ BOOL GBuffManager::Init()
 	return TRUE;
 }
 
-BOOL GBuffManager::CreateGBuffers()
+BOOL RTManager::CreateGBuffers()
 {
 
 	if (!mNormalsBuff.Init(mWinWidth, mWinHeight, DXGI_FORMAT_R10G10B10A2_UNORM))
@@ -46,7 +46,7 @@ BOOL GBuffManager::CreateGBuffers()
 	return TRUE;
 }
 
-void GBuffManager::SetRenderTargetToGBuff()
+void RTManager::SetRenderTargetToGBuff()
 {
 	ID3D11RenderTargetView* renderTargets[GBUFFERNUM] = { NULL };
 
@@ -61,7 +61,7 @@ void GBuffManager::SetRenderTargetToGBuff()
 	mD3DDeviceContext->OMSetRenderTargets(3, renderTargets, mDepthStencilView);
 }
 
-void GBuffManager::GetWindowSize(HWND hWnd)
+void RTManager::GetWindowSize(HWND hWnd)
 {
 	HRESULT hr = S_OK;
 

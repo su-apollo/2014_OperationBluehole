@@ -2,7 +2,7 @@
 #include "PostProcessor.h"
 #include "Renderer.h"
 #include "App.h"
-#include "GBuffManager.h"
+#include "RTManager.h"
 #include "LightManager.h"
 #include "Camera.h"
 
@@ -88,9 +88,9 @@ void PostProcessor::Render()
 	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPSConstBuffer);
 
 	// set Gbuff
-	ID3D11ShaderResourceView* normalTexRV = GBuffManager::GetInstance()->GetNormalTexRV();
-	ID3D11ShaderResourceView* diffuseTexRV = GBuffManager::GetInstance()->GetDiffuseTexRV();
-	ID3D11ShaderResourceView* specularTexRV = GBuffManager::GetInstance()->GetSpecularTexRV();
+	ID3D11ShaderResourceView* normalTexRV = RTManager::GetInstance()->GetNormalTexRV();
+	ID3D11ShaderResourceView* diffuseTexRV = RTManager::GetInstance()->GetDiffuseTexRV();
+	ID3D11ShaderResourceView* specularTexRV = RTManager::GetInstance()->GetSpecularTexRV();
 	ID3D11ShaderResourceView* depthTexRV = Renderer::GetInstance()->GetDepthStencilRV();
 
 	// set constbuff

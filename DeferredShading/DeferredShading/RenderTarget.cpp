@@ -1,22 +1,22 @@
 #include "stdafx.h"
-#include "GBuffer.h"
+#include "RenderTarget.h"
 #include "Renderer.h"
 
 
 
-GBuffer::GBuffer()
+RenderTarget::RenderTarget()
 {
 }
 
 
-GBuffer::~GBuffer()
+RenderTarget::~RenderTarget()
 {
 	SafeRelease(mRenderTargetView);
 	SafeRelease(mTexture);
 }
 
 
-BOOL GBuffer::Init(UINT width, UINT height, DXGI_FORMAT format)
+BOOL RenderTarget::Init(UINT width, UINT height, DXGI_FORMAT format)
 {
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mWidth = width;

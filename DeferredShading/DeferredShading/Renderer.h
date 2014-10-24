@@ -2,7 +2,7 @@
 #include "Singleton.h"
 #include "Camera.h"
 #include "RenderObj.h"
-#include "GBuffer.h"
+#include "RenderTarget.h"
 #include "Elin.h"
 
 // just draw single obj

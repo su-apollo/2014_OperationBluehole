@@ -1,15 +1,15 @@
 #pragma once
 #include "Singleton.h"
-#include "GBuffer.h"
+#include "RenderTarget.h"
 #define GBUFFERNUM 3
 
 // todo : 화면크기가 변경될 경우?
 // todo : depthstendcil은 여기다 두는게 좋을까?
-class GBuffManager : public Singleton<GBuffManager>
+class RTManager : public Singleton<RTManager>
 {
 public:
-	GBuffManager();
-	~GBuffManager();
+	RTManager();
+	~RTManager();
 
 	BOOL Init();
 	BOOL CreateGBuffers();
@@ -28,9 +28,9 @@ private:
 	void GetWindowSize(HWND hWnd);
 
 	// render targets
-	GBuffer						mNormalsBuff;
-	GBuffer						mDiffuseBuff;
-	GBuffer						mSpecularBuff;
+	RenderTarget			mNormalsBuff;
+	RenderTarget			mDiffuseBuff;
+	RenderTarget			mSpecularBuff;
 
 	// get from renderer
 	UINT					mWinWidth = 0;

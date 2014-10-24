@@ -72,17 +72,17 @@
     <ClInclude Include="RenderObj.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="GBuffer.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="PostProcessor.h">
-      <Filter>Render</Filter>
-    </ClInclude>
-    <ClInclude Include="GBuffManager.h">
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="ModelManager.h">
       <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTarget.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RTManager.h">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -122,17 +122,17 @@
     <ClCompile Include="RenderObj.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="GBuffer.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="PostProcessor.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
-    <ClCompile Include="GBuffManager.cpp">
       <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="ModelManager.cpp">
       <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTarget.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="RTManager.cpp">
+      <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
