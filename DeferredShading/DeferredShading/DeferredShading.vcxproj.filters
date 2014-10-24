@@ -84,6 +84,9 @@
     <ClInclude Include="RTManager.h">
       <Filter>Render</Filter>
     </ClInclude>
+    <ClInclude Include="SamplerManager.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -133,6 +136,9 @@
     </ClCompile>
     <ClCompile Include="RTManager.cpp">
       <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="SamplerManager.cpp">
+      <Filter>Contents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

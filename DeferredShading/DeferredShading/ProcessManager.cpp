@@ -6,6 +6,7 @@
 #include "LightManager.h"
 #include "RTManager.h"
 #include "PostProcessor.h"
+#include "SamplerManager.h"
 
 ProcessManager::ProcessManager()
 {
@@ -25,6 +26,9 @@ BOOL ProcessManager::Init() const
 		return FALSE;
 
 	if (!PostProcessor::GetInstance()->Init())
+		return FALSE;
+
+	if (!SamplerManager::GetInstance()->Init())
 		return FALSE;
 
 	return TRUE;

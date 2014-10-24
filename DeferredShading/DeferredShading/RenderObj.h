@@ -91,7 +91,6 @@ private:
 	D3DXMATRIX				mWorld2;
 
 	ID3D11ShaderResourceView*	mTextureRV = NULL;
-	ID3D11SamplerState*			mSamplerLinear = NULL;
 
 	// get from Renderer
 	ID3D11Device*           mD3DDevice = NULL;

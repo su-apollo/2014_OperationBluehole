@@ -38,8 +38,6 @@ struct MeshData
 	ID3D11ShaderResourceView*	mTextureRVDiff = NULL;
 	ID3D11ShaderResourceView*	mTextureRVNorm = NULL;
 	ID3D11ShaderResourceView*	mTextureRVSpec = NULL;
-
-	ID3D11SamplerState*			mSamplerLinear = NULL;
 };
 
 typedef std::shared_ptr<MeshData> EMeshData;

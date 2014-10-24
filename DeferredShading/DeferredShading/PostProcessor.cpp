@@ -5,7 +5,7 @@
 #include "RTManager.h"
 #include "LightManager.h"
 #include "Camera.h"
-
+#include "SamplerManager.h"
 
 PostProcessor::PostProcessor()
 {
@@ -18,7 +18,6 @@ PostProcessor::~PostProcessor()
 	SafeRelease(mPSConstBuffer);
 	SafeRelease(mVertexBuffer);
 	SafeRelease(mIndexBuffer);
-	SafeRelease(mSamplerLinear);
 }
 
 BOOL PostProcessor::Init()
@@ -38,12 +37,6 @@ BOOL PostProcessor::Init()
 	if (!CreateConstBuffer())
 	{
 		MessageBox(hWnd, L"PostProcessor CreateConstBuffer Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		return FALSE;
-	}
-
-	if (!CreateSamplerLinear())
-	{
-		MessageBox(hWnd, L"PostProcessor CreateSamplerLinear Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		return FALSE;
 	}
 
@@ -102,7 +95,8 @@ void PostProcessor::Render()
 	mD3DDeviceContext->PSSetShaderResources(1, 1, &diffuseTexRV);
 	mD3DDeviceContext->PSSetShaderResources(2, 1, &specularTexRV);
 	mD3DDeviceContext->PSSetShaderResources(3, 1, &depthTexRV);
-	mD3DDeviceContext->PSSetSamplers(0, 1, &mSamplerLinear);
+	ID3D11SamplerState* linearSampler = SamplerManager::GetInstance()->GetLinearSampler();
+	mD3DDeviceContext->PSSetSamplers(0, 1, &linearSampler);
 
 	// draw
 	mD3DDeviceContext->DrawIndexed(6, 0, 0);
@@ -193,25 +187,6 @@ HRESULT PostProcessor::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPo
 	if (pErrorBlob) pErrorBlob->Release();
 
 	return S_OK;
-}
-
-BOOL PostProcessor::CreateSamplerLinear()
-{
-	// Create the sample state
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = mD3DDevice->CreateSamplerState(&sampDesc, &mSamplerLinear);
-	if (FAILED(hr))
-		return FALSE;
-
-	return TRUE;
 }
 
 BOOL PostProcessor::CreateQuad()

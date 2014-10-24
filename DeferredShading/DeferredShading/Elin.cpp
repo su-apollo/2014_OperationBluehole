@@ -4,7 +4,7 @@
 #include "LightManager.h"
 #include "Timer.h"
 #include "Logger.h"
-
+#include "SamplerManager.h"
 
 Elin::Elin()
 {
@@ -150,7 +150,8 @@ void Elin::RenderMesh(EMeshData meshData)
 	mD3DDeviceContext->PSSetShaderResources(1, 1, &meshData->mTextureRVNorm);
 	mD3DDeviceContext->PSSetShaderResources(2, 1, &meshData->mTextureRVSpec);
 
-	mD3DDeviceContext->PSSetSamplers(0, 1, &meshData->mSamplerLinear);
+	ID3D11SamplerState* linearSampler = SamplerManager::GetInstance()->GetLinearSampler();
+	mD3DDeviceContext->PSSetSamplers(0, 1, &linearSampler);
 
 	mD3DDeviceContext->DrawIndexed(meshData->mNumIndex, 0, 0);
 }
@@ -399,7 +400,8 @@ BOOL Elin::LoadMeshTexture(EMesh mesh, EMeshData meshData)
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = mD3DDevice->CreateSamplerState(&sampDesc, &meshData->mSamplerLinear);
+	ID3D11SamplerState* linearSampler = SamplerManager::GetInstance()->GetLinearSampler();
+	hr = mD3DDevice->CreateSamplerState(&sampDesc, &linearSampler);
 	if (FAILED(hr))
 		return FALSE;
 
