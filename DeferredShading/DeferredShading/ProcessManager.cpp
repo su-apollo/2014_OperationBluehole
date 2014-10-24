@@ -54,6 +54,9 @@ BOOL ProcessManager::Process() const
 	PostProcessor::GetInstance()->Render();
 
 	// render stage clean up
+	// 이거 하나 추가했다고 프레임이 대폭상승
+	// directx debug로 인해 콘솔에 찍는 비용이 매우큼
+	// 때문에 프레임이 안정적이지 못하고 오락가락했던것 같음
 	PostProcessor::GetInstance()->RenderCleanUp();
 	// end
 	Renderer::GetInstance()->SwapChain();
