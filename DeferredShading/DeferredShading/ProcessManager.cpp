@@ -48,13 +48,12 @@ BOOL ProcessManager::Process() const
 	// clear
 	Renderer::GetInstance()->SetRasterizeStage();
 	Renderer::GetInstance()->SetupViewPort();
-	Renderer::GetInstance()->ClearBackBuff();
-	Renderer::GetInstance()->ClearDepthStencilBuff();
 	RTManager::GetInstance()->ClearRenderTargets();
 	RTManager::GetInstance()->SetRenderTargetToGBuff();
 
 	// render line
 	Renderer::GetInstance()->Render();
+	Renderer::GetInstance()->ClearBackBuff();
 	PostProcessor::GetInstance()->Render();
 
 	// render stage clean up

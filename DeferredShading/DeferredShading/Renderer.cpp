@@ -28,13 +28,6 @@ BOOL Renderer::Init()
 		return FALSE;
 	}
 
-	if (!CreateDepthStencilBuffer())
-	{
-		MessageBox(hWnd, L"CreateStencilBuff Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		DestroyDevice();
-		return FALSE;
-	}
-
 	if (!CreateRasterizeState())
 	{
 		MessageBox(hWnd, L"CreateRasterizeState Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
@@ -124,57 +117,6 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 	return TRUE;
 }
 
-BOOL Renderer::CreateDepthStencilBuffer()
-{
-	ID3D11Texture2D* pDepthStencil = NULL;
-
-	// Create depth stencil texture
-	D3D11_TEXTURE2D_DESC descDepth;
-	ZeroMemory(&descDepth, sizeof(descDepth));
-	descDepth.Width = mWinWidth;
-	descDepth.Height = mWinHeight;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	//descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS;
-	descDepth.Format = DXGI_FORMAT_R32_TYPELESS;
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;
-	hr = mD3DDevice->CreateTexture2D(&descDepth, NULL, &pDepthStencil);
-	if (FAILED(hr))
-		return FALSE;
-
-	// Create the depth stencil view
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-	ZeroMemory(&descDSV, sizeof(descDSV));
-	//descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
-	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSV.Texture2D.MipSlice = 0;
-	hr = mD3DDevice->CreateDepthStencilView(pDepthStencil, &descDSV, &mDepthStencilView);
-	if (FAILED(hr))
-		return FALSE;
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC descSRV;
-	ZeroMemory(&descSRV, sizeof(descSRV));
-	//descSRV.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	descSRV.Format = DXGI_FORMAT_R32_FLOAT;
-	descSRV.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	descSRV.Texture2D.MipLevels = 1;
-	descSRV.Texture2D.MostDetailedMip = 0;
-
-	hr = mD3DDevice->CreateShaderResourceView(pDepthStencil, &descSRV, &mDepthStencilRV);
-	pDepthStencil->Release();
-
-	if (FAILED(hr))
-		return FALSE;
-
-	return TRUE;
-}
-
 void Renderer::DestroyDevice()
 {
 	mCube.Release();
@@ -216,11 +158,6 @@ void Renderer::ClearBackBuff()
 	//clear
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
 	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
-}
-
-void Renderer::ClearDepthStencilBuff()
-{
-	mD3DDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 BOOL Renderer::CreateRasterizeState()

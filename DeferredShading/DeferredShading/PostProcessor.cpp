@@ -25,7 +25,6 @@ BOOL PostProcessor::Init()
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
 	mRenderTargetView = Renderer::GetInstance()->GetRenderTargetView();
-	mDepthStencilView = Renderer::GetInstance()->GetDepthStencilView();
 	HWND hWnd = App::GetInstance()->GetHandleMainWindow();
 
 	if (!CompileShader())
@@ -78,7 +77,7 @@ void PostProcessor::Render()
 	ID3D11ShaderResourceView* normalTexRV = RTManager::GetInstance()->GetNormalTexRV();
 	ID3D11ShaderResourceView* diffuseTexRV = RTManager::GetInstance()->GetDiffuseTexRV();
 	ID3D11ShaderResourceView* specularTexRV = RTManager::GetInstance()->GetSpecularTexRV();
-	ID3D11ShaderResourceView* depthTexRV = Renderer::GetInstance()->GetDepthStencilRV();
+	ID3D11ShaderResourceView* depthTexRV = RTManager::GetInstance()->GetDepthTexRV();
 
 	// set constbuff
 	PostProcessorConstantBuffer pcb;

@@ -9,7 +9,7 @@ class DirectionalLight
 public:
 
 	DirectionalLight()
-		: mDirection(0.0f, 0.0f, -1.0f, 1.0f), mColor(1.0f, 1.0f, 1.0f, 1.0f) {}
+		: mDirection(1.0f, 0.0f, -1.0f, 1.0f), mColor(1.0f, 1.0f, 1.0f, 1.0f) {}
 	~DirectionalLight() {}
 
 	

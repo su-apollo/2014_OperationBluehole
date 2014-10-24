@@ -57,7 +57,6 @@ private:
 	ID3D11Device*           mD3DDevice = NULL;
 	ID3D11DeviceContext*    mD3DDeviceContext = NULL;
 	ID3D11RenderTargetView* mRenderTargetView = NULL;
-	ID3D11DepthStencilView* mDepthStencilView = NULL;
 
 	// get last error
 	HRESULT hr = S_OK;

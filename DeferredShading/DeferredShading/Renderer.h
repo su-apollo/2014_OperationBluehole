@@ -16,16 +16,13 @@ public:
 
 	void Render();
 	void ClearBackBuff();
-	void ClearDepthStencilBuff();
 	void SetupViewPort();
 	void SetRasterizeStage();
 	void SwapChain() { mSwapChain->Present(0, 0); }
 
 	ID3D11Device*				GetDevice() { return mD3DDevice; }
 	ID3D11DeviceContext*		GetDeviceContext() { return mD3DDeviceContext; }
-	ID3D11DepthStencilView*		GetDepthStencilView() { return mDepthStencilView; }
 	ID3D11RenderTargetView*		GetRenderTargetView() { return mRenderTargetView; }
-	ID3D11ShaderResourceView*	GetDepthStencilRV() { return mDepthStencilRV; }
 
 private:
 
@@ -49,8 +46,6 @@ private:
 	ID3D11RasterizerState*		mRasterizerState = NULL;
 
 	ID3D11RenderTargetView*		mRenderTargetView = NULL;
-	ID3D11DepthStencilView*		mDepthStencilView = NULL;
-	ID3D11ShaderResourceView*	mDepthStencilRV = NULL;
 
 	UINT					mDPCallNum = 0;
 
