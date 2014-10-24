@@ -111,11 +111,6 @@ private:
 	ID3D11Buffer*           mVSConstBuffer = NULL;
 	ID3D11Buffer*			mPSConstBuffer = NULL;
 
-
-
-	//ID3D11ShaderResourceView*	mTextureRV = NULL;
-	//ID3D11SamplerState*			mSamplerLinear = NULL;
-
 	D3DXMATRIX				mWorld;
 
 	// get to Renderer
@@ -131,9 +126,6 @@ private:
 
 	//여러 매쉬를 포함하고 있는 전체 모델
 	std::vector<EMesh> mModel;
-
 	std::vector <EMeshData>	mMeshData;
-
-
 };
 

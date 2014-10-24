@@ -201,10 +201,8 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						FbxVector2 tex;
 						bool isMapped;
 						pMesh->GetPolygonVertexUV(j,k, lUVSetName, tex, isMapped);
-						pNewMesh->mVertex[iControlPointIndex].mUV.x = tex[0];
-						pNewMesh->mVertex[iControlPointIndex].mUV.y = -tex[1];
-
-						
+						pNewMesh->mVertex[iControlPointIndex].mUV.x = static_cast<float>(tex[0]);
+						pNewMesh->mVertex[iControlPointIndex].mUV.y = static_cast<float>(-tex[1]);
 
 
 						switch (k)
@@ -223,33 +221,38 @@ void Elin::ProcessGeometry(FbxNode* inNode)
 						}
 
 					}
-					/*
-					// ========= Get the Tangents ==============================
-					D3DXVECTOR3 tangent;
-					int ControlPointIndexStart = pMesh->GetPolygonVertex(j, 0);
 
-					if (ControlPointIndexStart + 2 < pNewMesh->mVertex.size())
-					{
-						D3DXVECTOR3 deltaPos1 = pNewMesh->mVertex[ControlPointIndexStart + 1].mPos - pNewMesh->mVertex[ControlPointIndexStart].mPos;
-						D3DXVECTOR3 deltaPos2 = pNewMesh->mVertex[ControlPointIndexStart + 2].mPos - pNewMesh->mVertex[ControlPointIndexStart + 1].mPos;
-						D3DXVECTOR2 deltaUV1 = pNewMesh->mVertex[ControlPointIndexStart + 1].mUV - pNewMesh->mVertex[ControlPointIndexStart].mUV;
-						D3DXVECTOR2 deltaUV2 = pNewMesh->mVertex[ControlPointIndexStart + 2].mUV - pNewMesh->mVertex[ControlPointIndexStart + 1].mUV;;
-
-						float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-						tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y)*r;
-
-						pNewMesh->mVertex[ControlPointIndexStart].mTangent = tangent;
-						pNewMesh->mVertex[ControlPointIndexStart + 1].mTangent = tangent;
-						pNewMesh->mVertex[ControlPointIndexStart + 2].mTangent = tangent;
-					}
-					*/
-
-
-					//mIndex.push_back(tempIndex);
 					//이거 순서 어떻게?
 					pNewMesh->mIndices.push_back(tempIndex.i0);
 					pNewMesh->mIndices.push_back(tempIndex.i1);
 					pNewMesh->mIndices.push_back(tempIndex.i2);
+				}
+
+				// ========= Get the Tangents =============================
+				// 삼각형을 돌면서 각 꼭지점의 tangent를 계산
+
+				int polycount = pMesh->GetPolygonCount();
+				int numv = pNewMesh->mVertex.size();
+				int numi = pNewMesh->mIndices.size();
+
+				for (int polygonNum = 0; polygonNum < pMesh->GetPolygonCount(); polygonNum++)
+				{
+					D3DXVECTOR3 tangent;
+					int ControlPointIndexStart = pMesh->GetPolygonVertex(polygonNum, 0);
+					int ControlPointIndexStart1 = pMesh->GetPolygonVertex(polygonNum, 1);
+					int ControlPointIndexStart2 = pMesh->GetPolygonVertex(polygonNum, 2);
+
+					D3DXVECTOR3 deltaPos1 = pNewMesh->mVertex[ControlPointIndexStart1].mPos - pNewMesh->mVertex[ControlPointIndexStart].mPos;
+					D3DXVECTOR3 deltaPos2 = pNewMesh->mVertex[ControlPointIndexStart2].mPos - pNewMesh->mVertex[ControlPointIndexStart1].mPos;
+					D3DXVECTOR2 deltaUV1 = pNewMesh->mVertex[ControlPointIndexStart1].mUV - pNewMesh->mVertex[ControlPointIndexStart].mUV;
+					D3DXVECTOR2 deltaUV2 = pNewMesh->mVertex[ControlPointIndexStart2].mUV - pNewMesh->mVertex[ControlPointIndexStart1].mUV;;
+
+					float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+					tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y)*r;
+
+					pNewMesh->mVertex[ControlPointIndexStart].mTangent = tangent;
+					pNewMesh->mVertex[ControlPointIndexStart1].mTangent = tangent;
+					pNewMesh->mVertex[ControlPointIndexStart2].mTangent = tangent;
 				}
 				pNewMesh->mNumIndex = pNewMesh->mIndices.size();
 				mModel.push_back(pNewMesh);
@@ -459,8 +462,6 @@ void Elin::Release()
 	SafeRelease(mVertexLayout11);
 	SafeRelease(mVertexShader);
 	SafeRelease(mPixelShader);
-
-
 }
 
 
