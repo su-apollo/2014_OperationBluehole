@@ -60,10 +60,10 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	}
 
 	float4 ambient = float4(0, 0, 0, 1)*0.3;
-
 	float4 finalColor = saturate(ambient + specularResult + diffuse);
-	//float4 finalColor = float4(depth.x, depth.x, depth.x, 1);
-	finalColor.a = 1;
+
+	//float4 finalColor = float4((depth.xxx - 0.9999) * 10000, 1);
+	//finalColor.a = 1;
 
 	return finalColor;
 }

@@ -47,12 +47,8 @@ BOOL Renderer::Init()
 
 void Renderer::Render()
 {
-	// set rendertarget
 	// om - output merge
-	//mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
-
 	mD3DDeviceContext->OMSetDepthStencilState(RenderStateManager::GetInstance()->GetDepthState(), 0);
-	mD3DDeviceContext->OMSetBlendState(RenderStateManager::GetInstance()->GetGeometryBlendState(), 0, 0xFFFFFFFF);
 
 	mCube.Render();
 }
@@ -152,28 +148,5 @@ void Renderer::ClearBackBuff()
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
 	mD3DDeviceContext->ClearRenderTargetView(mRenderTargetView, ClearColor);
 }
-
-/*
-BOOL Renderer::CreateRasterizeState()
-{
-	D3D11_RASTERIZER_DESC desc;
-	ZeroMemory(&desc, sizeof(D3D11_RASTERIZER_DESC));
-	desc.CullMode = D3D11_CULL_BACK;
-	desc.FillMode = D3D11_FILL_SOLID;
-	desc.DepthClipEnable = true;
-	
-	hr = mD3DDevice->CreateRasterizerState(&desc, &mRasterizerState);	
-
-	if (FAILED(hr))
-		return FALSE;
-
-	return TRUE;
-}
-
-void Renderer::SetRasterizeStage()
-{
-	mD3DDeviceContext->RSSetState(mRasterizerState);
-}
-*/
 
 

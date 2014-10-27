@@ -30,7 +30,6 @@ public:
 private:
 
 	BOOL					CompileShader();
-	BOOL					CreateDepthBuffer();
 	BOOL					CreateConstBuffer();
 	BOOL					CreateQuad();
 
@@ -49,8 +48,6 @@ private:
 	WCHAR*					mPixelShaderPath = L"PostProcess.hlsl";
 	LPCSTR					mPixelShaderMain = "main";
 	LPCSTR					mPixelShaderModel = "ps_4_0_level_9_1";
-
-	ID3D11DepthStencilView*	mDepthBuffDSV = NULL;
 
 	// draw quad
 	ID3D11Buffer*           mVertexBuffer = NULL;

@@ -49,7 +49,6 @@ BOOL ProcessManager::Process() const
 	Camera::GetInstance()->Update();
 
 	// clear
-	//Renderer::GetInstance()->SetRasterizeStage();
 	Renderer::GetInstance()->SetupViewPort();
 	RTManager::GetInstance()->ClearRenderTargets();
 	RTManager::GetInstance()->SetRenderTargetToGBuff();
@@ -62,6 +61,7 @@ BOOL ProcessManager::Process() const
 	// render stage clean up
 	// 이거 하나 추가했다고 프레임이 대폭상승
 	// directx debug로 인해 콘솔에 찍는 비용이 매우큼
+	// 이전 프레임을 렌더하면서 다음 프레임의 렌더타겟위에 그리게 되면서 병목이 발생하는 듯함
 	// 때문에 프레임이 안정적이지 못하고 오락가락했던것 같음
 	PostProcessor::GetInstance()->RenderCleanUp();
 	// end

@@ -27,7 +27,6 @@ public:
 private:
 
 	BOOL CreateDevice(HWND hWnd);
-	//BOOL CreateRasterizeState();
 	BOOL CreateDepthStencilBuffer();
 
 	void DestroyDevice();
@@ -40,8 +39,6 @@ private:
 
 	ID3D11Device*				mD3DDevice = NULL;
 	ID3D11DeviceContext*		mD3DDeviceContext = NULL;
-
-	//ID3D11RasterizerState*		mRasterizerState = NULL;
 
 	ID3D11RenderTargetView*		mRenderTargetView = NULL;
 
