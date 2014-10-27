@@ -6,6 +6,7 @@
 #include "LightManager.h"
 #include "Camera.h"
 #include "SamplerManager.h"
+#include "RenderStateManager.h"
 
 PostProcessor::PostProcessor()
 {
@@ -58,7 +59,11 @@ BOOL PostProcessor::Init()
 void PostProcessor::Render()
 {
 	// set render target view
-	mD3DDeviceContext->ClearDepthStencilView(mDepthBuffDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	// if depth read only witch can't clear
+	//mD3DDeviceContext->ClearDepthStencilView(mDepthBuffDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	mD3DDeviceContext->OMSetDepthStencilState(RenderStateManager::GetInstance()->GetEqualStencilState(), 0);
+	mD3DDeviceContext->OMSetBlendState(RenderStateManager::GetInstance()->GetGeometryBlendState(), 0, 0xFFFFFFFF);
+	//mD3DDeviceContext->OMSetRenderTargets(1, &mBackBuffRTV, mDepthBuffDSV);
 	mD3DDeviceContext->OMSetRenderTargets(1, &mBackBuffRTV, NULL);
 
 	// set lay out
@@ -274,6 +279,7 @@ BOOL PostProcessor::CreateDepthBuffer()
 	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0;
+	descDSV.Flags = D3D11_DSV_READ_ONLY_DEPTH;
 	//descDSV.Flags = D3D11_DSV_READ_ONLY_DEPTH;
 	hr = mD3DDevice->CreateDepthStencilView(pDepthStencil, &descDSV, &mDepthBuffDSV);
 	if (FAILED(hr))

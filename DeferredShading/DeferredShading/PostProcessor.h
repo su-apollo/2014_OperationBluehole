@@ -22,10 +22,10 @@ public:
 	PostProcessor();
 	~PostProcessor();
 
-	BOOL Init();
+	BOOL					Init();
 
-	void Render();
-	void RenderCleanUp();
+	void					Render();
+	void					RenderCleanUp();
 
 private:
 

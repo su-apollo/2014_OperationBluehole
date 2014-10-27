@@ -6,6 +6,7 @@
 #include "Elin.h"
 
 // just draw single obj
+// rasterize단계는 default로 사용해도 상관없음
 class Renderer : public Singleton<Renderer>
 {
 public:

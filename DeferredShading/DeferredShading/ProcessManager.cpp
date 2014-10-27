@@ -7,6 +7,7 @@
 #include "RTManager.h"
 #include "PostProcessor.h"
 #include "SamplerManager.h"
+#include "RenderStateManager.h"
 
 ProcessManager::ProcessManager()
 {
@@ -30,6 +31,8 @@ BOOL ProcessManager::Init() const
 
 	if (!SamplerManager::GetInstance()->Init())
 		return FALSE;
+
+	RenderStateManager::GetInstance()->Init();
 
 	return TRUE;
 }
@@ -76,4 +79,5 @@ void ProcessManager::Destroy() const
 	RTManager::Release();
 	PostProcessor::Release();
 	SamplerManager::Release();
+	RenderStateManager::Release();
 }

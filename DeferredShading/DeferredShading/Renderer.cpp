@@ -2,7 +2,7 @@
 #include "Renderer.h"
 #include "App.h"
 #include "Logger.h"
-
+#include "RenderStateManager.h"
 
 
 Renderer::Renderer()
@@ -50,6 +50,9 @@ void Renderer::Render()
 	// set rendertarget
 	// om - output merge
 	//mD3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
+
+	mD3DDeviceContext->OMSetDepthStencilState(RenderStateManager::GetInstance()->GetDepthState(), 0);
+	mD3DDeviceContext->OMSetBlendState(RenderStateManager::GetInstance()->GetGeometryBlendState(), 0, 0xFFFFFFFF);
 
 	mCube.Render();
 }

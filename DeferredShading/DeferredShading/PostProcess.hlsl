@@ -51,7 +51,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	normal = (normal - 0.5) * 2;
 
 	float4 finalColor = saturate(specular + diffuse);
-	//float4 finalColor = float4(depth.x, depth.y, depth.z, 1);
+	//float4 finalColor = float4(depth.x, depth.x, depth.x, 1);
 	finalColor.a = 1;
 
 	return finalColor;
