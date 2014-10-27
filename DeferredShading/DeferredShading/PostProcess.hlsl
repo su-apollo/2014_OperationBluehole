@@ -44,15 +44,25 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 diffuse = txDiffuse.Sample(samLinear, Input.Tex);
 	float4 specular = txSpecular.Sample(samLinear, Input.Tex);
 	float4 depth = txDepth.Sample(samLinear, Input.Tex);
-
-	specular = dot(vLightDir[0], normal) * vLightColor[0] * specular * 0.4;
-	diffuse = diffuse * 0.8;
-
 	normal = (normal - 0.5) * 2;
 
-	float4 finalColor = saturate(specular + diffuse);
-	//float4 finalColor = float4(depth.x, depth.x, depth.x, 1);
-	finalColor.a = 1;
+	diffuse = diffuse * dot(vLightDir[0], normal) * 0.5 * vLightColor[0];
+
+	float4 reflection = normalize(reflect(vLightDir[0], normal));
+		float4 viewDir = normalize(vEye);
+
+		float4 specularResult = 0;
+		if (diffuse.x > 0)
+		{
+			specularResult = saturate(dot(viewDir, reflection));
+			specularResult = pow(specularResult, 32.0f);
+			specularResult *= specular*vLightColor[0];
+		}
+
+	float4 ambient = float4(0, 0, 0, 1)*0.3;
+
+		float4 finalColor = saturate(ambient + specularResult + diffuse);
+		finalColor.a = 1;
 
 	return finalColor;
 }

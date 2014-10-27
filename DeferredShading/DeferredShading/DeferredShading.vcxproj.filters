@@ -69,9 +69,6 @@
     <ClInclude Include="Renderer.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="RenderObj.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="PostProcessor.h">
       <Filter>Render</Filter>
     </ClInclude>
@@ -125,9 +122,6 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="RenderObj.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="PostProcessor.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -148,12 +142,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="PostProcess.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>

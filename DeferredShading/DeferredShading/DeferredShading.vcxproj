@@ -101,7 +101,6 @@
     <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="ProcessManager.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="RenderObj.h" />
     <ClInclude Include="SamplerManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="stdafx.h" />
@@ -123,7 +122,6 @@
     <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="RenderObj.cpp" />
     <ClCompile Include="SamplerManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -132,11 +130,6 @@
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <FileType>Document</FileType>
-    </FxCompile>
     <FxCompile Include="ElinPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
     </FxCompile>
@@ -147,11 +140,6 @@
     <FxCompile Include="Quad.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-    </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <FileType>Document</FileType>
     </FxCompile>
     <FxCompile Include="ElinVertexShader.hlsl" />
   </ItemGroup>

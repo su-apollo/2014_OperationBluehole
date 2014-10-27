@@ -1,7 +1,6 @@
 #pragma once
 #include "Singleton.h"
 #include "Camera.h"
-#include "RenderObj.h"
 #include "RenderTarget.h"
 #include "Elin.h"
 
