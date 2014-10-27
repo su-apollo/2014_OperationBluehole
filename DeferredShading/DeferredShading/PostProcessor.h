@@ -43,11 +43,11 @@ private:
 
 	WCHAR*					mVertexShaderPath = L"Quad.hlsl";
 	LPCSTR					mVertexShaderMain = "main";
-	LPCSTR					mVertexShaderModel = "vs_4_0_level_9_1";
+	LPCSTR					mVertexShaderModel = "vs_4_0_level_9_3";
 
 	WCHAR*					mPixelShaderPath = L"PostProcess.hlsl";
 	LPCSTR					mPixelShaderMain = "main";
-	LPCSTR					mPixelShaderModel = "ps_4_0_level_9_1";
+	LPCSTR					mPixelShaderModel = "ps_4_0_level_9_3";
 
 	// draw quad
 	ID3D11Buffer*           mVertexBuffer = NULL;

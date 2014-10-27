@@ -7,6 +7,7 @@
 //--------------------------------------------------------------------------------------
 cbuffer ConstantBuffer : register(b0)
 {
+	float4 vEye;
 	float4 vLightDir[2];
 	float4 vLightColor[2];
 };
@@ -30,6 +31,7 @@ struct PS_INPUT
 	float2 Tex : TEXCOORD0;
 	float3 Tang : TEXCOORD1;
 	float3 Norm : TEXCOORD2;
+	float4 WorldPos : TEXCOORD3;
 };
 
 //--------------------------------------------------------------------------------------
@@ -58,10 +60,25 @@ GBuffer main(PS_INPUT Input)
 
 	GBuffer output;
 	output.normal = normal;
-	//output.normal = float4(Input.Norm, 1);
-	//output.normal = float4(Input.Tang, 1);
 	output.diffuse = txDiffuse.Sample(samLinear, Input.Tex);
 	output.specular = txSpecular.Sample(samLinear, Input.Tex);
+
+	//variables to calculate specular
+	float4 reflection = normalize(reflect(vLightDir[0], normal));
+	float4 viewDir = normalize(Input.WorldPos - vEye);
+
+	float4 specularResult = 0;
+	if (output.diffuse.x > 0)
+	{
+		specularResult = saturate(dot(viewDir, reflection));
+		specularResult = pow(specularResult, 32.0f);
+		specularResult *= output.specular*vLightColor[0];
+	}
+
+	output.specular = specularResult;
+
+	//output.normal = float4(Input.Norm, 1);
+	//output.normal = float4(Input.Tang, 1);
 
 	return output;
 }

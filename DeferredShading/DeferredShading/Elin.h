@@ -25,15 +25,15 @@ static const LPCWSTR	ELIN_TEXTURE_HAIR_DIFF = L"ElinModel/popori_F_hair07_diff.b
 static const LPCWSTR	ELIN_TEXTURE_HAIR_NORM = L"ElinModel/popori_F_hair07_norm.bmp";
 static const LPCWSTR	ELIN_TEXTURE_HAIR_SPEC = L"ElinModel/popori_F_hair07_spec.bmp";
 
-static const CHAR* ELIN_PATH = "ElinModel/Popori_F_H00_dance.FBX";
+static const CHAR* ELIN_PATH = "ElinModel/Popori_F_H00_dance_NoAni.FBX";
 
 static const WCHAR* VS_PATH = L"ElinVertexShader.hlsl";
 static const LPCSTR	VS_MAIN = "main";
-static const LPCSTR VS_MODEL = "vs_4_0_level_9_1";
+static const LPCSTR VS_MODEL = "vs_4_0_level_9_3";
 
 static const WCHAR* PS_PATH = L"ElinPixelShader.hlsl";
 static const LPCSTR	PS_MAIN = "main";
-static const LPCSTR PS_MODEL = "ps_4_0_level_9_1";
+static const LPCSTR PS_MODEL = "ps_4_0_level_9_3";
 
 static const int MAX_LIGHT = 2;
 
@@ -46,6 +46,7 @@ struct VSConstantBuffer
 
 struct PSConstantBuffer
 {
+	D3DXVECTOR4 vEye;
 	D3DXVECTOR4 vLightDir[2];
 	D3DXVECTOR4 vLightColor[2];
 };
