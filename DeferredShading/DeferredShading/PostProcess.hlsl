@@ -61,9 +61,14 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	// point
 	position.w = 1.0f;
 	
-	float4 lightDir = position - vLightPos[0];
+	float4 lightDir = vLightPos[0] - position;
 	float distance = length(lightDir);
 	lightDir /= distance;
+
+
+	//°¨¼è´Ù½ÃÇØºÁ
+	
+	
 	diffuse *= dot(lightDir, normal) * vLightColor[0];
 	diffuse = saturate(diffuse);
 
