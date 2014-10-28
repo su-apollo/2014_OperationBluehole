@@ -7,7 +7,7 @@
 #include "RTManager.h"
 #include "PostProcessor.h"
 #include "SamplerManager.h"
-#include "RenderStateManager.h"
+#include "RSManager.h"
 
 ProcessManager::ProcessManager()
 {

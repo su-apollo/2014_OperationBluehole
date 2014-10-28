@@ -6,7 +6,7 @@
 #include "LightManager.h"
 #include "Camera.h"
 #include "SamplerManager.h"
-#include "RenderStateManager.h"
+#include "RSManager.h"
 
 PostProcessor::PostProcessor()
 {
@@ -82,7 +82,8 @@ void PostProcessor::Render()
 
 	// set constbuff
 	PostProcessorConstantBuffer pcb;
-	pcb.mInverseProj = Camera::GetInstance()->GetMatInverseProj();
+	D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseProj();
+	pcb.mInverseProj = matInverseProj;
 	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
 	pcb.vNearFar = D3DXVECTOR4(Camera::GetInstance()->GetNear(), Camera::GetInstance()->GetFar(), 0, 1);
 	for (int i = 0; i < MAX_LIGHT; ++i)
@@ -171,7 +172,7 @@ BOOL PostProcessor::CompileShader()
 
 HRESULT PostProcessor::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut)
 {
-	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR;
 
 #if defined( DEBUG ) || defined( _DEBUG )
 	dwShaderFlags |= D3DCOMPILE_DEBUG;

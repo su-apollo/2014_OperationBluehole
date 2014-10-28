@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "RenderStateManager.h"
+#include "RSManager.h"
 #include "Renderer.h"
 
 RenderStateManager::RenderStateManager()

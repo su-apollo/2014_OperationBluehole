@@ -2,7 +2,7 @@
 #include "Renderer.h"
 #include "App.h"
 #include "Logger.h"
-#include "RenderStateManager.h"
+#include "RSManager.h"
 
 
 Renderer::Renderer()
@@ -25,15 +25,6 @@ BOOL Renderer::Init()
 		DestroyDevice();
 		return FALSE;
 	}
-
-	/*
-	if (!CreateRasterizeState())
-	{
-		MessageBox(hWnd, L"CreateRasterizeState Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		DestroyDevice();
-		return FALSE;
-	}
-	*/
 
 	if (!mCube.Init())
 	{

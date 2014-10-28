@@ -1,8 +1,10 @@
 #pragma once
 #include "Singleton.h"
 
-
-
+enum {
+	FRUSTUM_NEAR = 10,
+	FRUSTUM_FAR = 100
+};
 
 
 class Camera : public Singleton<Camera>
@@ -29,8 +31,8 @@ private:
 	D3DXVECTOR3 mAt;
 	D3DXVECTOR3 mUp;
 
-	float		mNear = 10.0f;
-	float		mFar = 100.0f;
+	float		mNear = FRUSTUM_NEAR;
+	float		mFar = FRUSTUM_FAR;
 
 	D3DXMATRIX	mMatView;
 	D3DXMATRIX	mMatProj;
