@@ -60,30 +60,41 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	position.xyz /= position.www;
 	// point
 	position.w = 1.0f;
+
+	float4 diffuseFactor = float4(0, 0, 0, 0);
+	float4 specularFactor = float4(0, 0, 0, 0);;
 	
-	float4 lightDir = vLightPos[0] - position;
-	float distance = length(lightDir);
-	lightDir /= distance;
+	for ( int i = 0; i < 1 ; ++i )
+	{
+		// get lightDirection and distance
+		float4 lightDir = vLightPos[i] - position;
+		float distance = length(lightDir.xyz);
+		lightDir /= distance;
 
+		float3 attr = float3(0, 0, 1);
+		float attrFactor = 1.0f / dot(attr, float3(1.0f, distance, distance*distance));
 
-	//°¨¼è´Ù½ÃÇØºÁ
+		//calculate diffuseFactor
+		diffuseFactor += dot(lightDir, normal) * vLightColor[i] * attrFactor;
+
+		//variables to calculate specular
+		float4 reflection = normalize(reflect(lightDir, normal));
+		float4 viewDir = normalize(position - vEye);
+
+		//calculate specularFactor
+		float specularResult = saturate(dot(viewDir, reflection));
+		specularFactor += pow(specularResult, 1.0f) * vLightColor[i] * attrFactor;
+		
+	}
+
+	specular *= specularFactor;
+	diffuse *= diffuseFactor;
+
 	
 	
-	diffuse *= dot(lightDir, normal) * vLightColor[0];
-	diffuse = saturate(diffuse);
-
-	//variables to calculate specular
-	float4 reflection = normalize(reflect(lightDir, normal));
-	float4 viewDir = normalize(position - vEye);
-
-	float4 specularResult = 0;
-
-	specularResult = saturate(dot(viewDir, reflection));
-	specularResult = pow(specularResult, 1.0f);
-	specularResult *= specular*vLightColor[0];
-
+	
 	float4 finalColor = 0;
-	finalColor = saturate(ambient + specularResult + diffuse);
+	finalColor = saturate(ambient + specular + diffuse);
 	//finalColor = diffuse;
 	//finalColor = float4(z, z, z, 1);
 	return finalColor;
