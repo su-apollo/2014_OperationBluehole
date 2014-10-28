@@ -11,10 +11,11 @@ struct QuadVertex
 
 struct PostProcessorConstantBuffer
 {
+	D3DXMATRIX	mInverseProj;
 	D3DXVECTOR4 vEye;
 	D3DXVECTOR4 vLightPos[MAX_LIGHT];
 	D3DXVECTOR4 vLightColor[MAX_LIGHT];
-	float		fLightRange[MAX_LIGHT];
+	D3DXVECTOR4	vLightRange[MAX_LIGHT];
 };
 
 class PostProcessor : public Singleton<PostProcessor>

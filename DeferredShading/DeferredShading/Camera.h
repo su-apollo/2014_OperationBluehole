@@ -17,6 +17,7 @@ public:
 
 	D3DXMATRIX	GetMatView() { return mMatView; }
 	D3DXMATRIX	GetMatProj() { return mMatProj; }
+	D3DXMATRIX	GetMatInverseProj();
 
 private:
 

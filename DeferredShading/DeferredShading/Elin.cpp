@@ -110,17 +110,6 @@ void Elin::Render()
 	vcb.mProjection = matProj;
 	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
 
-	PSConstantBuffer pcb;
-	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
-	for (int i = 0; i < MAX_LIGHT; ++i)
-	{
-		PLightPointer light = LightManager::GetInstance()->mPLightList[i];
-		pcb.vLightPos[i] = light->mPos;
-		pcb.vLightColor[i] = light->mColor;
-		pcb.fLightRange[i] = light->mRange;
-	}
-	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
-
 	// draw
 	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
 	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
@@ -333,11 +322,6 @@ BOOL Elin::CreateMeshCB(EMesh mesh, EMeshData meshData)
 	bd.CPUAccessFlags = 0;
 
 	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mVSConstBuffer);
-	if (FAILED(hr))
-		return FALSE;
-
-	bd.ByteWidth = sizeof(PSConstantBuffer);
-	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mPSConstBuffer);
 	if (FAILED(hr))
 		return FALSE;
 

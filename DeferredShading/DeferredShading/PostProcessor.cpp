@@ -82,13 +82,14 @@ void PostProcessor::Render()
 
 	// set constbuff
 	PostProcessorConstantBuffer pcb;
+	pcb.mInverseProj = Camera::GetInstance()->GetMatInverseProj();
 	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
 	for (int i = 0; i < MAX_LIGHT; ++i)
 	{
 		PLightPointer light = LightManager::GetInstance()->mPLightList[i];
 		pcb.vLightPos[i] = light->mPos;
 		pcb.vLightColor[i] = light->mColor;
-		pcb.fLightRange[i] = light->mRange;
+		pcb.vLightRange[i] = D3DXVECTOR4(light->mRange, light->mRange, light->mRange, 1);
 	}
 	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
 

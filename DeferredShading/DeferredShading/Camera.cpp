@@ -19,3 +19,10 @@ void Camera::Update()
 	D3DXMatrixLookAtLH(&mMatView, &mEye, &mAt,&mUp );
 	D3DXMatrixPerspectiveFovLH(&mMatProj, D3DX_PI / 4, width / (FLOAT)height, mNear, mFar);
 }
+
+D3DXMATRIX Camera::GetMatInverseProj()
+{
+	D3DXMATRIX output;
+	D3DXMatrixInverse(&output, NULL, &mMatProj);
+	return output;
+}

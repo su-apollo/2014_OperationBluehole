@@ -43,14 +43,6 @@ struct VSConstantBuffer
 	D3DXMATRIX mProjection;
 };
 
-struct PSConstantBuffer
-{
-	D3DXVECTOR4 vEye;
-	D3DXVECTOR4 vLightPos[MAX_LIGHT];
-	D3DXVECTOR4 vLightColor[MAX_LIGHT];
-	float		fLightRange[MAX_LIGHT];
-};
-
 struct MeshData
 {
 	ID3D11Buffer*           mVertexBuffer = NULL;
