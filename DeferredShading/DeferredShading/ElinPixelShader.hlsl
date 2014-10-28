@@ -69,7 +69,7 @@ GBuffer main(PS_INPUT Input)
 	float4 lightDir = Input.WorldPos - vLightPos[0];
 	float distance = length(lightDir);
 	lightDir /= distance;
-	output.diffuse *= saturate(dot(-lightDir, normal));
+	output.diffuse *= saturate(dot(-lightDir, normal))* 0.5 * vLightColor[0];
 
 
 	//variables to calculate specular

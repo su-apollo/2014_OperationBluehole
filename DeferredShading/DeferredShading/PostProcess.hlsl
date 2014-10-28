@@ -45,7 +45,6 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 ambient = float4(0, 0, 0, 1)*0.3;
 
 	normal = (normal - 0.5) * 2;
-	diffuse = diffuse * 0.5 * vLightColor[0];
 	
 	float4 finalColor = 0;
 	finalColor = saturate(ambient + specular + diffuse);
