@@ -1,12 +1,15 @@
 #pragma once
 #include "Singleton.h"
 #include "DirectionalLight.h"
-
+#include "PointLight.h"
 
 
 
 typedef std::shared_ptr<DirectionalLight> DLightPointer;
 typedef std::vector<DLightPointer> DLightList;
+
+typedef std::shared_ptr<PointLight> PLightPointer;
+typedef std::vector<PLightPointer> PLightList;
 
 
 
@@ -17,10 +20,11 @@ public:
 	LightManager();
 	~LightManager();
 
-	void CreateDirectionalLight(int num);
-		
-	DLightList	mDLightList;
-	
+	void CreateDirectionalLights(int num);
+	void CreatePointLights(int num);
+
+	DLightList mDLightList;
+	PLightList mPLightList;
 
 };
 

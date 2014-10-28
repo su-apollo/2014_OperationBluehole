@@ -1,7 +1,7 @@
 #pragma once
 #include "Singleton.h"
-
-
+#include "Elin.h"
+#include "Config.h"
 
 struct QuadVertex
 {
@@ -12,8 +12,9 @@ struct QuadVertex
 struct PostProcessorConstantBuffer
 {
 	D3DXVECTOR4 vEye;
-	D3DXVECTOR4 vLightDir[2];
-	D3DXVECTOR4 vLightColor[2];
+	D3DXVECTOR4 vLightPos[MAX_LIGHT];
+	D3DXVECTOR4 vLightColor[MAX_LIGHT];
+	float		fLightRange[MAX_LIGHT];
 };
 
 class PostProcessor : public Singleton<PostProcessor>

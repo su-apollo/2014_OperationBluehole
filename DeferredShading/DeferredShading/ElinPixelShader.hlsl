@@ -8,8 +8,9 @@
 cbuffer ConstantBuffer : register(b0)
 {
 	float4 vEye;
-	float4 vLightDir[2];
+	float4 vLightPos[2];
 	float4 vLightColor[2];
+	float  fLightRange[2];
 };
 
 //--------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 #include <xnamath.h>
 #include "Singleton.h"
 #include "ModelManager.h"
+#include "Config.h"
 
 static const LPCWSTR	ELIN_TEXTURE_FACE_DIFF = L"ElinModel/Popori_F_Face01_diff.bmp";
 static const LPCWSTR	ELIN_TEXTURE_FACE_NORM = L"ElinModel/Popori_F_Face01_norm.bmp";
@@ -35,8 +36,6 @@ static const WCHAR* PS_PATH = L"ElinPixelShader.hlsl";
 static const LPCSTR	PS_MAIN = "main";
 static const LPCSTR PS_MODEL = "ps_4_0_level_9_3";
 
-static const int MAX_LIGHT = 2;
-
 struct VSConstantBuffer
 {
 	D3DXMATRIX mWorld;
@@ -47,8 +46,9 @@ struct VSConstantBuffer
 struct PSConstantBuffer
 {
 	D3DXVECTOR4 vEye;
-	D3DXVECTOR4 vLightDir[2];
-	D3DXVECTOR4 vLightColor[2];
+	D3DXVECTOR4 vLightPos[MAX_LIGHT];
+	D3DXVECTOR4 vLightColor[MAX_LIGHT];
+	float		fLightRange[MAX_LIGHT];
 };
 
 struct MeshData

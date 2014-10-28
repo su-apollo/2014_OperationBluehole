@@ -1,6 +1,5 @@
 #include "stdafx.h"
-#include "PointLight.h"
-
+#include "Config.h"
 
 
 

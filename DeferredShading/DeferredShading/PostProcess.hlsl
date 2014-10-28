@@ -1,23 +1,21 @@
 
 
-
-
-
-
 //--------------------------------------------------------------------------------------
 // Globals
 //--------------------------------------------------------------------------------------
 cbuffer ConstantBuffer : register(b0)
 {
 	float4 vEye;
-	float4 vLightDir[2];
+	float4 vLightPos[2];
 	float4 vLightColor[2];
+	float  fLightRange[2];
 };
 
 //--------------------------------------------------------------------------------------
 // Textures and Samplers
 //--------------------------------------------------------------------------------------
 
+//배열로 관리할 수 있을 것 같은데
 Texture2D txNormal : register(t0);
 Texture2D txDiffuse : register(t1);
 Texture2D txSpecular : register(t2);

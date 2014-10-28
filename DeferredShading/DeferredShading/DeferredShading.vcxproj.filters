@@ -90,6 +90,9 @@
     <ClInclude Include="PointLight.h">
       <Filter>Light</Filter>
     </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>PreCompile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="PointLight.cpp">
       <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>PreCompile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

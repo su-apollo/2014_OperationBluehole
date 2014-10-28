@@ -40,7 +40,7 @@ BOOL Elin::Init()
 
 	mWorld *= matRotate;
 
-	LightManager::GetInstance()->CreateDirectionalLight(MAX_LIGHT);
+	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
 
 	return TRUE;
 }
@@ -111,13 +111,14 @@ void Elin::Render()
 	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
 
 	PSConstantBuffer pcb;
-	DLightPointer light1 = LightManager::GetInstance()->mDLightList[0];
-	DLightPointer light2 = LightManager::GetInstance()->mDLightList[1];
 	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
-	pcb.vLightDir[0] = light1->GetDirection();
-	pcb.vLightDir[1] = light2->GetDirection();
-	pcb.vLightColor[0] = light1->GetColor();
-	pcb.vLightColor[1] = light2->GetColor();
+	for (int i = 0; i < MAX_LIGHT; ++i)
+	{
+		PLightPointer light = LightManager::GetInstance()->mPLightList[i];
+		pcb.vLightPos[i] = light->mPos;
+		pcb.vLightColor[i] = light->mColor;
+		pcb.fLightRange[i] = light->mRange;
+	}
 	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
 
 	// draw
