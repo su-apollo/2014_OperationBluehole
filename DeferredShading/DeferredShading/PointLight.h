@@ -7,7 +7,7 @@
 class PointLight
 {
 public:
-	PointLight() : mPos(0.0f, 0.0f, 0.0f, 0.0f), mRange(10.f), mColor(1.0f, 1.0f, 1.0f, 1.0f) {}
+	PointLight() : mPos(1.0f, 0.0f, 0.0f, 1.0f), mRange(10.f), mColor(1.0f, 1.0f, 1.0f, 1.0f) {}
 	~PointLight() {}
 
 
