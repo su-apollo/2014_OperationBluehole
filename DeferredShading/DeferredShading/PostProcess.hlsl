@@ -64,21 +64,21 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 lightDir = position - vLightPos[0];
 	float distance = length(lightDir);
 	lightDir /= distance;
-	diffuse *= dot(-lightDir, normal) * vLightColor[0];
+	diffuse *= dot(lightDir, normal) * vLightColor[0] * 0.8;
 	diffuse = saturate(diffuse);
 
 	//variables to calculate specular
-	float4 reflection = normalize(reflect(-lightDir, normal));
+	float4 reflection = normalize(reflect(lightDir, normal));
 	float4 viewDir = normalize(position - vEye);
 
 	float4 specularResult = 0;
 
 	specularResult = saturate(dot(viewDir, reflection));
-	specularResult = pow(specularResult, 1.0f);
+	specularResult = pow(specularResult, 3.0f);
 	specularResult *= specular*vLightColor[0];
 
 	float4 finalColor = 0;
-	finalColor = saturate(ambient + specular + diffuse);
+	finalColor = saturate(ambient + specularResult + diffuse);
 	//finalColor = float4(z, z, z, 1);
 	return finalColor;
 }
