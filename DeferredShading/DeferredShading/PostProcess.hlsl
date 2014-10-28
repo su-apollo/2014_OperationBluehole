@@ -50,16 +50,14 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	diffuse = diffuse * dot(vLightDir[0], normal) * 0.5 * vLightColor[0];
 	
 	float4 finalColor = 0;
-	//finalColor = saturate(ambient + specular + diffuse);
+	finalColor = saturate(ambient + specular + diffuse);
 
 	//for depth
 	float n = 1.0f;
 	float f = 100.0f;
-	float z = (2.0 * n) / (f + n - depth * (f - n));
+	float z = (2.0 * n) / (f + n - depth.x * (f - n));
 
-	finalColor = float4(z, z, z, 1);
-
-
+	//finalColor = float4(z, z, z, 1);
 
 	return finalColor;
 }

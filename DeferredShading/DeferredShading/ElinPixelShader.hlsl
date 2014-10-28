@@ -68,12 +68,10 @@ GBuffer main(PS_INPUT Input)
 	float4 viewDir = normalize(Input.WorldPos - vEye);
 
 	float4 specularResult = 0;
-	if (output.diffuse.x > 0)
-	{
-		specularResult = saturate(dot(viewDir, reflection));
-		specularResult = pow(specularResult, 32.0f);
-		specularResult *= output.specular*vLightColor[0];
-	}
+
+	specularResult = saturate(dot(viewDir, reflection));
+	specularResult = pow(specularResult, 1.0f);
+	specularResult *= output.specular*vLightColor[0];
 
 	output.specular = specularResult;
 
