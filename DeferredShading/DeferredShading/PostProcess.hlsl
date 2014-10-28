@@ -7,6 +7,7 @@ cbuffer ConstantBuffer : register(b0)
 {
 	float4x4 mInverseProj;
 	float4 vEye;
+	float4 vNearFar;
 	float4 vLightPos[2];
 	float4 vLightColor[2];
 	float4 vLightRange[2];
@@ -49,8 +50,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	normal = (normal - 0.5) * 2;
 	
 	//for depth
-	float n = 1.0f;
-	float f = 100.0f;
+	float n = vNearFar.x;
+	float f = vNearFar.y;
 	float z = (2.0 * n) / (f + n - depth.x * (f - n));
 	
 	// reconstruct pos
@@ -90,13 +91,10 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	specular *= specularFactor;
 	diffuse *= diffuseFactor;
 
-	
-	
-	
 	float4 finalColor = 0;
-	finalColor = saturate(ambient + specular + diffuse);
+	//finalColor = saturate(ambient + specular + diffuse);
 	//finalColor = diffuse;
-	//finalColor = float4(z, z, z, 1);
+	finalColor = float4(z, z, z, 1);
 	return finalColor;
 }
 

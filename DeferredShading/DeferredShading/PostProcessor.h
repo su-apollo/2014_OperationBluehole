@@ -13,6 +13,7 @@ struct PostProcessorConstantBuffer
 {
 	D3DXMATRIX	mInverseProj;
 	D3DXVECTOR4 vEye;
+	D3DXVECTOR4 vNearFar;
 	D3DXVECTOR4 vLightPos[MAX_LIGHT];
 	D3DXVECTOR4 vLightColor[MAX_LIGHT];
 	D3DXVECTOR4	vLightRange[MAX_LIGHT];

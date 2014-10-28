@@ -13,6 +13,10 @@ public:
 	~Camera() {}
 
 	void		Update();
+
+	float		GetNear() { return mNear; }
+	float		GetFar() { return mFar; }
+
 	D3DXVECTOR3	GetPosition() { return mEye; }
 
 	D3DXMATRIX	GetMatView() { return mMatView; }
@@ -25,7 +29,7 @@ private:
 	D3DXVECTOR3 mAt;
 	D3DXVECTOR3 mUp;
 
-	float		mNear = 1.0f;
+	float		mNear = 10.0f;
 	float		mFar = 100.0f;
 
 	D3DXMATRIX	mMatView;

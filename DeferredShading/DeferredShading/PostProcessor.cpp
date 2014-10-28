@@ -84,6 +84,7 @@ void PostProcessor::Render()
 	PostProcessorConstantBuffer pcb;
 	pcb.mInverseProj = Camera::GetInstance()->GetMatInverseProj();
 	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
+	pcb.vNearFar = D3DXVECTOR4(Camera::GetInstance()->GetNear(), Camera::GetInstance()->GetFar(), 0, 1);
 	for (int i = 0; i < MAX_LIGHT; ++i)
 	{
 		PLightPointer light = LightManager::GetInstance()->mPLightList[i];
