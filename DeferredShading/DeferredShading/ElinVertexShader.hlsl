@@ -26,7 +26,6 @@ struct VS_OUTPUT
 	float2 Tex : TEXCOORD0;
 	float3 Tang : TEXCOORD1;
 	float3 Norm : TEXCOORD2;
-	float4 WorldPos : TEXCOORD3;
 };
 
 //--------------------------------------------------------------------------------------
@@ -36,7 +35,6 @@ VS_OUTPUT main(VS_INPUT Input)
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
 	output.Pos = mul(Input.Pos, World);
-	output.WorldPos = output.Pos;
 	output.Pos = mul(output.Pos, View);
 	output.Pos = mul(output.Pos, Projection);
 	output.Tex = Input.Tex;
