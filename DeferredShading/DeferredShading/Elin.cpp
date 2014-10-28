@@ -40,8 +40,6 @@ BOOL Elin::Init()
 
 	mWorld *= matRotate;
 
-	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
-
 	return TRUE;
 }
 

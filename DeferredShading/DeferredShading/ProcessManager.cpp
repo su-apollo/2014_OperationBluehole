@@ -33,6 +33,8 @@ BOOL ProcessManager::Init() const
 		return FALSE;
 
 	RenderStateManager::GetInstance()->Init();
+	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
+	//todo : ºû À§Ä¡ ¼³Á¤
 
 	return TRUE;
 }
