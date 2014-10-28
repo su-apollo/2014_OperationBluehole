@@ -30,6 +30,7 @@ struct PS_INPUT
 {
 	float4 Pos : SV_POSITION;
 	float2 Tex : TEXCOORD0;
+	float4 ScreenPos : TEXCOORD1;
 };
 
 
@@ -47,22 +48,19 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	normal = (normal - 0.5) * 2;
 	
-
-
 	//for depth
 	float n = 1.0f;
 	float f = 100.0f;
 	float z = (2.0 * n) / (f + n - depth.x * (f - n));
-
-	float x = Input.Pos.x;
-	float y = Input.Pos.y;
+	
+	// reconstruct pos
+	float x = Input.ScreenPos.x;
+	float y = Input.ScreenPos.y;
 	float4 position = mul(float4(x, y, z, 1.0), mInverseProj);
 	position.xyz /= position.www;
+	// point
 	position.w = 1.0f;
-
-
-	//pointLihgt추가 : 정확히는 vLightPos여야.
-	//WorldPos가 있어야 하기 때문에. diffuse도 여기서 계산해야 할 것 같다.??
+	
 	float4 lightDir = position - vLightPos[0];
 	float distance = length(lightDir);
 	lightDir /= distance;
@@ -78,11 +76,9 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	specularResult = saturate(dot(viewDir, reflection));
 	specularResult = pow(specularResult, 1.0f);
 	specularResult *= specular*vLightColor[0];
-	
 
 	float4 finalColor = 0;
 	finalColor = saturate(ambient + specular + diffuse);
-
 	//finalColor = float4(z, z, z, 1);
 	return finalColor;
 }
