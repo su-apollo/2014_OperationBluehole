@@ -8,7 +8,8 @@ cbuffer ConstantBuffer : register(b0)
 	float4 vEye;
 	float4 vLightPos[2];
 	float4 vLightColor[2];
-	float  fLightRange[2];
+	float4 vLightRange[2];
+	float4x4 mInverseProj;
 };
 
 //--------------------------------------------------------------------------------------
