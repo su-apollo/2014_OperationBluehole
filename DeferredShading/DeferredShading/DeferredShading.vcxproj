@@ -93,6 +93,7 @@
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Elin.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="Room.h" />
     <ClInclude Include="RSManager.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="RTManager.h" />
@@ -117,6 +118,7 @@
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Elin.cpp" />
     <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="Room.cpp" />
     <ClCompile Include="RSManager.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="RTManager.cpp" />

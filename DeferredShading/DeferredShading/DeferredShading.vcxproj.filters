@@ -93,6 +93,9 @@
     <ClInclude Include="RSManager.h">
       <Filter>Render</Filter>
     </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -151,6 +154,9 @@
     </ClCompile>
     <ClCompile Include="RSManager.cpp">
       <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Contents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
