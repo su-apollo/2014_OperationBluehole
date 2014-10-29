@@ -68,7 +68,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 		lightDir /= distance;
 
 		float3 attr = float3(0, 0, 1);
-		float attrFactor = 1.0f / dot(attr, float3(1.0f, distance, distance*distance));
+		float attrFactor = 1.0f - saturate((distance-0.1f) / vLightRange[i].x);
+		attrFactor = pow(attrFactor, 2);
 
 		//calculate diffuseFactor
 		diffuseFactor += dot(lightDir, normal) * vLightColor[i] * attrFactor;
