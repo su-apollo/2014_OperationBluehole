@@ -43,25 +43,25 @@ MaterialPointer MaterialManager::CreateMaterial(UINT vertexConstbuff, WCHAR* ver
 	if (!CompileVertexShader(vertexShader, mat))
 	{
 		MessageBox(hWnd, L"CreateMaterial VertexShader Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		return NULL;
+		exit(1);
 	}
 	
 	if (!CompilePixelShader(pixelShader, mat))
 	{
 		MessageBox(hWnd, L"CreateMaterial PixelShader Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		return NULL;
+		exit(1);
 	}
 
 	if (!CreateConstBuffer(vertexConstbuff, pixelConstbuff, mat))
 	{
 		MessageBox(hWnd, L"CreateMaterial ConstBuffer Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		return NULL;
+		exit(1);
 	}
 
 	if (!CreateTextureSR(diffusePath, specularPath, normalPath, mat))
 	{
 		MessageBox(hWnd, L"CreateMaterial Texture Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
-		return NULL;
+		exit(1);
 	}
 
 	return mat;

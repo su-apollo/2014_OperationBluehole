@@ -34,6 +34,9 @@
 #include <d3dcompiler.h>
 #include <d3dx9math.h>
 
+// fbxsdk
+#include <fbxsdk.h>
+
 // std
 #include <vector>
 #include <list>
