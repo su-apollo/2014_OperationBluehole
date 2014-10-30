@@ -99,6 +99,12 @@
     <ClInclude Include="Material.h">
       <Filter>Contents</Filter>
     </ClInclude>
+    <ClInclude Include="FBXLoader.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="Contents.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -162,6 +168,12 @@
       <Filter>Contents</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXLoader.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="Contents.cpp">
       <Filter>Contents</Filter>
     </ClCompile>
   </ItemGroup>

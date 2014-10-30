@@ -89,9 +89,11 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Contents.h" />
     <ClInclude Include="DeferredShading.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Elin.h" />
+    <ClInclude Include="FBXLoader.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Room.h" />
@@ -115,9 +117,11 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="Contents.cpp" />
     <ClCompile Include="DeferredShading.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Elin.cpp" />
+    <ClCompile Include="FBXLoader.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Room.cpp" />
