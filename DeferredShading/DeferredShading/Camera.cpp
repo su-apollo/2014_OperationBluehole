@@ -26,3 +26,11 @@ D3DXMATRIX Camera::GetMatInverseProj()
 	D3DXMatrixInverse(&output, NULL, &mMatProj);
 	return output;
 }
+
+D3DXMATRIX Camera::GetMatInverseViewProj()
+{
+	D3DXMATRIX output;
+	D3DXMatrixMultiply(&output, &mMatView, &mMatProj);
+	D3DXMatrixInverse(&output, NULL, &output);
+	return output;
+}

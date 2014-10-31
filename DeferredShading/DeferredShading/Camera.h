@@ -2,10 +2,9 @@
 #include "Singleton.h"
 
 enum {
-	FRUSTUM_NEAR = 10,
+	FRUSTUM_NEAR = 100,
 	FRUSTUM_FAR = 300
 };
-
 
 class Camera : public Singleton<Camera>
 {
@@ -24,6 +23,7 @@ public:
 	D3DXMATRIX	GetMatView() { return mMatView; }
 	D3DXMATRIX	GetMatProj() { return mMatProj; }
 	D3DXMATRIX	GetMatInverseProj();
+	D3DXMATRIX	GetMatInverseViewProj();
 
 private:
 

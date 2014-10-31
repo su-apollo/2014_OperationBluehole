@@ -82,8 +82,10 @@ void PostProcessor::Render()
 
 	// set constbuff
 	PostProcessorConstantBuffer pcb;
-	D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseProj();
-	pcb.mInverseProj = matInverseProj;
+	//D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseProj();
+	D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseViewProj();
+	D3DXMatrixTranspose(&matInverseProj, &matInverseProj);
+	pcb.mInverseViewProj = matInverseProj;
 	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
 	pcb.vNearFar = D3DXVECTOR4(Camera::GetInstance()->GetNear(), Camera::GetInstance()->GetFar(), 0, 1);
 	for (int i = 0; i < MAX_LIGHT; ++i)

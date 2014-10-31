@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------------------------
 cbuffer ConstantBuffer : register(b0)
 {
-	matrix mInverseProj;
+	matrix mInverseViewProj;
 	float4 vEye;
 	float4 vNearFar;
 	float4 vLightPos[2];
@@ -50,13 +50,14 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	normal = normal * 2 - 1;
 	
 	// reconstruct pos
-	float x = Input.Tex.x * 2 - 1;
-	float y = (1 - Input.Tex.y) * 2 - 1;
-	float4 position = mul(float4(x, y, depth.x, 1.0), mInverseProj);
-	position.xyz /= position.w;
-	// point
-	position.w = 1.0f;
-
+	float4 position;
+	position.x = Input.Tex.x * 2 - 1;
+	position.y = (1 - Input.Tex.y) * 2 - 1;
+	position.z = depth.x;
+	position.w = 1;
+	position = mul(position, mInverseViewProj);
+	position /= position.w;
+	
 	float4 diffuseFactor = float4(0, 0, 0, 0);
 	float4 specularFactor = float4(0, 0, 0, 0);;
 	
@@ -81,17 +82,15 @@ float4 main(PS_INPUT Input) : SV_TARGET
 		//calculate specularFactor
 		float specularResult = saturate(dot(viewDir, reflection));
 		specularFactor += pow(specularResult, 1.0f) * vLightColor[i] * attrFactor;
-		
 	}
 
 	specular *= specularFactor;
 	diffuse *= diffuseFactor;
 
 	float4 finalColor = 0;
-	//finalColor = txDepth.Sample(samLinear, Input.Tex);
 	finalColor = saturate(ambient + specular*4 + diffuse);
 	//finalColor = specular * 4;
-	//finalColor = float4(position.xxx, 1);
+	//finalColor = float4(position.zzz, 1);
 	//finalColor = float4(depth.xxx,1);
 	//finalColor = float4(z, z, z, 1);
 	return finalColor;
