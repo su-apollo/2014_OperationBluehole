@@ -45,6 +45,10 @@ BOOL PostProcessor::Init()
 		MessageBox(hWnd, L"PostProcessor Quad Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		return FALSE;
 	}
+	if (!LoadNoiseTexture())
+	{
+		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -83,9 +87,16 @@ void PostProcessor::Render()
 	// set constbuff
 	PostProcessorConstantBuffer pcb;
 	//D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseProj();
-	D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseViewProj();
+	D3DXMATRIX matInverseViewProj = Camera::GetInstance()->GetMatInverseViewProj();
+	D3DXMatrixTranspose(&matInverseViewProj, &matInverseViewProj);
+	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
+	D3DXMatrixTranspose(&matProj, &matProj);
+	D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseProj();
 	D3DXMatrixTranspose(&matInverseProj, &matInverseProj);
-	pcb.mInverseViewProj = matInverseProj;
+	
+	pcb.mInverseViewProj = matInverseViewProj;
+	pcb.mProj = matProj;
+	pcb.mInverseProj = matInverseProj;
 	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
 	pcb.vNearFar = D3DXVECTOR4(Camera::GetInstance()->GetNear(), Camera::GetInstance()->GetFar(), 0, 1);
 	for (int i = 0; i < MAX_LIGHT; ++i)
@@ -244,6 +255,10 @@ void PostProcessor::RenderCleanUp()
 	mD3DDeviceContext->PSSetShaderResources(0, 8, nullSRV);
 }
 
-
-
-
+BOOL PostProcessor::LoadNoiseTexture()
+{
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, NOISE_TEXTURE, NULL, NULL, &mTextureNoise, NULL);
+	if (FAILED(hr))
+		return FALSE;
+	return TRUE;
+}

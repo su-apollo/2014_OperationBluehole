@@ -12,12 +12,16 @@ struct QuadVertex
 struct PostProcessorConstantBuffer
 {
 	D3DXMATRIX	mInverseViewProj;
+	D3DXMATRIX	mProj;
+	D3DXMATRIX	mInverseProj;
 	D3DXVECTOR4 vEye;
 	D3DXVECTOR4 vNearFar;
 	D3DXVECTOR4 vLightPos[MAX_LIGHT];
 	D3DXVECTOR4 vLightColor[MAX_LIGHT];
 	D3DXVECTOR4	vLightRange[MAX_LIGHT];
 };
+
+static const LPCWSTR	NOISE_TEXTURE = L"noise_texture.bmp";
 
 class PostProcessor : public Singleton<PostProcessor>
 {
@@ -35,6 +39,7 @@ private:
 	BOOL					CompileShader();
 	BOOL					CreateConstBuffer();
 	BOOL					CreateQuad();
+	BOOL					LoadNoiseTexture();
 
 	HRESULT					CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
@@ -43,6 +48,9 @@ private:
 	ID3D11Buffer*			mPSConstBuffer = NULL;
 
 	ID3D11InputLayout*      mVertexLayout11 = NULL;
+
+	// noise texture
+	ID3D11ShaderResourceView*	mTextureNoise = NULL;
 
 	WCHAR*					mVertexShaderPath = L"Quad.hlsl";
 	LPCSTR					mVertexShaderMain = "main";
