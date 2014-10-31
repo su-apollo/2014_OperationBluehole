@@ -22,9 +22,7 @@ FbxScene* ModelManager::MakeFbxSceneFromFile(const char* filePath)
 {
 	mFbxManager = FbxManager::Create();
 	if (!mFbxManager)
-	{
 		return false;
-	}
 
 	FbxIOSettings* fbxIOSettings = FbxIOSettings::Create(mFbxManager, IOSROOT);
 	mFbxManager->SetIOSettings(fbxIOSettings);
@@ -34,29 +32,34 @@ FbxScene* ModelManager::MakeFbxSceneFromFile(const char* filePath)
 	FbxImporter* fbxImporter = FbxImporter::Create(mFbxManager, "myImporter");
 
 	if (!fbxImporter)
-	{
 		return false;
-	}
 
 	if (!fbxImporter->Initialize(filePath, -1, mFbxManager->GetIOSettings()))
-	{
 		return false;
-	}
 
 	if (!fbxImporter->Import(mFbxScene))
-	{
 		return false;
-	}
+
 	fbxImporter->Destroy();
+
+	FbxAxisSystem OurAxisSystem = FbxAxisSystem::OpenGL;
+	//좌표계 설정
+	FbxAxisSystem SceneAxisSystem = mFbxScene->GetGlobalSettings().GetAxisSystem();
+	if (SceneAxisSystem != OurAxisSystem)
+		FbxAxisSystem::DirectX.ConvertScene(mFbxScene);
+
+	FbxSystemUnit SceneSystemUnit = mFbxScene->GetGlobalSettings().GetSystemUnit();
+	if (SceneSystemUnit.GetScaleFactor() != 1.0)
+		FbxSystemUnit::cm.ConvertScene(mFbxScene);
 
 	return mFbxScene;
 }
 
 
 
-EMesh ModelManager::ProcessMesh(FbxNode* inNode)
+MeshPointer ModelManager::ProcessMesh(FbxNode* inNode)
 {
-	EMesh pNewMesh(new Mesh);
+	MeshPointer pNewMesh(new Mesh);
 	FbxMesh* pMesh = (FbxMesh*)inNode->GetNodeAttribute();
 
 	//fbx매쉬 생성
@@ -174,6 +177,28 @@ EMesh ModelManager::ProcessMesh(FbxNode* inNode)
 		pNewMesh->mNumIndex = pNewMesh->mIndices.size();
 	}
 
+	FbxAnimEvaluator* lEvaluator = mFbxScene->GetAnimationEvaluator();
+	FbxMatrix lGlobal;
+	lGlobal.SetIdentity();
+
+	//lEvaluator->GetNodeLocalTransform();
+	
+	if (inNode != mFbxScene->GetRootNode())
+	{
+		lGlobal = lEvaluator->GetNodeGlobalTransform(inNode);
+		pNewMesh->mWorld = D3DXMATRIX(	lGlobal.Get(0, 0), lGlobal.Get(0, 1), lGlobal.Get(0, 2), lGlobal.Get(0, 3),
+										lGlobal.Get(1, 0), lGlobal.Get(1, 1), lGlobal.Get(1, 2), lGlobal.Get(1, 3),
+										lGlobal.Get(2, 0), lGlobal.Get(2, 1), lGlobal.Get(2, 2), lGlobal.Get(2, 3),
+										lGlobal.Get(3, 0), lGlobal.Get(3, 1), lGlobal.Get(3, 2), lGlobal.Get(3, 3));
+	}
+	else
+	{
+		pNewMesh->mWorld = D3DXMATRIX(	lGlobal.Get(0, 0), lGlobal.Get(0, 1), lGlobal.Get(0, 2), lGlobal.Get(0, 3),
+										lGlobal.Get(1, 0), lGlobal.Get(1, 1), lGlobal.Get(1, 2), lGlobal.Get(1, 3),
+										lGlobal.Get(2, 0), lGlobal.Get(2, 1), lGlobal.Get(2, 2), lGlobal.Get(2, 3),
+										lGlobal.Get(3, 0), lGlobal.Get(3, 1), lGlobal.Get(3, 2), lGlobal.Get(3, 3));
+	}
+	
 	return pNewMesh;
 }
 

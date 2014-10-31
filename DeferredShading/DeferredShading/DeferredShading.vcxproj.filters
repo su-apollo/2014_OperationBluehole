@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Utils">
-      <UniqueIdentifier>{8692b25a-4d73-4203-ba34-3665e8e7b1b8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{93031e5c-57f8-4308-a1c5-713e27f1c71a}</UniqueIdentifier>
     </Filter>
@@ -21,6 +18,12 @@
     </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{202d29dd-b6dd-4d9d-ad60-101d850d2925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="trash">
+      <UniqueIdentifier>{3265437e-15fa-430d-9a93-ed0c30be3027}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{8692b25a-4d73-4203-ba34-3665e8e7b1b8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -96,17 +99,17 @@
     <ClInclude Include="Room.h">
       <Filter>Contents</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Contents</Filter>
-    </ClInclude>
-    <ClInclude Include="FBXLoader.h">
-      <Filter>Contents</Filter>
-    </ClInclude>
     <ClInclude Include="Contents.h">
       <Filter>Contents</Filter>
     </ClInclude>
+    <ClInclude Include="FBXLoader.h">
+      <Filter>trash</Filter>
+    </ClInclude>
     <ClInclude Include="FBXRenderer.h">
-      <Filter>Contents</Filter>
+      <Filter>trash</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>trash</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -170,17 +173,17 @@
     <ClCompile Include="Room.cpp">
       <Filter>Contents</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Contents</Filter>
-    </ClCompile>
-    <ClCompile Include="FBXLoader.cpp">
-      <Filter>Contents</Filter>
-    </ClCompile>
     <ClCompile Include="Contents.cpp">
       <Filter>Contents</Filter>
     </ClCompile>
+    <ClCompile Include="FBXLoader.cpp">
+      <Filter>trash</Filter>
+    </ClCompile>
     <ClCompile Include="FBXRenderer.cpp">
-      <Filter>Contents</Filter>
+      <Filter>trash</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>trash</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

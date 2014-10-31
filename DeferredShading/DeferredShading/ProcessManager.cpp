@@ -83,4 +83,5 @@ void ProcessManager::Destroy() const
 	PostProcessor::Release();
 	SamplerManager::Release();
 	RenderStateManager::Release();
+	Contents::Release();
 }

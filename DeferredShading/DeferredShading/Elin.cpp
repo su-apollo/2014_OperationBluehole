@@ -35,10 +35,10 @@ BOOL Elin::Init()
 	LoadTexture();
 
 	D3DXMATRIX matRotate;
-	D3DXMatrixRotationY(&matRotate, static_cast<float>(180.0*(3.14 / 180.0)));
 	D3DXMatrixRotationX(&matRotate, static_cast<float>(-90.0*(3.14 / 180.0)));
+	//D3DXMatrixRotationY(&matRotate, static_cast<float>(180.0*(3.14 / 180.0)));
 
-	mWorld *= matRotate;
+	//mWorld *= matRotate;
 
 	return TRUE;
 }
@@ -56,6 +56,8 @@ void Elin::GetMeshData(FbxNode* inNode)
 
 			if (childNode->GetNodeAttribute() == NULL)
 				continue;
+
+			int temp = childNode->GetNodeAttribute()->GetAttributeType();
 
 			if (childNode->GetNodeAttribute()->GetAttributeType() != FbxNodeAttribute::eMesh)
 				continue;
@@ -93,14 +95,25 @@ void Elin::Render()
 	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
 	mWorld *= matRotate;
 
+	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
+	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
+	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
+	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPSConstBuffer);
+
+	for (unsigned int i = 0; i < mMeshData.size(); ++i)
+		RenderMesh(mMeshData[i]);
+}
+
+void Elin::RenderMesh(MeshDataPointer meshData)
+{
 	// update constbuff
-	D3DXMATRIX matWorld;
+	D3DXMATRIX matWorld = meshData->mWorld* mWorld;
 	D3DXMATRIX matView = Camera::GetInstance()->GetMatView();
 	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
 	VSConstantBuffer vcb;
 
 	// 열 우선배치
-	D3DXMatrixTranspose(&matWorld, &mWorld);
+	D3DXMatrixTranspose(&matWorld, &matWorld);
 	D3DXMatrixTranspose(&matView, &matView);
 	D3DXMatrixTranspose(&matProj, &matProj);
 	vcb.mWorld = matWorld;
@@ -108,20 +121,6 @@ void Elin::Render()
 	vcb.mProjection = matProj;
 	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
 
-	// draw
-	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
-	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
-	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
-	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPSConstBuffer);
-
-	for (unsigned int i = 0; i < mMeshData.size(); ++i)
-	{
-		RenderMesh(mMeshData[i]);
-	}
-}
-
-void Elin::RenderMesh(EMeshData meshData)
-{
 	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
 
 	// Set vertex buffer
@@ -249,10 +248,12 @@ BOOL Elin::CreateModelBuffer()
 }
 
 
-BOOL Elin::CreateMeshBuffer(EMesh mesh)
+BOOL Elin::CreateMeshBuffer(MeshPointer mesh)
 {
-	EMeshData pMeshData(new MeshData);
+	MeshDataPointer pMeshData(new MeshData);
 	mMeshData.push_back(pMeshData);
+	pMeshData->mWorld = mesh->mWorld;
+
 	if (!CreateMeshVB(mesh, mMeshData.back()))
 		return FALSE;
 	if (!CreateMeshIB(mesh, mMeshData.back()))
@@ -263,7 +264,7 @@ BOOL Elin::CreateMeshBuffer(EMesh mesh)
 	return TRUE;
 }
 
-BOOL Elin::CreateMeshVB(EMesh mesh, EMeshData meshData)
+BOOL Elin::CreateMeshVB(MeshPointer mesh, MeshDataPointer meshData)
 {
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -284,7 +285,7 @@ BOOL Elin::CreateMeshVB(EMesh mesh, EMeshData meshData)
 }
 
 
-BOOL Elin::CreateMeshIB(EMesh mesh, EMeshData meshData)
+BOOL Elin::CreateMeshIB(MeshPointer mesh, MeshDataPointer meshData)
 {
 	meshData->mNumIndex = mesh->mNumIndex;
 
@@ -308,7 +309,7 @@ BOOL Elin::CreateMeshIB(EMesh mesh, EMeshData meshData)
 }
 
 
-BOOL Elin::CreateMeshCB(EMesh mesh, EMeshData meshData)
+BOOL Elin::CreateMeshCB(MeshPointer mesh, MeshDataPointer meshData)
 {
 	D3D11_BUFFER_DESC bd;
 	//아래 zeromemory를 꼭해야함
@@ -358,7 +359,7 @@ BOOL Elin::LoadTexture()
 	return TRUE;
 }
 
-BOOL Elin::LoadMeshTexture(EMesh mesh, EMeshData meshData)
+BOOL Elin::LoadMeshTexture(MeshPointer mesh, MeshDataPointer meshData)
 {
 	// Load the Texture
 	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mesh->mTexutreDiff, NULL, NULL, &meshData->mTextureRVDiff, NULL);

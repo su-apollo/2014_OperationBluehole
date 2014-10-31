@@ -2,17 +2,28 @@
 #include "FBXLoader.h"
 #include "Logger.h"
 
-
-
-
-
-FBXLoader::FBXLoader()
+CFBXLoader::CFBXLoader()
 {
+	mSdkManager = nullptr;
+	mScene = nullptr;
 }
 
-
-FBXLoader::~FBXLoader()
+CFBXLoader::~CFBXLoader()
 {
+	Release();
+}
+
+//
+void CFBXLoader::Release()
+{
+	m_meshNodeArray.clear();
+
+	if (mImporter)
+	{
+		mImporter->Destroy();
+		mImporter = nullptr;
+	}
+
 	if (mScene)
 	{
 		mScene->Destroy();
@@ -26,62 +37,95 @@ FBXLoader::~FBXLoader()
 	}
 }
 
-BOOL FBXLoader::Init()
-{
-	mSdkManager = FbxManager::Create();
-	if (!mSdkManager)
-		return FALSE;
-
-	FbxIOSettings* ios = FbxIOSettings::Create(mSdkManager, IOSROOT);
-	mSdkManager->SetIOSettings(ios);
-
-	FbxString lPath = FbxGetApplicationDirectory();
-	mSdkManager->LoadPluginsDirectory(lPath.Buffer());
-
-	mScene = FbxScene::Create(mSdkManager, "My Scene");
-	if (!mScene)
-		return FALSE;
-
-	return TRUE;
-}
-
-BOOL FBXLoader::LoadFBX(char* filename)
+HRESULT CFBXLoader::LoadFBX(const char* filename, const eAXIS_SYSTEM axis)
 {
 	if (!filename)
-		return FALSE;
+		return E_FAIL;
 
+	HRESULT hr = S_OK;
+
+	InitializeSdkObjects(mSdkManager, mScene);
+	if (!mSdkManager)
+		return E_FAIL;
+
+	// ƒCƒ“???ì¬
 	int lFileFormat = -1;
 	mImporter = FbxImporter::Create(mSdkManager, "");
 
 	if (!mSdkManager->GetIOPluginRegistry()->DetectReaderFileFormat(filename, lFileFormat))
-		lFileFormat = mSdkManager->GetIOPluginRegistry()->FindReaderIDByDescription("FBX binary (*.fbx)");
+	{
+		// Unrecognizable file format. Try to fall back to FbxImporter::eFBX_BINARY
+		lFileFormat = mSdkManager->GetIOPluginRegistry()->FindReaderIDByDescription("FBX binary (*.fbx)");;
+	}
 
+	// Initialize the importer by providing a filename.
 	if (!mImporter || mImporter->Initialize(filename, lFileFormat) == false)
-		return FALSE;
+		return E_FAIL;
 
+	//
 	if (!mImporter || mImporter->Import(mScene) == false)
-		return FALSE;
+		return E_FAIL;
 
 	FbxAxisSystem OurAxisSystem = FbxAxisSystem::DirectX;
 
-	//ÁÂÇ¥°è ¼³Á¤
+	if (axis == eAXIS_OPENGL)
+		OurAxisSystem = FbxAxisSystem::OpenGL;
+
+	// DirectXŒn
 	FbxAxisSystem SceneAxisSystem = mScene->GetGlobalSettings().GetAxisSystem();
 	if (SceneAxisSystem != OurAxisSystem)
+	{
 		FbxAxisSystem::DirectX.ConvertScene(mScene);
+	}
 
-	//
+	// ’PˆÊŒn‚Ì“ˆê
+	// •s—v‚Å‚à‚¢‚¢‚©‚à
 	FbxSystemUnit SceneSystemUnit = mScene->GetGlobalSettings().GetSystemUnit();
 	if (SceneSystemUnit.GetScaleFactor() != 1.0)
+	{
+		// ƒZƒ“?ƒ???’PˆÊ‚ÉƒRƒ“ƒo?ƒg‚·‚é
 		FbxSystemUnit::cm.ConvertScene(mScene);
-	
+	}
+
+	// ŽOŠp?‰»(ŽOŠp?ˆÈŠO‚Ìƒf??‚Å‚àƒRƒŒ‚ÅˆÀS)
 	TriangulateRecursive(mScene->GetRootNode());
 
+	Setup();
 
-
-	return TRUE;
+	return hr;
 }
 
-void FBXLoader::TriangulateRecursive(FbxNode* pNode)
+//
+void CFBXLoader::InitializeSdkObjects(FbxManager*& pManager, FbxScene*& pScene)
+{
+	//The first thing to do is to create the FBX Manager which is the object allocator for almost all the classes in the SDK
+	pManager = FbxManager::Create();
+	if (!pManager)
+	{
+		FBXSDK_printf("Error: Unable to create FBX Manager!\n");
+		exit(1);
+	}
+	else FBXSDK_printf("Autodesk FBX SDK version %s\n", pManager->GetVersion());
+
+	//Create an IOSettings object. This object holds all import/export settings.
+	FbxIOSettings* ios = FbxIOSettings::Create(pManager, IOSROOT);
+	pManager->SetIOSettings(ios);
+
+	//Load plugins from the executable directory (optional)
+	FbxString lPath = FbxGetApplicationDirectory();
+	pManager->LoadPluginsDirectory(lPath.Buffer());
+
+	//Create an FBX scene. This object holds most objects imported/exported from/to files.
+	pScene = FbxScene::Create(pManager, "My Scene");
+	if (!pScene)
+	{
+		FBXSDK_printf("Error: Unable to create FBX scene!\n");
+		exit(1);
+	}
+}
+
+// ŽOŠp?‰»
+void CFBXLoader::TriangulateRecursive(FbxNode* pNode)
 {
 	FbxNodeAttribute* lNodeAttribute = pNode->GetNodeAttribute();
 
@@ -93,22 +137,38 @@ void FBXLoader::TriangulateRecursive(FbxNode* pNode)
 			lNodeAttribute->GetAttributeType() == FbxNodeAttribute::ePatch)
 		{
 			FbxGeometryConverter lConverter(pNode->GetFbxManager());
+			// ‚±‚ê‚Å‚Ç‚ñ‚È?ó‚àŽOŠp?‰»
+#if 0
+			lConverter.TriangulateInPlace(pNode);	// ŒÃ‚¢Žè?
+#endif // 0
 			lConverter.Triangulate(mScene, true);
 		}
 	}
 
 	const int lChildCount = pNode->GetChildCount();
 	for (int lChildIndex = 0; lChildIndex < lChildCount; ++lChildIndex)
+	{
+		// Žqƒm?ƒh‚ð’Tõ
 		TriangulateRecursive(pNode->GetChild(lChildIndex));
+	}
 }
 
-void FBXLoader::Setup()
+//
+FbxNode&	CFBXLoader::GetRootNode()
 {
-	if (mScene->GetRootNode())
-		SetupNode(mScene->GetRootNode(), "null");
+	return *mScene->GetRootNode();
 }
 
-void FBXLoader::SetupNode(FbxNode* pNode, std::string parentName)
+void CFBXLoader::Setup()
+{
+	// RootNode‚©‚ç’Tõ‚µ‚Ä‚¢‚­
+	if (mScene->GetRootNode())
+	{
+		SetupNode(mScene->GetRootNode(), "null");
+	}
+}
+
+void CFBXLoader::SetupNode(FbxNode* pNode, std::string parentName)
 {
 	if (!pNode)
 		return;
@@ -127,10 +187,13 @@ void FBXLoader::SetupNode(FbxNode* pNode, std::string parentName)
 		const int lVertexCount = lMesh->GetControlPointsCount();
 
 		if (lVertexCount > 0)
+		{
+			// ’¸?‚ª‚ ‚é‚È‚çƒm?ƒh‚ÉƒRƒs?
 			CopyVertexData(lMesh, &meshNode);
+		}
 	}
 
-	// todo : ¿¤¸°¸ðµ¨ È®ÀÎ
+	// ?ƒeƒŠƒAƒ‹
 	const int lMaterialCount = pNode->GetMaterialCount();
 	for (int i = 0; i < lMaterialCount; i++)
 	{
@@ -141,145 +204,36 @@ void FBXLoader::SetupNode(FbxNode* pNode, std::string parentName)
 		FBX_MATERIAL_NODE destMat;
 		CopyMatrialData(mat, &destMat);
 
-		meshNode.materialArray.push_back(destMat);
+		meshNode.m_materialArray.push_back(destMat);
 	}
 
+	//
 	ComputeNodeMatrix(pNode, &meshNode);
 
-	mMeshNodeArray.push_back(meshNode);
+	m_meshNodeArray.push_back(meshNode);
 
 	const int lCount = pNode->GetChildCount();
 	for (int i = 0; i < lCount; i++)
+	{
 		SetupNode(pNode->GetChild(i), meshNode.name);
+	}
 }
 
-void FBXLoader::CopyVertexData(FbxMesh* pMesh, FBX_MESH_NODE* meshNode)
+//
+void CFBXLoader::SetFbxColor(FBX_MATRIAL_ELEMENT& destColor, const FbxDouble3 srcColor)
 {
-	if (!pMesh)
-		return;
-
-	int lPolygonCount = pMesh->GetPolygonCount();
-
-	FbxVector4 pos, nor;
-
-	meshNode->elements.numPosition = 1;
-	meshNode->elements.numNormal = 1;
-
-	unsigned int indx = 0;
-
-	for (int i = 0; i < lPolygonCount; i++)
-	{
-		int lPolygonsize = pMesh->GetPolygonSize(i);
-
-		for (int pol = 0; pol < lPolygonsize; pol++)
-		{
-			int index = pMesh->GetPolygonVertex(i, pol);
-			meshNode->indexArray.push_back(indx);
-
-			pos = pMesh->GetControlPointAt(index);
-			pMesh->GetPolygonVertexNormal(i, pol, nor);
-
-			meshNode->positionArray.push_back(pos);
-			meshNode->normalArray.push_back(nor);
-
-			++indx;
-		}
-	}
-
-	FbxStringList	uvsetName;
-	pMesh->GetUVSetNames(uvsetName);
-	// todo : ¿¤¸°¸ðµ¨ °¹¼ö È®ÀÎ
-	int numUVSet = uvsetName.GetCount();
-	meshNode->elements.numUVSet = numUVSet;
-
-	bool unmapped = false;
-
-	for (int uv = 0; uv < numUVSet; uv++)
-	{
-		meshNode->uvsetID[uvsetName.GetStringAt(uv)] = uv;
-		for (int i = 0; i < lPolygonCount; i++)
-		{
-			int lPolygonsize = pMesh->GetPolygonSize(i);
-
-			for (int pol = 0; pol < lPolygonsize; pol++)
-			{
-				FbxString name = uvsetName.GetStringAt(uv);
-				FbxVector2 texCoord;
-				pMesh->GetPolygonVertexUV(i, pol, name, texCoord, unmapped);
-				meshNode->texcoordArray.push_back(texCoord);
-			}
-		}
-	}
+	destColor.a = 1.0f;
+	destColor.r = static_cast<float>(srcColor[0]);
+	destColor.g = static_cast<float>(srcColor[1]);
+	destColor.b = static_cast<float>(srcColor[2]);
 }
 
-void FBXLoader::CopyMatrialData(FbxSurfaceMaterial* mat, FBX_MATERIAL_NODE* destMat)
-{
-	if (!mat)
-		return;
-
-	if (mat->GetClassId().Is(FbxSurfaceLambert::ClassId))
-	{
-		destMat->type = FBX_MATERIAL_NODE::MATERIAL_LAMBERT;
-	}
-	else if (mat->GetClassId().Is(FbxSurfacePhong::ClassId))
-	{
-		destMat->type = FBX_MATERIAL_NODE::MATERIAL_PHONG;
-	}
-
-	const FbxDouble3 lEmissive = GetMaterialProperty(mat,
-		FbxSurfaceMaterial::sEmissive, FbxSurfaceMaterial::sEmissiveFactor, &destMat->emmisive);
-	SetFbxColor(destMat->emmisive, lEmissive);
-
-	const FbxDouble3 lAmbient = GetMaterialProperty(mat,
-		FbxSurfaceMaterial::sAmbient, FbxSurfaceMaterial::sAmbientFactor, &destMat->ambient);
-	SetFbxColor(destMat->ambient, lAmbient);
-
-	const FbxDouble3 lDiffuse = GetMaterialProperty(mat,
-		FbxSurfaceMaterial::sDiffuse, FbxSurfaceMaterial::sDiffuseFactor, &destMat->diffuse);
-	SetFbxColor(destMat->diffuse, lDiffuse);
-
-	const FbxDouble3 lSpecular = GetMaterialProperty(mat,
-		FbxSurfaceMaterial::sSpecular, FbxSurfaceMaterial::sSpecularFactor, &destMat->specular);
-	SetFbxColor(destMat->specular, lSpecular);
-
-	//
-	FbxProperty lTransparencyFactorProperty = mat->FindProperty(FbxSurfaceMaterial::sTransparencyFactor);
-	if (lTransparencyFactorProperty.IsValid())
-	{
-		double lTransparencyFactor = lTransparencyFactorProperty.Get<FbxDouble>();
-		destMat->TransparencyFactor = static_cast<float>(lTransparencyFactor);
-	}
-
-	// Specular Power
-	FbxProperty lShininessProperty = mat->FindProperty(FbxSurfaceMaterial::sShininess);
-	if (lShininessProperty.IsValid())
-	{
-		double lShininess = lShininessProperty.Get<FbxDouble>();
-		destMat->shininess = static_cast<float>(lShininess);
-	}
-}
-
-void FBXLoader::ComputeNodeMatrix(FbxNode* pNode, FBX_MESH_NODE* meshNode)
-{
-	if (!pNode || !meshNode)
-		return;
-
-	FbxAnimEvaluator* lEvaluator = mScene->GetAnimationEvaluator();
-	FbxMatrix lGlobal;
-	lGlobal.SetIdentity();
-
-	if (pNode != mScene->GetRootNode())
-	{
-		lGlobal = lEvaluator->GetNodeGlobalTransform(pNode);
-		FBXMatrixToFloat16(&lGlobal, meshNode->mat4x4);
-	}
-	else
-	{
-		FBXMatrixToFloat16(&lGlobal, meshNode->mat4x4);
-	}
-}
-
-FbxDouble3 FBXLoader::GetMaterialProperty(const FbxSurfaceMaterial * pMaterial, const char * pPropertyName, const char * pFactorPropertyName, FBX_MATRIAL_ELEMENT* pElement)
+//
+FbxDouble3 CFBXLoader::GetMaterialProperty(
+	const FbxSurfaceMaterial * pMaterial,
+	const char * pPropertyName,
+	const char * pFactorPropertyName,
+	FBX_MATRIAL_ELEMENT*			pElement)
 {
 	pElement->type = FBX_MATRIAL_ELEMENT::ELEMENT_NONE;
 
@@ -354,12 +308,140 @@ FbxDouble3 FBXLoader::GetMaterialProperty(const FbxSurfaceMaterial * pMaterial, 
 	return lResult;
 }
 
-void FBXLoader::SetFbxColor(FBX_MATRIAL_ELEMENT& destColor, const FbxDouble3 srcColor)
+//
+void CFBXLoader::CopyMatrialData(FbxSurfaceMaterial* mat, FBX_MATERIAL_NODE* destMat)
 {
-	destColor.a = 1.0f;
-	destColor.r = static_cast<float>(srcColor[0]);
-	destColor.g = static_cast<float>(srcColor[1]);
-	destColor.b = static_cast<float>(srcColor[2]);
+	if (!mat)
+		return;
+
+	if (mat->GetClassId().Is(FbxSurfaceLambert::ClassId))
+	{
+		destMat->type = FBX_MATERIAL_NODE::MATERIAL_LAMBERT;
+	}
+	else if (mat->GetClassId().Is(FbxSurfacePhong::ClassId))
+	{
+		destMat->type = FBX_MATERIAL_NODE::MATERIAL_PHONG;
+	}
+
+	const FbxDouble3 lEmissive = GetMaterialProperty(mat,
+		FbxSurfaceMaterial::sEmissive, FbxSurfaceMaterial::sEmissiveFactor, &destMat->emmisive);
+	SetFbxColor(destMat->emmisive, lEmissive);
+
+	const FbxDouble3 lAmbient = GetMaterialProperty(mat,
+		FbxSurfaceMaterial::sAmbient, FbxSurfaceMaterial::sAmbientFactor, &destMat->ambient);
+	SetFbxColor(destMat->ambient, lAmbient);
+
+	const FbxDouble3 lDiffuse = GetMaterialProperty(mat,
+		FbxSurfaceMaterial::sDiffuse, FbxSurfaceMaterial::sDiffuseFactor, &destMat->diffuse);
+	SetFbxColor(destMat->diffuse, lDiffuse);
+
+	const FbxDouble3 lSpecular = GetMaterialProperty(mat,
+		FbxSurfaceMaterial::sSpecular, FbxSurfaceMaterial::sSpecularFactor, &destMat->specular);
+	SetFbxColor(destMat->specular, lSpecular);
+
+	//
+	FbxProperty lTransparencyFactorProperty = mat->FindProperty(FbxSurfaceMaterial::sTransparencyFactor);
+	if (lTransparencyFactorProperty.IsValid())
+	{
+		double lTransparencyFactor = lTransparencyFactorProperty.Get<FbxDouble>();
+		destMat->TransparencyFactor = static_cast<float>(lTransparencyFactor);
+	}
+
+	// Specular Power
+	FbxProperty lShininessProperty = mat->FindProperty(FbxSurfaceMaterial::sShininess);
+	if (lShininessProperty.IsValid())
+	{
+		double lShininess = lShininessProperty.Get<FbxDouble>();
+		destMat->shininess = static_cast<float>(lShininess);
+	}
 }
 
+//
+void CFBXLoader::ComputeNodeMatrix(FbxNode* pNode, FBX_MESH_NODE* meshNode)
+{
+	if (!pNode || !meshNode)
+	{
+		return;
+	}
 
+	FbxAnimEvaluator* lEvaluator = mScene->GetAnimationEvaluator();
+	FbxMatrix lGlobal;
+	lGlobal.SetIdentity();
+
+	if (pNode != mScene->GetRootNode())
+	{
+		lGlobal = lEvaluator->GetNodeGlobalTransform(pNode);
+
+		FBXMatrixToFloat16(&lGlobal, meshNode->mat4x4);
+	}
+	else
+	{
+		FBXMatrixToFloat16(&lGlobal, meshNode->mat4x4);
+	}
+}
+
+//
+void CFBXLoader::CopyVertexData(FbxMesh*	pMesh, FBX_MESH_NODE* meshNode)
+{
+	if (!pMesh)
+		return;
+
+	int lPolygonCount = pMesh->GetPolygonCount();
+
+	FbxVector4 pos, nor;
+
+	meshNode->elements.numPosition = 1;
+	meshNode->elements.numNormal = 1;
+
+	unsigned int indx = 0;
+
+	for (int i = 0; i < lPolygonCount; i++)
+	{
+		// ?ƒŠƒSƒ““à‚Ì’¸?”(ˆê‰žAŽOŠp?‰»‚µ‚Ä‚é‚Ì‚Å3?‚Ì‚Í‚¸‚¾‚ª?ƒFƒbƒN)
+		int lPolygonsize = pMesh->GetPolygonSize(i);
+
+		for (int pol = 0; pol < lPolygonsize; pol++)
+		{
+			int index = pMesh->GetPolygonVertex(i, pol);
+			meshNode->indexArray.push_back(indx);
+
+			pos = pMesh->GetControlPointAt(index);
+			pMesh->GetPolygonVertexNormal(i, pol, nor);
+
+			meshNode->m_positionArray.push_back(pos);
+			meshNode->m_normalArray.push_back(nor);
+
+			++indx;
+		}
+	}
+
+	// UVˆ—(UV‚Í2‚ÂˆÈã‚ ‚éê‡‚ª‚ ‚é‚Ì‚Å•Êˆ—)
+	FbxStringList	uvsetName;
+	pMesh->GetUVSetNames(uvsetName);
+	int numUVSet = uvsetName.GetCount();
+	meshNode->elements.numUVSet = numUVSet;
+
+	bool unmapped = false;
+
+	for (int uv = 0; uv < numUVSet; uv++)
+	{
+		meshNode->uvsetID[uvsetName.GetStringAt(uv)] = uv;
+		for (int i = 0; i < lPolygonCount; i++)
+		{
+			int lPolygonsize = pMesh->GetPolygonSize(i);
+
+			for (int pol = 0; pol < lPolygonsize; pol++)
+			{
+				FbxString name = uvsetName.GetStringAt(uv);
+				FbxVector2 texCoord;
+				pMesh->GetPolygonVertexUV(i, pol, name, texCoord, unmapped);
+				meshNode->m_texcoordArray.push_back(texCoord);
+			}
+		}
+	}
+}
+
+FBX_MESH_NODE& CFBXLoader::GetNode(const unsigned int id)
+{
+	return m_meshNodeArray[id];
+}

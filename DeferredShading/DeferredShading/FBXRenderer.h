@@ -3,27 +3,27 @@
 
 struct	VERTEX_DATA
 {
-	D3DXVECTOR4	vPos;
-	D3DXVECTOR4	vNor;
-	D3DXVECTOR2	vTexcoord;
+	DirectX::XMFLOAT3	vPos;
+	DirectX::XMFLOAT3	vNor;
+	DirectX::XMFLOAT2	vTexcoord;
 };
 
 struct MATERIAL_CONSTANT_DATA
 {
-	D3DXVECTOR4	ambient;
-	D3DXVECTOR4	diffuse;
-	D3DXVECTOR4	specular;
-	D3DXVECTOR4	emmisive;
+	DirectX::XMFLOAT4	ambient;
+	DirectX::XMFLOAT4	diffuse;
+	DirectX::XMFLOAT4	specular;
+	DirectX::XMFLOAT4	emmisive;
 };
 
 struct MATERIAL_DATA
 {
-	D3DXVECTOR4	ambient;
-	D3DXVECTOR4	diffuse;
-	D3DXVECTOR4	specular;
-	D3DXVECTOR4	emmisive;
+	DirectX::XMFLOAT4	ambient;
+	DirectX::XMFLOAT4	diffuse;
+	DirectX::XMFLOAT4	specular;
+	DirectX::XMFLOAT4	emmisive;
 	float specularPower;
-	float TransparencyFactor;
+	float TransparencyFactor;		// 透過度
 
 	MATERIAL_CONSTANT_DATA materialConstantData;
 
@@ -77,8 +77,8 @@ struct	MESH_NODE
 	enum INDEX_BIT
 	{
 		INDEX_NOINDEX = 0,
-		INDEX_16BIT,	
-		INDEX_32BIT,
+		INDEX_16BIT,		// 16bitインデックス
+		INDEX_32BIT,		// 32bitインデックス
 	};
 	INDEX_BIT	m_indexBit;
 
@@ -112,35 +112,28 @@ struct	MESH_NODE
 			m_pVB = nullptr;
 		}
 	}
+
 	void SetIndexBit(const size_t indexCount)
 	{
+#if 0
+		if (indexCount == 0)
+			m_indexBit = INDEX_NOINDEX;
+		else if (indexCount < 0xffff)
+			m_indexBit = INDEX_16BIT;
+		else if (indexCount >= 0xffff)
+			m_indexBit = INDEX_32BIT;
+#else
+		// 現状、16bitインデックス対応はまだ
 		m_indexBit = INDEX_NOINDEX;
 		if (indexCount != 0)
 			m_indexBit = INDEX_32BIT;
+#endif
 	};
 };
 
-class FBXRenderer
+class CFBXRenderDX11
 {
-public:
-	FBXRenderer();
-	~FBXRenderer();
-
-	void Release();
-
-	HRESULT LoadFBX(const char* filename, ID3D11Device*	pd3dDevice);
-	HRESULT CreateInputLayout(ID3D11Device*	pd3dDevice, const void* pShaderBytecodeWithInputSignature, size_t BytecodeLength, D3D11_INPUT_ELEMENT_DESC* pLayout, unsigned int layoutSize);
-
-	HRESULT RenderAll(ID3D11DeviceContext* pImmediateContext);
-
-	size_t GetNodeCount(){ return m_meshNodeArray.size(); }
-
-	MESH_NODE& GetNode(const int id){ return m_meshNodeArray[id]; };
-	void	GetNodeMatrix(const int id, float* mat4x4){ memcpy(mat4x4, m_meshNodeArray[id].mat4x4, sizeof(float)* 16); };
-	MATERIAL_DATA& GetNodeMaterial(const size_t id){ return m_meshNodeArray[id].materialData; };
-
-private:
-	FBXLoader*		m_pFBX;
+	CFBXLoader*		m_pFBX;
 
 	std::vector<MESH_NODE>	m_meshNodeArray;
 
@@ -151,6 +144,23 @@ private:
 	HRESULT CreateVertexBuffer(ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pVertices, uint32_t stride, uint32_t vertexCount);
 	HRESULT CreateIndexBuffer(ID3D11Device*	pd3dDevice, ID3D11Buffer** pBuffer, void* pIndices, uint32_t indexCount);
 
+public:
+	CFBXRenderDX11();
+	~CFBXRenderDX11();
 
+	void Release();
+
+	HRESULT LoadFBX(const char* filename, ID3D11Device*	pd3dDevice);
+	HRESULT CreateInputLayout(ID3D11Device*	pd3dDevice, const void* pShaderBytecodeWithInputSignature, size_t BytecodeLength, D3D11_INPUT_ELEMENT_DESC* pLayout, unsigned int layoutSize);
+
+	HRESULT RenderAll(ID3D11DeviceContext* pImmediateContext);
+	HRESULT RenderNode(ID3D11DeviceContext* pImmediateContext, const size_t nodeId);
+	HRESULT RenderNodeInstancing(ID3D11DeviceContext* pImmediateContext, const size_t nodeId, const uint32_t InstanceCount);
+	HRESULT RenderNodeInstancingIndirect(ID3D11DeviceContext* pImmediateContext, const size_t nodeId, ID3D11Buffer* pBufferForArgs, const uint32_t AlignedByteOffsetForArgs);
+
+	size_t GetNodeCount(){ return m_meshNodeArray.size(); }
+
+	MESH_NODE& GetNode(const int id){ return m_meshNodeArray[id]; };
+	void	GetNodeMatrix(const int id, float* mat4x4){ memcpy(mat4x4, m_meshNodeArray[id].mat4x4, sizeof(float)* 16); };
+	MATERIAL_DATA& GetNodeMaterial(const size_t id){ return m_meshNodeArray[id].materialData; };
 };
-

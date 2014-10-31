@@ -26,7 +26,7 @@ static const LPCWSTR	ELIN_TEXTURE_HAIR_DIFF = L"ElinModel/popori_F_hair07_diff.b
 static const LPCWSTR	ELIN_TEXTURE_HAIR_NORM = L"ElinModel/popori_F_hair07_norm.bmp";
 static const LPCWSTR	ELIN_TEXTURE_HAIR_SPEC = L"ElinModel/popori_F_hair07_spec.bmp";
 
-static const CHAR* ELIN_PATH = "ElinModel/Popori_F_H00_dance_NoAni.FBX";
+static const CHAR* ELIN_PATH = "ElinModel/Popori_F_H00_dance_good.FBX";
 
 static const WCHAR* VS_PATH = L"ElinVertexShader.hlsl";
 static const LPCSTR	VS_MAIN = "main";
@@ -53,9 +53,11 @@ struct MeshData
 	ID3D11ShaderResourceView*	mTextureRVDiff = NULL;
 	ID3D11ShaderResourceView*	mTextureRVNorm = NULL;
 	ID3D11ShaderResourceView*	mTextureRVSpec = NULL;
+
+	D3DXMATRIX				mWorld;
 };
 
-typedef std::shared_ptr<MeshData> EMeshData;
+typedef std::shared_ptr<MeshData> MeshDataPointer;
 
 class Elin
 {
@@ -79,16 +81,16 @@ private:
 	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
 	BOOL	CreateModelBuffer();
-	BOOL	CreateMeshBuffer(EMesh mesh);
-	BOOL	CreateMeshVB(EMesh mesh, EMeshData meshData);
-	BOOL	CreateMeshIB(EMesh mesh, EMeshData meshData);
-	BOOL	CreateMeshCB(EMesh mesh, EMeshData meshData);
+	BOOL	CreateMeshBuffer(MeshPointer mesh);
+	BOOL	CreateMeshVB(MeshPointer mesh, MeshDataPointer meshData);
+	BOOL	CreateMeshIB(MeshPointer mesh, MeshDataPointer meshData);
+	BOOL	CreateMeshCB(MeshPointer mesh, MeshDataPointer meshData);
 
 	BOOL LoadTexture();
-	BOOL LoadMeshTexture(EMesh mesh, EMeshData meshData);
+	BOOL LoadMeshTexture(MeshPointer mesh, MeshDataPointer meshData);
 
 
-	void RenderMesh(EMeshData meshData);
+	void RenderMesh(MeshDataPointer meshData);
 
 	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11PixelShader*      mPixelShader = NULL;
@@ -110,7 +112,7 @@ private:
 	FbxScene* mFbxScene = nullptr;
 
 	//여러 매쉬를 포함하고 있는 전체 모델
-	std::vector<EMesh> mModel;
-	std::vector <EMeshData>	mMeshData;
+	std::vector<MeshPointer> mModel;
+	std::vector <MeshDataPointer>	mMeshData;
 };
 

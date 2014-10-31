@@ -12,15 +12,17 @@ struct Vertex
 
 struct Mesh
 {
-	std::vector<Vertex> mVertex;
-	std::vector<unsigned int> mIndices;
-	int mNumPolygon;
-	int mNumVertex;
-	int mNumIndex;
+	std::vector<Vertex>			mVertex;
+	std::vector<unsigned int>	mIndices;
+	int				mNumPolygon;
+	int				mNumVertex;
+	int				mNumIndex;
 
-	const WCHAR* mTexutreDiff;
-	const WCHAR* mTexutreNorm;
-	const WCHAR* mTexutreSpec;
+	const WCHAR*	mTexutreDiff;
+	const WCHAR*	mTexutreNorm;
+	const WCHAR*	mTexutreSpec;
+
+	D3DXMATRIX		mWorld;
 };
 
 struct Indices
@@ -28,8 +30,7 @@ struct Indices
 	int i0, i1, i2;
 };
 
-typedef std::shared_ptr<Mesh> EMesh;
-
+typedef std::shared_ptr<Mesh> MeshPointer;
 
 class ModelManager : public Singleton<ModelManager>
 {
@@ -39,7 +40,7 @@ public:
 
 	BOOL			Init();
 	FbxScene*		MakeFbxSceneFromFile(const char* filePath);
-	EMesh			ProcessMesh(FbxNode* inNode);
+	MeshPointer		ProcessMesh(FbxNode* inNode);
 	void			CleanUp();
 
 

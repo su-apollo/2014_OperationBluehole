@@ -36,6 +36,7 @@ static const LPCSTR MAT_VS_MODEL = "vs_4_0_level_9_3";
 static const LPCSTR	MAT_PS_MAIN = "main";
 static const LPCSTR MAT_PS_MODEL = "ps_4_0_level_9_3";
 
+//먼가 부족한 material
 class MaterialManager : public Singleton<MaterialManager>
 {
 public:
@@ -43,14 +44,8 @@ public:
 	~MaterialManager();
 
 	BOOL			Init();
-
-	// todo : 예외처리를 어떻게 해야하는가?
 	MaterialPointer CreateMaterial(	UINT vertexConstbuff, WCHAR* vertexShader, UINT pixelConstbuff, WCHAR* pixelShader, 
 									WCHAR* diffusePath, WCHAR* normalPath, WCHAR* specularPath = NULL);
-
-
-
-
 
 private:
 
@@ -61,9 +56,6 @@ private:
 	BOOL			CreateConstBuffer(UINT vertexBuffSize, UINT pixelBuffSize, MaterialPointer mat);
 
 	HRESULT			CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
-
-
-
 
 	// get to Renderer
 	ID3D11Device*           mD3DDevice = NULL;
