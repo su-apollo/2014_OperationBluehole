@@ -88,6 +88,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	diffuse *= diffuseFactor;
 
 	float4 finalColor = 0;
+	//finalColor = txDepth.Sample(samLinear, Input.Tex);
 	finalColor = saturate(ambient + specular*4 + diffuse);
 	//finalColor = specular * 4;
 	//finalColor = float4(position.xxx, 1);
