@@ -28,13 +28,13 @@ static const LPCWSTR	ELIN_TEXTURE_HAIR_SPEC = L"ElinModel/popori_F_hair07_spec.b
 
 static const CHAR* ELIN_PATH = "ElinModel/Popori_F_H00_dance_good.FBX";
 
-static const WCHAR* VS_PATH = L"ElinVertexShader.hlsl";
-static const LPCSTR	VS_MAIN = "main";
-static const LPCSTR VS_MODEL = "vs_4_0_level_9_3";
+static const WCHAR* ELIN_VS_PATH = L"ElinVertexShader.hlsl";
+static const LPCSTR	ELIN_VS_MAIN = "main";
+static const LPCSTR ELIN_VS_MODEL = "vs_4_0_level_9_3";
 
-static const WCHAR* PS_PATH = L"ElinPixelShader.hlsl";
-static const LPCSTR	PS_MAIN = "main";
-static const LPCSTR PS_MODEL = "ps_4_0_level_9_3";
+static const WCHAR* ELIN_PS_PATH = L"ElinPixelShader.hlsl";
+static const LPCSTR	ELIN_PS_MAIN = "main";
+static const LPCSTR ELIN_PS_MODEL = "ps_4_0_level_9_3";
 
 struct VSConstantBuffer
 {

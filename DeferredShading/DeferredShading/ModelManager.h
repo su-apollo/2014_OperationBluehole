@@ -14,13 +14,13 @@ struct Mesh
 {
 	std::vector<Vertex>			mVertex;
 	std::vector<unsigned int>	mIndices;
-	int				mNumPolygon;
-	int				mNumVertex;
-	int				mNumIndex;
+	int				mNumPolygon = 0;
+	int				mNumVertex = 0;
+	int				mNumIndex = 0;
 
-	const WCHAR*	mTexutreDiff;
-	const WCHAR*	mTexutreNorm;
-	const WCHAR*	mTexutreSpec;
+	const WCHAR*	mTexutreDiff = NULL;
+	const WCHAR*	mTexutreNorm = NULL;
+	const WCHAR*	mTexutreSpec = NULL;
 
 	D3DXMATRIX		mWorld;
 };

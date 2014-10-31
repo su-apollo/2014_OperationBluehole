@@ -34,12 +34,6 @@ BOOL Elin::Init()
 	CreateModelBuffer();
 	LoadTexture();
 
-	D3DXMATRIX matRotate;
-	D3DXMatrixRotationX(&matRotate, static_cast<float>(-90.0*(3.14 / 180.0)));
-	//D3DXMatrixRotationY(&matRotate, static_cast<float>(180.0*(3.14 / 180.0)));
-
-	//mWorld *= matRotate;
-
 	return TRUE;
 }
 
@@ -170,7 +164,7 @@ HRESULT Elin::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCS
 BOOL Elin::CompileVertexShader()
 {
 	ID3DBlob* pVSBlob = NULL;
-	hr = CompileShaderFromFile(L"ElinVertexShader.hlsl", "main", VS_MODEL, &pVSBlob);
+	hr = CompileShaderFromFile(const_cast<WCHAR*>(ELIN_VS_PATH), ELIN_VS_MAIN, ELIN_VS_MODEL, &pVSBlob);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -207,8 +201,7 @@ BOOL Elin::CompileVertexShader()
 BOOL Elin::CompilePixelShader()
 {
 	ID3DBlob* pPSBlob = NULL;
-	//hr = CompileShaderFromFile(const_cast<WCHAR*>(PS_PATH), PS_MAIN, PS_MODEL, &pPSBlob);
-	hr = CompileShaderFromFile(L"ElinPixelShader.hlsl", "main", PS_MODEL, &pPSBlob);
+	hr = CompileShaderFromFile(const_cast<WCHAR*>(ELIN_PS_PATH), ELIN_PS_MAIN, ELIN_PS_MODEL, &pPSBlob);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -371,22 +364,6 @@ BOOL Elin::LoadMeshTexture(MeshPointer mesh, MeshDataPointer meshData)
 		return FALSE;
 
 	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mesh->mTexutreSpec, NULL, NULL, &meshData->mTextureRVSpec, NULL);
-	if (FAILED(hr))
-		return FALSE;
-
-	// Create the sample state
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	// 선형 필터
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	ID3D11SamplerState* linearSampler = SamplerManager::GetInstance()->GetLinearSampler();
-	hr = mD3DDevice->CreateSamplerState(&sampDesc, &linearSampler);
 	if (FAILED(hr))
 		return FALSE;
 

@@ -48,7 +48,6 @@ HRESULT CFBXLoader::LoadFBX(const char* filename, const eAXIS_SYSTEM axis)
 	if (!mSdkManager)
 		return E_FAIL;
 
-	// イン???作成
 	int lFileFormat = -1;
 	mImporter = FbxImporter::Create(mSdkManager, "");
 
@@ -71,23 +70,18 @@ HRESULT CFBXLoader::LoadFBX(const char* filename, const eAXIS_SYSTEM axis)
 	if (axis == eAXIS_OPENGL)
 		OurAxisSystem = FbxAxisSystem::OpenGL;
 
-	// DirectX系
 	FbxAxisSystem SceneAxisSystem = mScene->GetGlobalSettings().GetAxisSystem();
 	if (SceneAxisSystem != OurAxisSystem)
 	{
 		FbxAxisSystem::DirectX.ConvertScene(mScene);
 	}
 
-	// 単位系の統一
-	// 不要でもいいかも
 	FbxSystemUnit SceneSystemUnit = mScene->GetGlobalSettings().GetSystemUnit();
 	if (SceneSystemUnit.GetScaleFactor() != 1.0)
 	{
-		// セン?メ???単位にコンバ?トする
 		FbxSystemUnit::cm.ConvertScene(mScene);
 	}
 
-	// 三角?化(三角?以外のデ??でもコレで安心)
 	TriangulateRecursive(mScene->GetRootNode());
 
 	Setup();
@@ -124,7 +118,6 @@ void CFBXLoader::InitializeSdkObjects(FbxManager*& pManager, FbxScene*& pScene)
 	}
 }
 
-// 三角?化
 void CFBXLoader::TriangulateRecursive(FbxNode* pNode)
 {
 	FbxNodeAttribute* lNodeAttribute = pNode->GetNodeAttribute();
@@ -137,9 +130,8 @@ void CFBXLoader::TriangulateRecursive(FbxNode* pNode)
 			lNodeAttribute->GetAttributeType() == FbxNodeAttribute::ePatch)
 		{
 			FbxGeometryConverter lConverter(pNode->GetFbxManager());
-			// これでどんな?状も三角?化
 #if 0
-			lConverter.TriangulateInPlace(pNode);	// 古い手?
+			lConverter.TriangulateInPlace(pNode);
 #endif // 0
 			lConverter.Triangulate(mScene, true);
 		}
@@ -148,7 +140,6 @@ void CFBXLoader::TriangulateRecursive(FbxNode* pNode)
 	const int lChildCount = pNode->GetChildCount();
 	for (int lChildIndex = 0; lChildIndex < lChildCount; ++lChildIndex)
 	{
-		// 子ノ?ドを探索
 		TriangulateRecursive(pNode->GetChild(lChildIndex));
 	}
 }
@@ -161,7 +152,6 @@ FbxNode&	CFBXLoader::GetRootNode()
 
 void CFBXLoader::Setup()
 {
-	// RootNodeから探索していく
 	if (mScene->GetRootNode())
 	{
 		SetupNode(mScene->GetRootNode(), "null");
@@ -188,12 +178,10 @@ void CFBXLoader::SetupNode(FbxNode* pNode, std::string parentName)
 
 		if (lVertexCount > 0)
 		{
-			// 頂?があるならノ?ドにコピ?
 			CopyVertexData(lMesh, &meshNode);
 		}
 	}
 
-	// ?テリアル
 	const int lMaterialCount = pNode->GetMaterialCount();
 	for (int i = 0; i < lMaterialCount; i++)
 	{
@@ -397,7 +385,6 @@ void CFBXLoader::CopyVertexData(FbxMesh*	pMesh, FBX_MESH_NODE* meshNode)
 
 	for (int i = 0; i < lPolygonCount; i++)
 	{
-		// ?リゴン内の頂?数(一応、三角?化してるので3?のはずだが?ェック)
 		int lPolygonsize = pMesh->GetPolygonSize(i);
 
 		for (int pol = 0; pol < lPolygonsize; pol++)
@@ -415,7 +402,6 @@ void CFBXLoader::CopyVertexData(FbxMesh*	pMesh, FBX_MESH_NODE* meshNode)
 		}
 	}
 
-	// UV処理(UVは2つ以上ある場合があるので別処理)
 	FbxStringList	uvsetName;
 	pMesh->GetUVSetNames(uvsetName);
 	int numUVSet = uvsetName.GetCount();

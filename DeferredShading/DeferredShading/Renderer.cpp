@@ -26,9 +26,16 @@ BOOL Renderer::Init()
 		return FALSE;
 	}
 
-	if (!mCube.Init())
+	if (!mElin.Init())
 	{
-		MessageBox(hWnd, L"Cube Init Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		MessageBox(hWnd, L"Elin Init Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		DestroyDevice();
+		return FALSE;
+	}
+
+	if (!mRoom.Init())
+	{
+		MessageBox(hWnd, L"Room Init Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		DestroyDevice();
 		return FALSE;
 	}
@@ -41,7 +48,8 @@ void Renderer::Render()
 	// om - output merge
 	mD3DDeviceContext->OMSetDepthStencilState(RenderStateManager::GetInstance()->GetDepthState(), 0);
 
-	mCube.Render();
+	mElin.Render();
+	mRoom.Render();
 }
 
 BOOL Renderer::CreateDevice(HWND hWnd)
@@ -109,7 +117,7 @@ BOOL Renderer::CreateDevice(HWND hWnd)
 
 void Renderer::DestroyDevice()
 {
-	mCube.Release();
+	mElin.Release();
 
 	if (mD3DDeviceContext)
 		mD3DDeviceContext->ClearState();

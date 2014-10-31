@@ -1,9 +1,7 @@
 #pragma once
 #include "Singleton.h"
 
-// UVSet名, 頂?内のUVセット順序
 typedef std::tr1::unordered_map<std::string, int> UVsetID;
-// UVSet名, テクス?ャパス名(１つのUVSetに複数のテクス?ャがぶら下がってることがある)
 typedef std::tr1::unordered_map<std::string, std::vector<std::string>> TextureSet;
 
 struct FBX_MATRIAL_ELEMENT
@@ -44,7 +42,6 @@ struct FBX_MATRIAL_ELEMENT
 
 struct FBX_MATERIAL_NODE
 {
-	// FBXの?テリアルはLambertとPhongしかない
 	enum eMATERIAL_TYPE
 	{
 		MATERIAL_LAMBERT = 0,
@@ -58,31 +55,30 @@ struct FBX_MATERIAL_NODE
 	FBX_MATRIAL_ELEMENT specular;
 
 	float shininess;
-	float TransparencyFactor;		// 透過度
+	float TransparencyFactor;
 };
 
-// メッシュ?成要素
 struct MESH_ELEMENTS
 {
-	unsigned int	numPosition;		// 頂?座標のセットをいくつ持つか
-	unsigned int	numNormal;			//
-	unsigned int	numUVSet;			// UVセット数
+	unsigned int	numPosition;
+	unsigned int	numNormal;
+	unsigned int	numUVSet;
 };
 
 //
 struct FBX_MESH_NODE
 {
-	std::string		name;			// ノ?ド名
-	std::string		parentName;		// 親ノ?ド名(親がいないなら"null"という名称が入る.rootノ?ドの対応)
+	std::string		name;			
+	std::string		parentName;		
 
-	MESH_ELEMENTS	elements;		// メッシュが保持するデ???造
-	std::vector<FBX_MATERIAL_NODE> m_materialArray;		// ?テリアル
+	MESH_ELEMENTS	elements;		
+	std::vector<FBX_MATERIAL_NODE> m_materialArray;	
 	UVsetID		uvsetID;
 
-	std::vector<unsigned int>		indexArray;				// インデックス配列
-	std::vector<FbxVector4>			m_positionArray;		// ?ジション配列
-	std::vector<FbxVector4>			m_normalArray;			// ?線配列
-	std::vector<FbxVector2>			m_texcoordArray;		// テクス?ャ座標配列
+	std::vector<unsigned int>		indexArray;			
+	std::vector<FbxVector4>			m_positionArray;	
+	std::vector<FbxVector4>			m_normalArray;		
+	std::vector<FbxVector2>			m_texcoordArray;	
 
 	float	mat4x4[16];	// Matrix
 
@@ -157,11 +153,10 @@ public:
 
 	void Release();
 
-	// 読み込み
 	HRESULT LoadFBX(const char* filename, const eAXIS_SYSTEM axis);
 	FbxNode&	GetRootNode();
 
-	size_t GetNodesCount(){ return m_meshNodeArray.size(); };		// ノ?ド数の取得
+	size_t GetNodesCount(){ return m_meshNodeArray.size(); };	
 
 	FBX_MESH_NODE&	GetNode(const unsigned int id);
 };

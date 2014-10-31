@@ -23,7 +23,7 @@ struct MATERIAL_DATA
 	DirectX::XMFLOAT4	specular;
 	DirectX::XMFLOAT4	emmisive;
 	float specularPower;
-	float TransparencyFactor;		// 透過度
+	float TransparencyFactor;
 
 	MATERIAL_CONSTANT_DATA materialConstantData;
 
@@ -77,8 +77,8 @@ struct	MESH_NODE
 	enum INDEX_BIT
 	{
 		INDEX_NOINDEX = 0,
-		INDEX_16BIT,		// 16bitインデックス
-		INDEX_32BIT,		// 32bitインデックス
+		INDEX_16BIT,	
+		INDEX_32BIT,	
 	};
 	INDEX_BIT	m_indexBit;
 
@@ -123,7 +123,6 @@ struct	MESH_NODE
 		else if (indexCount >= 0xffff)
 			m_indexBit = INDEX_32BIT;
 #else
-		// 現状、16bitインデックス対応はまだ
 		m_indexBit = INDEX_NOINDEX;
 		if (indexCount != 0)
 			m_indexBit = INDEX_32BIT;

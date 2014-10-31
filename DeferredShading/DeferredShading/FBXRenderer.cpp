@@ -72,7 +72,6 @@ HRESULT CFBXRenderDX11::CreateNodes(ID3D11Device*	pd3dDevice)
 
 		memcpy(meshNode.mat4x4, fbxNode.mat4x4, sizeof(float)* 16);
 
-		// ?テリアル
 		MaterialConstruction(pd3dDevice, fbxNode, meshNode);
 
 		m_meshNodeArray.push_back(meshNode);
@@ -160,8 +159,6 @@ HRESULT CFBXRenderDX11::VertexConstruction(ID3D11Device*	pd3dDevice, FBX_MESH_NO
 
 		if ((float)fbxNode.m_texcoordArray.size() > 0)
 		{
-			// 今回はUV1つしかやらない
-			// UVのV値反?
 			pV[i].vTexcoord = DirectX::XMFLOAT2((float)abs(1.0f - fbxNode.m_texcoordArray[i].mData[0]),
 				(float)abs(1.0f - fbxNode.m_texcoordArray[i].mData[1]));
 		}
@@ -185,7 +182,6 @@ HRESULT CFBXRenderDX11::MaterialConstruction(ID3D11Device*	pd3dDevice, FBX_MESH_
 
 	HRESULT hr = S_OK;
 
-	// 今回は先頭の?テリアルだけ使う
 	FBX_MATERIAL_NODE fbxMaterial = fbxNode.m_materialArray[0];
 	meshNode.materialData.specularPower = fbxMaterial.shininess;
 	meshNode.materialData.TransparencyFactor = fbxMaterial.TransparencyFactor;
@@ -199,8 +195,6 @@ HRESULT CFBXRenderDX11::MaterialConstruction(ID3D11Device*	pd3dDevice, FBX_MESH_
 	meshNode.materialData.emmisive
 		= DirectX::XMFLOAT4(fbxMaterial.emmisive.r, fbxMaterial.emmisive.g, fbxMaterial.emmisive.b, fbxMaterial.emmisive.a);
 
-
-	// Diffuseだけからテクス?ャを読み込む
 	if (fbxMaterial.diffuse.textureSetArray.size() > 0)
 	{
 		TextureSet::const_iterator it = fbxMaterial.diffuse.textureSetArray.begin();
@@ -208,11 +202,7 @@ HRESULT CFBXRenderDX11::MaterialConstruction(ID3D11Device*	pd3dDevice, FBX_MESH_
 		{
 			std::string path = it->second[0];
 
-			// June 2010の時から変更
-			//			hr = D3DX11CreateShaderResourceViewFromFileA( pd3dDevice,path.c_str(), NULL, NULL, &meshNode.materialData.pSRV, NULL );
-
-			// Todo: 決め打ちよくないけど暫定対応
-			// FBXのSDKだと文字列はcharなんだけど、こっちではwcharにしないといけない...
+			// texture
 			WCHAR	wstr[512];
 			size_t wLen = 0;
 			mbstowcs_s(&wLen, wstr, path.size() + 1, path.c_str(), _TRUNCATE);
@@ -253,7 +243,6 @@ HRESULT CFBXRenderDX11::MaterialConstruction(ID3D11Device*	pd3dDevice, FBX_MESH_
 //
 HRESULT CFBXRenderDX11::CreateInputLayout(ID3D11Device*	pd3dDevice, const void* pShaderBytecodeWithInputSignature, size_t BytecodeLength, D3D11_INPUT_ELEMENT_DESC* pLayout, unsigned int layoutSize)
 {
-	// InputeLayoutは頂?シェ??のコンパイル結果が必要
 	if (!pd3dDevice || !pShaderBytecodeWithInputSignature || !pLayout)
 		return E_FAIL;
 
@@ -322,7 +311,6 @@ HRESULT CFBXRenderDX11::RenderNode(ID3D11DeviceContext* pImmediateContext, const
 	pImmediateContext->IASetInputLayout(node->m_pInputLayout);
 	pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// インデックスバッフ?が存在する場合
 	if (node->m_indexBit != MESH_NODE::INDEX_NOINDEX)
 	{
 		DXGI_FORMAT indexbit = DXGI_FORMAT_R16_UINT;
@@ -356,7 +344,6 @@ HRESULT CFBXRenderDX11::RenderNodeInstancing(ID3D11DeviceContext* pImmediateCont
 	pImmediateContext->IASetInputLayout(node->m_pInputLayout);
 	pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// インデックスバッフ?が存在する場合
 	if (node->m_indexBit != MESH_NODE::INDEX_NOINDEX)
 	{
 		DXGI_FORMAT indexbit = DXGI_FORMAT_R16_UINT;
@@ -390,7 +377,6 @@ HRESULT CFBXRenderDX11::RenderNodeInstancingIndirect(ID3D11DeviceContext* pImmed
 	pImmediateContext->IASetInputLayout(node->m_pInputLayout);
 	pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// インデックスバッフ?が存在する場合
 	if (node->m_indexBit != MESH_NODE::INDEX_NOINDEX)
 	{
 		DXGI_FORMAT indexbit = DXGI_FORMAT_R16_UINT;
