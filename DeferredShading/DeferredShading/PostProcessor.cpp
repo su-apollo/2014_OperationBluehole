@@ -112,6 +112,8 @@ void PostProcessor::Render()
 	mD3DDeviceContext->PSSetShaderResources(1, 1, &diffuseTexRV);
 	mD3DDeviceContext->PSSetShaderResources(2, 1, &specularTexRV);
 	mD3DDeviceContext->PSSetShaderResources(3, 1, &depthTexRV);
+	mD3DDeviceContext->PSSetShaderResources(4, 1, &mTextureNoise);
+
 	ID3D11SamplerState* linearSampler = SamplerManager::GetInstance()->GetLinearSampler();
 	mD3DDeviceContext->PSSetSamplers(0, 1, &linearSampler);
 
