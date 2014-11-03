@@ -108,9 +108,3 @@ REGISTER_KEY_HANDLER(VK_ESCAPE)
 {
 	ProcessManager::GetInstance()->Stop();
 }
-
-
-REGISTER_KEY_HANDLER(VK_LBUTTON)
-{
-	ProcessManager::GetInstance()->Stop();
-}

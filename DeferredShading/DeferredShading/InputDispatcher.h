@@ -24,6 +24,7 @@ struct MousePosInfo
 	int mPosY;
 };
 
+// 해당 키 이벤트가 발생하면 등록해둔 함수 실행
 class InputDispatcher : public Singleton<InputDispatcher>
 {
 public:

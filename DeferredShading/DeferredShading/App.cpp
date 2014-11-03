@@ -2,6 +2,7 @@
 #include "App.h"
 #include "Logger.h"
 #include "ProcessManager.h"
+#include "InputDispatcher.h"
 
 App::App()
 {
@@ -151,7 +152,38 @@ LRESULT App::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) const
 	}
 		return 0;
 
-	// todo : input
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_KEYDOWN:
+	{
+		KeyInput key;
+		key.mKeyValue = static_cast<unsigned char>(wParam);
+		key.mKeyState = KeyStatusType::KEY_DOWN;
+
+		if (InputDispatcher::GetInstance()->IsPressed(key))
+			key.mKeyState = KeyStatusType::KEY_PRESSED;
+
+		InputDispatcher::GetInstance()->EventKeyInput(key);
+		InputDispatcher::GetInstance()->DispatchKeyInput();
+	}
+		return 0;
+
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_SYSKEYUP:
+	case WM_KEYUP:
+	{
+		KeyInput key;
+		key.mKeyValue = static_cast<unsigned char>(wParam);
+		key.mKeyState = KeyStatusType::KEY_UP;
+
+		InputDispatcher::GetInstance()->EventKeyInput(key);
+		InputDispatcher::GetInstance()->DispatchKeyInput();
+	}
+
+	case WM_ERASEBKGND:
+		return 1;
 
 	default:
 		return DefWindowProc(mHandleMainWindow, uMsg, wParam, lParam);
