@@ -3,10 +3,6 @@
 #include "App.h"
 #include "ProcessManager.h"
 
-//함수포인터로 사용
-typedef void(*KeyEventHandler)(KeyInput inputKey);
-static KeyEventHandler KeyHandlerTable[MAX_KEY];
-
 static void DefaultKeyHandler(KeyInput inputKey)
 {
 }
@@ -22,14 +18,6 @@ struct InitKeyHandlers
 		}
 	}
 } _init_key_handlers_;
-
-struct RegisterKeyHandler
-{
-	RegisterKeyHandler(unsigned char keyType, KeyEventHandler keyHandler)
-	{
-		KeyHandlerTable[keyType] = keyHandler;
-	}
-};
 
 InputDispatcher::InputDispatcher() : mUpdatedMousePos(0, 0)
 {
@@ -98,11 +86,6 @@ void InputDispatcher::DispatchKeyInput()
 		}
 	}
 }
-
-#define REGISTER_KEY_HANDLER( KEY_TYPE ) \
-	static void Handler_##KEY_TYPE( KeyInput inputKey ); \
-	static RegisterKeyHandler _register_##KEY_TYPE(KEY_TYPE, Handler_##KEY_TYPE); \
-	static void Handler_##KEY_TYPE( KeyInput inputKey )
 
 REGISTER_KEY_HANDLER(VK_ESCAPE)
 {

@@ -46,3 +46,20 @@ private:
 	MousePosInfo				mUpdatedMousePos;
 };
 
+//함수포인터로 사용
+typedef void(*KeyEventHandler)(KeyInput inputKey);
+static KeyEventHandler KeyHandlerTable[MAX_KEY];
+
+struct RegisterKeyHandler
+{
+	RegisterKeyHandler(unsigned char keyType, KeyEventHandler keyHandler)
+	{
+		KeyHandlerTable[keyType] = keyHandler;
+	}
+};
+
+//선언 -> 등록 -> 정의
+#define REGISTER_KEY_HANDLER( KEY_TYPE ) \
+	static void Handler_##KEY_TYPE( KeyInput inputKey ); \
+	static RegisterKeyHandler _register_##KEY_TYPE(KEY_TYPE, Handler_##KEY_TYPE); \
+	static void Handler_##KEY_TYPE( KeyInput inputKey )

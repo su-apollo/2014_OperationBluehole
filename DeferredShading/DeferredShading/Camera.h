@@ -9,11 +9,11 @@ enum {
 class Camera : public Singleton<Camera>
 {
 public:
-	Camera()
-		: mEye(0.0f, 100.0f, -150.0f), mAt(0.0f, 50.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f) {};
+	Camera();
 	~Camera() {}
 
 	void		Update();
+	void		MoveFront(float speed);
 
 	float		GetNear() { return mNear; }
 	float		GetFar() { return mFar; }
@@ -30,6 +30,8 @@ private:
 	D3DXVECTOR3 mEye;
 	D3DXVECTOR3 mAt;
 	D3DXVECTOR3 mUp;
+
+	D3DXMATRIX	mTransform;
 
 	float		mNear = FRUSTUM_NEAR;
 	float		mFar = FRUSTUM_FAR;
