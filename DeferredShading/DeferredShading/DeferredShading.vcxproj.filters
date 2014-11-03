@@ -111,6 +111,9 @@
     <ClInclude Include="Material.h">
       <Filter>trash</Filter>
     </ClInclude>
+    <ClInclude Include="InputDispatcher.h">
+      <Filter>App</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -184,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>trash</Filter>
+    </ClCompile>
+    <ClCompile Include="InputDispatcher.cpp">
+      <Filter>App</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
