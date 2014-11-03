@@ -12,7 +12,7 @@ struct QuadVertex
 struct PostProcessorConstantBuffer
 {
 	D3DXMATRIX	mInverseViewProj;
-	D3DXMATRIX	mProj;
+	D3DXMATRIX	mViewProj;
 	D3DXMATRIX	mInverseProj;
 	D3DXVECTOR4 vEye;
 	D3DXVECTOR4 vNearFar;

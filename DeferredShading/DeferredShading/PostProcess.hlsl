@@ -6,9 +6,8 @@
 cbuffer ConstantBuffer : register(b0)
 {
 	matrix mInverseViewProj;
-	matrix mProj;
+	matrix mViewProj;
 	matrix mInverseProj;
-	matrix mView;
 	float4 vEye;
 	float4 vNearFar;
 	float4 vLightPos[2];
@@ -43,7 +42,7 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 // SSAO
 //--------------------------------------------------------------------------------------
-float getOcclusion(float3x3 tbn, float4 viewPosition)
+float getOcclusion(float3x3 tbn, float4 position)
 {
 	//set z values to 0~1 cuz we want to orient kernels on z axis.
 	float3 sample_sphere[8] = {
@@ -58,17 +57,17 @@ float getOcclusion(float3x3 tbn, float4 viewPosition)
 	for (int i = 0; i < 8; ++i)
 	{
 		//make sample kernels
-		float3 sampleViewPosition = sample_sphere[i];
-		sampleViewPosition = mul(tbn, sampleViewPosition);
+		float3 sampleWorldPos = sample_sphere[i];
+		sampleWorldPos = mul(tbn, sampleWorldPos);
 
 		float scale = float(i) / float(8);
 		scale = lerp(0.1f, 1.0f, scale * scale);
-		sampleViewPosition *= scale;
+		sampleWorldPos *= scale;
 
-		sampleViewPosition = sampleViewPosition * radius + viewPosition.xyz;
+		sampleWorldPos = sampleWorldPos * radius + position.xyz;
 
 		//project position
-		float4 sampleProjected = mul(float4(sampleViewPosition, 1), mProj); // -1~1
+		float4 sampleProjected = mul(float4(sampleWorldPos, 1), mViewProj); // -1~1
 		sampleProjected.xy /= sampleProjected.w;
 		float2 projected = float2(sampleProjected.x, sampleProjected.y);
 		float2 a = float2(sampleProjected.x*0.5 + 0.5, 0.5 - sampleProjected.y*0.5);
@@ -76,12 +75,12 @@ float getOcclusion(float3x3 tbn, float4 viewPosition)
 
 		//get original depth
 		float	sampleOriginalDepth = txDepth.Sample(samLinear, a).x;
-		float4 originalViewPos = mul(float4(projected.x, projected.y, sampleOriginalDepth, 1), mInverseViewProj);
-		originalViewPos /= originalViewPos.w;
+		float4 origianlWorldPos = mul(float4(projected.x, projected.y, sampleOriginalDepth, 1), mInverseViewProj);
+		origianlWorldPos /= origianlWorldPos.w;
 
 		//optional calculation? sampleViewPosition.z > originalPos.z면 차폐된것이다.
-		float rangeCheck = distance(viewPosition.xyz, sampleViewPosition.xyz) < radius ? 1 : 0;
-		occlusion += step(originalViewPos.z, sampleViewPosition.z)* rangeCheck;
+		float rangeCheck = distance(position.xyz, sampleWorldPos.xyz) < radius ? 1 : 0;
+		occlusion += step(origianlWorldPos.z, sampleWorldPos.z)* rangeCheck;
 	}
 
 	//more occluded means darker.
@@ -171,39 +170,22 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	//set noise.z to 0 cuz we want to orient hemisphere on z axis.
 	noise.z = 0;
 
-	//get view position
-	float4 viewPosition;
-	viewPosition.x = Input.Tex.x * 2 - 1;
-	viewPosition.y = (1 - Input.Tex.y) * 2 - 1;
-	viewPosition.z = depth.x;
-	viewPosition.w = 1;
-	viewPosition = mul(viewPosition, mInverseProj);
-	viewPosition /= viewPosition.w;
-
-	//get view Normal ???
-
-	float4 viewNormal = txNormal.Sample(samLinear, Input.Tex);
-	viewNormal = viewNormal * 2 - 1;
-	//viewNormal = mul(viewNormal, mView);
-
-
 	//float3 viewNormal = normal_from_depth(depth.x, Input.Tex);
 
 	//make randomVector -1 ~ 1
 	float3 randomVector;
 	randomVector.xyz = noise.xyz *  2.0 - 1.0; //-1~1
 
-	float3 tangent = normalize(randomVector - viewNormal.xyz*dot(randomVector, viewNormal.xyz));
-	float3 bitangent = cross(tangent, viewNormal.xyz);
-	float3x3 kernelTBN = float3x3(tangent, bitangent, viewNormal.xyz);
+	float3 tangent = normalize(randomVector - normal.xyz*dot(randomVector, normal.xyz));
+	float3 bitangent = cross(tangent, normal.xyz);
+	float3x3 kernelTBN = float3x3(tangent, bitangent, normal.xyz);
 
 	float occlusion = getOcclusion(kernelTBN, position);
 
 	float4 finalColor = 0;
-	//finalColor = float4(viewNormal.xyz, 1);
 	finalColor = saturate(ambient + specular*4 + diffuse);
 	//finalColor = specular * 4;
-	//finalColor = float4(occlusion, occlusion, occlusion, 1);
+	finalColor = float4(occlusion, occlusion, occlusion, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);
 	//finalColor = float4(z, z, z, 1);
 	return finalColor;

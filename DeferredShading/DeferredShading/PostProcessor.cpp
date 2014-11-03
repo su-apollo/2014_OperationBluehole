@@ -89,13 +89,17 @@ void PostProcessor::Render()
 	//D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseProj();
 	D3DXMATRIX matInverseViewProj = Camera::GetInstance()->GetMatInverseViewProj();
 	D3DXMatrixTranspose(&matInverseViewProj, &matInverseViewProj);
-	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
-	D3DXMatrixTranspose(&matProj, &matProj);
+
 	D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseProj();
 	D3DXMatrixTranspose(&matInverseProj, &matInverseProj);
-	
+	D3DXMATRIX matView = Camera::GetInstance()->GetMatView();
+	D3DXMATRIX matViewProj = Camera::GetInstance()->GetMatProj();
+	matViewProj = matView * matViewProj;
+	D3DXMatrixTranspose(&matView, &matView);
+	D3DXMatrixTranspose(&matViewProj, &matViewProj);
+
 	pcb.mInverseViewProj = matInverseViewProj;
-	pcb.mProj = matProj;
+	pcb.mViewProj = matViewProj;
 	pcb.mInverseProj = matInverseProj;
 	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
 	pcb.vNearFar = D3DXVECTOR4(Camera::GetInstance()->GetNear(), Camera::GetInstance()->GetFar(), 0, 1);
