@@ -8,6 +8,7 @@ cbuffer ConstantBuffer : register(b0)
 	matrix mInverseViewProj;
 	matrix mProj;
 	matrix mInverseProj;
+	matrix mView;
 	float4 vEye;
 	float4 vNearFar;
 	float4 vLightPos[2];
@@ -44,14 +45,14 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 float getOcclusion(float3x3 tbn, float4 viewPosition)
 {
+	//set z values to 0~1 cuz we want to orient kernels on z axis.
 	float3 sample_sphere[8] = {
-		float3(0.7, 0.7, 0), float3(0, 0.7, 0.7),
-		float3(-0.7, 0.7, 0), float3(0, 0.7, -0.7),
-		float3(0.7, -0.7, 0), float3(0, -0.7, 0.7),
-		float3(-0.7, -0.7, 0), float3(0, -0.7, -0.7)
+		float3(0.5381, -0.4856, 0.4319), float3(0.1379, 0.2486, 0.4430),
+		float3(-0.3371, 0.5679, 0.0057), float3(-0.6999, -0.2451, 0.0019),
+		float3(0.4689, -0.1598, 0.8547), float3(0.2560, 0.8069, 0.1843),
+		float3(-0.4146, 0.1402, 0.0762), float3(-0.7100, -0.1924, 0.7344)
 	};
-
-	float radius = 2;
+	float radius = 5;
 
 	float occlusion = 0.0f;
 	for (int i = 0; i < 8; ++i)
@@ -59,6 +60,11 @@ float getOcclusion(float3x3 tbn, float4 viewPosition)
 		//make sample kernels
 		float3 sampleViewPosition = sample_sphere[i];
 		sampleViewPosition = mul(tbn, sampleViewPosition);
+
+		float scale = float(i) / float(8);
+		scale = lerp(0.1f, 1.0f, scale * scale);
+		sampleViewPosition *= scale;
+
 		sampleViewPosition = sampleViewPosition * radius + viewPosition.xyz;
 
 		//project position
@@ -70,11 +76,12 @@ float getOcclusion(float3x3 tbn, float4 viewPosition)
 
 		//get original depth
 		float	sampleOriginalDepth = txDepth.Sample(samLinear, a).x;
-		float4 originalViewPos = mul(float4(projected.x, projected.y, sampleOriginalDepth, 1), mInverseProj);
+		float4 originalViewPos = mul(float4(projected.x, projected.y, sampleOriginalDepth, 1), mInverseViewProj);
 		originalViewPos /= originalViewPos.w;
 
 		//optional calculation? sampleViewPosition.z > originalPos.z면 차폐된것이다.
-		occlusion += step(originalViewPos.z, sampleViewPosition.z);
+		float rangeCheck = distance(viewPosition.xyz, sampleViewPosition.xyz) < radius ? 1 : 0;
+		occlusion += step(originalViewPos.z, sampleViewPosition.z)* rangeCheck;
 	}
 
 	//more occluded means darker.
@@ -96,7 +103,10 @@ float3 normal_from_depth(float depth, float2 texcoords) {
 	float3 p2 = float3(offset2, depth2 - depth);
 
 	float3 normal = cross(p1, p2);
-	normal.z = -normal.z;
+
+	//y축이 뒤집혔는데?
+	normal.y = -normal.y;
+	//normal.z = -normal.z;
 
 	return normalize(normal);
 }
@@ -155,9 +165,11 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	//SSAO
 	//texture size 어떻게 얻지? 일단 숫자로 넣어놨지만 찾아서 바꿀 것.
-	float2 noiseTexCoords = float2(1024.0f, 768.0f) / float2(128.0f, 128);
+	float2 noiseTexCoords = float2(1024.0f, 768.0f) / float2(128, 128);
 	noiseTexCoords *= Input.Tex;
 	float4 noise = txNoise.Sample(samLinear, noiseTexCoords);
+	//set noise.z to 0 cuz we want to orient hemisphere on z axis.
+	noise.z = 0;
 
 	//get view position
 	float4 viewPosition;
@@ -169,27 +181,29 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	viewPosition /= viewPosition.w;
 
 	//get view Normal ???
-	/*
+
 	float4 viewNormal = txNormal.Sample(samLinear, Input.Tex);
 	viewNormal = viewNormal * 2 - 1;
-	*/
+	//viewNormal = mul(viewNormal, mView);
 
-	float3 viewNormal = normal_from_depth(depth.x, Input.Tex);
-	//viewNormal += normal;
+
+	//float3 viewNormal = normal_from_depth(depth.x, Input.Tex);
 
 	//make randomVector -1 ~ 1
-	float3 randomVector = noise.xyz *  2.0 - 1.0;
+	float3 randomVector;
+	randomVector.xyz = noise.xyz *  2.0 - 1.0; //-1~1
+
 	float3 tangent = normalize(randomVector - viewNormal.xyz*dot(randomVector, viewNormal.xyz));
 	float3 bitangent = cross(tangent, viewNormal.xyz);
 	float3x3 kernelTBN = float3x3(tangent, bitangent, viewNormal.xyz);
 
-	float occlusion = getOcclusion(kernelTBN, viewPosition);
+	float occlusion = getOcclusion(kernelTBN, position);
 
 	float4 finalColor = 0;
-	//finalColor = float4(occlusion, occlusion, occlusion, 1);
+	//finalColor = float4(viewNormal.xyz, 1);
 	finalColor = saturate(ambient + specular*4 + diffuse);
 	//finalColor = specular * 4;
-	//finalColor = float4(sampleOriginalDepth, sampleOriginalDepth, sampleOriginalDepth, 1);
+	//finalColor = float4(occlusion, occlusion, occlusion, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);
 	//finalColor = float4(z, z, z, 1);
 	return finalColor;
