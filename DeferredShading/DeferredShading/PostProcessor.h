@@ -19,6 +19,7 @@ struct PostProcessorConstantBuffer
 	D3DXVECTOR4 vLightPos[MAX_LIGHT];
 	D3DXVECTOR4 vLightColor[MAX_LIGHT];
 	D3DXVECTOR4	vLightRange[MAX_LIGHT];
+	D3DXVECTOR4 vKernelVariables;
 };
 
 static const LPCWSTR	NOISE_TEXTURE = L"noise_texture.bmp";
@@ -33,6 +34,7 @@ public:
 
 	void					Render();
 	void					RenderCleanUp();
+	void					ChangeKernelRadius(float radius);
 
 private:
 
@@ -71,5 +73,8 @@ private:
 
 	// get last error
 	HRESULT hr = S_OK;
+
+	// changeable varialbes
+	float					mKernelRadius = 2;
 };
 

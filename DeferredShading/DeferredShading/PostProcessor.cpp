@@ -110,6 +110,7 @@ void PostProcessor::Render()
 		pcb.vLightColor[i] = light->mColor;
 		pcb.vLightRange[i] = D3DXVECTOR4(light->mRange, light->mRange, light->mRange, 1);
 	}
+	pcb.vKernelVariables = D3DXVECTOR4(mKernelRadius,0,0,0);
 	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
 
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &normalTexRV);
@@ -267,4 +268,9 @@ BOOL PostProcessor::LoadNoiseTexture()
 	if (FAILED(hr))
 		return FALSE;
 	return TRUE;
+}
+
+void PostProcessor::ChangeKernelRadius(float radius)
+{
+	mKernelRadius += radius;
 }

@@ -13,6 +13,7 @@ cbuffer ConstantBuffer : register(b0)
 	float4 vLightPos[2];
 	float4 vLightColor[2];
 	float4 vLightRange[2];
+	float4 vKernelVariables;
 };
 
 //--------------------------------------------------------------------------------------
@@ -51,7 +52,7 @@ float getOcclusion(float3x3 tbn, float4 position)
 		float3(0.4689, -0.1598, 0.8547), float3(0.2560, 0.8069, 0.1843),
 		float3(-0.4146, 0.1402, 0.0762), float3(-0.7100, -0.1924, 0.7344)
 	};
-	float radius = 5;
+	float radius = vKernelVariables.x;
 
 	float occlusion = 0.0f;
 	for (int i = 0; i < 8; ++i)
@@ -170,8 +171,6 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	//set noise.z to 0 cuz we want to orient hemisphere on z axis.
 	noise.z = 0;
 
-	//float3 viewNormal = normal_from_depth(depth.x, Input.Tex);
-
 	//make randomVector -1 ~ 1
 	float3 randomVector;
 	randomVector.xyz = noise.xyz *  2.0 - 1.0; //-1~1
@@ -183,9 +182,9 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float occlusion = getOcclusion(kernelTBN, position);
 
 	float4 finalColor = 0;
-	finalColor = saturate(ambient + specular*4 + diffuse);
+	//finalColor = saturate(ambient + specular*4 + diffuse);
 	//finalColor = specular * 4;
-	finalColor = float4(occlusion, occlusion, occlusion, 1);
+	//finalColor = float4(occlusion, occlusion, occlusion, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);
 	//finalColor = float4(z, z, z, 1);
 	return finalColor;
