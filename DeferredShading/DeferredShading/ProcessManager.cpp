@@ -9,6 +9,7 @@
 #include "SamplerManager.h"
 #include "RSManager.h"
 #include "Contents.h"
+#include "InputDispatcher.h"
 
 ProcessManager::ProcessManager()
 {
@@ -45,9 +46,9 @@ BOOL ProcessManager::Process() const
 	if (!mIsContinue)
 		return FALSE;
 
-	Timer::GetInstance()->OnTick();
+	InputDispatcher::GetInstance()->DispatchKeyInput();
 
-	// todo : dispatch input
+	Timer::GetInstance()->OnTick();
 
 	Camera::GetInstance()->Update();
 
@@ -75,6 +76,7 @@ BOOL ProcessManager::Process() const
 
 void ProcessManager::Destroy() const
 {
+	InputDispatcher::Release();
 	Renderer::Release();
 	Timer::Release();
 	Camera::Release();

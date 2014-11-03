@@ -18,7 +18,7 @@ int APIENTRY _tWinMain(	_In_ HINSTANCE hInstance,
 
 	// 메모리 릭을 체크하려면 아래의 #### 칸에 릭 난 곳 { 숫자 } 표기 된 숫자를 넣어주면 됩니다.
 	// _CrtSetBreakAlloc( #### );
-	_CrtSetBreakAlloc(216);
+	// _CrtSetBreakAlloc( 139 );
 
 	// without window bar
 	//if (false == App::GetInstance()->CreateMainWindow(L"DeferredShading", WS_POPUPWINDOW))

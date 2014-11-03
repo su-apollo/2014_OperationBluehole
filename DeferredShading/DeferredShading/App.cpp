@@ -165,7 +165,6 @@ LRESULT App::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) const
 			key.mKeyState = KeyStatusType::KEY_PRESSED;
 
 		InputDispatcher::GetInstance()->EventKeyInput(key);
-		InputDispatcher::GetInstance()->DispatchKeyInput();
 	}
 		return 0;
 
@@ -179,7 +178,6 @@ LRESULT App::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) const
 		key.mKeyState = KeyStatusType::KEY_UP;
 
 		InputDispatcher::GetInstance()->EventKeyInput(key);
-		InputDispatcher::GetInstance()->DispatchKeyInput();
 	}
 
 	case WM_ERASEBKGND:
