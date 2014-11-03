@@ -4,7 +4,6 @@
 #include <xnamath.h>
 #include "Singleton.h"
 #include "ModelManager.h"
-#include "Config.h"
 
 static const LPCWSTR	ELIN_TEXTURE_FACE_DIFF = L"ElinModel/Popori_F_Face01_diff.bmp";
 static const LPCWSTR	ELIN_TEXTURE_FACE_NORM = L"ElinModel/Popori_F_Face01_norm.bmp";

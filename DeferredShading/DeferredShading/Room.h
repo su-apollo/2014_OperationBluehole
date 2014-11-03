@@ -4,7 +4,6 @@
 #include <xnamath.h>
 #include "Singleton.h"
 #include "ModelManager.h"
-#include "Config.h"
 #include "Elin.h"
 
 static const CHAR*		ROOM_PATH = "bg/BG_ColorBleedTest00_SM.FBX";

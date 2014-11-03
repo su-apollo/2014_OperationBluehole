@@ -90,9 +90,6 @@
     <ClInclude Include="PointLight.h">
       <Filter>Light</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
-      <Filter>PreCompile</Filter>
-    </ClInclude>
     <ClInclude Include="RSManager.h">
       <Filter>Render</Filter>
     </ClInclude>
@@ -169,9 +166,6 @@
     </ClCompile>
     <ClCompile Include="PointLight.cpp">
       <Filter>Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Config.cpp">
-      <Filter>PreCompile</Filter>
     </ClCompile>
     <ClCompile Include="RSManager.cpp">
       <Filter>Render</Filter>

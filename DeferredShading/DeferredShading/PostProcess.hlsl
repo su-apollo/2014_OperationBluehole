@@ -186,8 +186,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float occlusion = getOcclusion(kernelTBN, viewPosition);
 
 	float4 finalColor = 0;
-	finalColor = float4(occlusion, occlusion, occlusion, 1);
-	//finalColor = saturate(ambient + specular*4 + diffuse);
+	//finalColor = float4(occlusion, occlusion, occlusion, 1);
+	finalColor = saturate(ambient + specular*4 + diffuse);
 	//finalColor = specular * 4;
 	//finalColor = float4(sampleOriginalDepth, sampleOriginalDepth, sampleOriginalDepth, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);

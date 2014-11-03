@@ -88,7 +88,6 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Config.h" />
     <ClInclude Include="Contents.h" />
     <ClInclude Include="DeferredShading.h" />
     <ClInclude Include="DirectionalLight.h" />
@@ -123,7 +122,6 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Config.cpp" />
     <ClCompile Include="Contents.cpp" />
     <ClCompile Include="DeferredShading.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />

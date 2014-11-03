@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Contents.h"
-#include "Config.h"
 #include "LightManager.h"
 
 

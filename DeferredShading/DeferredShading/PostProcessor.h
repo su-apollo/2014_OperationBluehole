@@ -1,7 +1,7 @@
 #pragma once
 #include "Singleton.h"
+#include "Contents.h"
 #include "Elin.h"
-#include "Config.h"
 
 struct QuadVertex
 {
