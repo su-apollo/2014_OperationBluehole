@@ -69,19 +69,19 @@ float getOcclusion(float3x3 tbn, float4 position)
 
 		//project position
 		float4 sampleProjected = mul(float4(sampleWorldPos, 1), mViewProj); // -1~1
-		sampleProjected.xy /= sampleProjected.w;
-		float2 projected = float2(sampleProjected.x, sampleProjected.y);
-		float2 a = float2(sampleProjected.x*0.5 + 0.5, 0.5 - sampleProjected.y*0.5);
-		//sampleProjected.xy = sampleProjected.xy*0.5 + 0.5; 
+		sampleProjected.xyz /= sampleProjected.w;
+		float2 projCoord = float2(sampleProjected.x*0.5 + 0.5, 0.5 - sampleProjected.y*0.5); // 0~1
 
 		//get original depth
-		float	sampleOriginalDepth = txDepth.Sample(samLinear, a).x;
-		float4 origianlWorldPos = mul(float4(projected.x, projected.y, sampleOriginalDepth, 1), mInverseViewProj);
+		float	origianlDepth = txDepth.Sample(samLinear, projCoord).x; // 0~1
+		float4 origianlWorldPos = mul(float4(sampleProjected.x, sampleProjected.y, origianlDepth, 1), mInverseViewProj);
 		origianlWorldPos /= origianlWorldPos.w;
 
 		//optional calculation? sampleViewPosition.z > originalPos.z면 차폐된것이다.
-		float rangeCheck = distance(position.xyz, sampleWorldPos.xyz) < radius ? 1 : 0;
-		occlusion += step(origianlWorldPos.z, sampleWorldPos.z)* rangeCheck;
+		float rangeCheck = distance(position.xyz, origianlWorldPos.xyz) < radius ? 1 : 0;
+		//occlusion += step(origianlWorldPos.z, sampleWorldPos.z)* rangeCheck;
+		occlusion += step(origianlDepth, sampleProjected.z);
+
 	}
 
 	//more occluded means darker.
@@ -120,7 +120,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 diffuse = txDiffuse.Sample(samLinear, Input.Tex);
 	float4 specular = txSpecular.Sample(samLinear, Input.Tex);
 	float4 depth = txDepth.Sample(samLinear, Input.Tex);
-	float4 ambient = float4(0, 0, 0, 1)*0.3;
+	float4 ambient = float4(0.2f,0.15f,0.08f, 1) * 0.4f;
+	//float4 ambient = float4(0,0,0,1);
 
 	normal = normal * 2 - 1;
 
@@ -136,7 +137,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 diffuseFactor = float4(0, 0, 0, 0);
 	float4 specularFactor = float4(0, 0, 0, 0);;
 
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
 		// get lightDirection and distance
 		float4 lightDir = vLightPos[i] - position;
@@ -182,11 +183,10 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float occlusion = getOcclusion(kernelTBN, position);
 
 	float4 finalColor = 0;
-	finalColor = saturate(ambient + specular*4 + diffuse);
+	finalColor = saturate(ambient + specular + diffuse);
 	//finalColor = specular * 4;
 	//finalColor = float4(occlusion, occlusion, occlusion, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);
-	//finalColor = float4(z, z, z, 1);
 	return finalColor;
 }
 

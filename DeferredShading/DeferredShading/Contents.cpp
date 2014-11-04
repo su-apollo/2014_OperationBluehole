@@ -4,6 +4,7 @@
 #include "InputDispatcher.h"
 #include "Camera.h"
 #include "ProcessManager.h"
+#include "PostProcessor.h"
 
 Contents::Contents()
 {
@@ -16,7 +17,10 @@ Contents::~Contents()
 void Contents::Init()
 {
 	InputDispatch(VK_ESCAPE, [](){ ProcessManager::GetInstance()->Stop(); });
-	InputDispatch(VK_UP, [](){ Camera::GetInstance()->MoveFront(100.f); });
+	InputDispatch(VK_UP, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(0.05f); });
+	InputDispatch(VK_DOWN, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });
+
+
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
 
