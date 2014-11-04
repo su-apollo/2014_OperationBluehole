@@ -92,10 +92,7 @@
     <ClInclude Include="DeferredShading.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Elin.h" />
-    <ClInclude Include="FBXLoader.h" />
-    <ClInclude Include="FBXRenderer.h" />
     <ClInclude Include="InputDispatcher.h" />
-    <ClInclude Include="Material.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RSManager.h" />
@@ -110,7 +107,6 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SamplerManager.h" />
     <ClInclude Include="Singleton.h" />
-    <ClInclude Include="SkinnedMesh.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
@@ -122,10 +118,7 @@
     <ClCompile Include="DeferredShading.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Elin.cpp" />
-    <ClCompile Include="FBXLoader.cpp" />
-    <ClCompile Include="FBXRenderer.cpp" />
     <ClCompile Include="InputDispatcher.cpp" />
-    <ClCompile Include="Material.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RSManager.cpp" />
@@ -138,7 +131,6 @@
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SamplerManager.cpp" />
-    <ClCompile Include="SkinnedMesh.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

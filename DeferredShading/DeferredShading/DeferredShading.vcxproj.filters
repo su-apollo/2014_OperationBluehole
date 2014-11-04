@@ -19,9 +19,6 @@
     <Filter Include="App">
       <UniqueIdentifier>{202d29dd-b6dd-4d9d-ad60-101d850d2925}</UniqueIdentifier>
     </Filter>
-    <Filter Include="trash">
-      <UniqueIdentifier>{3265437e-15fa-430d-9a93-ed0c30be3027}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utils">
       <UniqueIdentifier>{8692b25a-4d73-4203-ba34-3665e8e7b1b8}</UniqueIdentifier>
     </Filter>
@@ -90,9 +87,6 @@
     <ClInclude Include="Contents.h">
       <Filter>Contents</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>trash</Filter>
-    </ClInclude>
     <ClInclude Include="InputDispatcher.h">
       <Filter>App</Filter>
     </ClInclude>
@@ -107,15 +101,6 @@
     </ClInclude>
     <ClInclude Include="SamplerManager.h">
       <Filter>Contents</Filter>
-    </ClInclude>
-    <ClInclude Include="FBXLoader.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="FBXRenderer.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinnedMesh.h">
-      <Filter>Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,9 +152,6 @@
     <ClCompile Include="Contents.cpp">
       <Filter>Contents</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>trash</Filter>
-    </ClCompile>
     <ClCompile Include="InputDispatcher.cpp">
       <Filter>App</Filter>
     </ClCompile>
@@ -184,15 +166,6 @@
     </ClCompile>
     <ClCompile Include="SamplerManager.cpp">
       <Filter>Contents</Filter>
-    </ClCompile>
-    <ClCompile Include="FBXLoader.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="FBXRenderer.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinnedMesh.cpp">
-      <Filter>Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
