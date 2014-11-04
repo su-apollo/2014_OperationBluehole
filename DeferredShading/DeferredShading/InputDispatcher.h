@@ -25,12 +25,10 @@ struct MousePosInfo
 	int mPosY;
 };
 
-// todo : dispatch로 넘기는 함수 인자를 받을 수 있도록 설정 
-// 인자가 필요하면 말해주세요
 class InputDispatcher : public Singleton<InputDispatcher>
 {
 	typedef std::function<void()> KeyTask;
-
+	
 public:
 	InputDispatcher();
 	~InputDispatcher();
@@ -52,3 +50,10 @@ private:
 
 	MousePosInfo					mUpdatedMousePos;
 };
+
+template <class F, class... Args>
+void InputDispatch(unsigned char keyType, F memfunc, Args&&... args)
+{
+	auto task = std::bind(memfunc, std::forward<Args>(args)...);
+	InputDispatcher::GetInstance()->RegisterKeyTask(keyType, task);
+}

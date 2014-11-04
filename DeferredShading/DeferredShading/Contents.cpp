@@ -15,7 +15,7 @@ Contents::~Contents()
 
 void Contents::Init()
 {
-	InputDispatcher::GetInstance()->RegisterKeyTask(VK_ESCAPE, [](){ ProcessManager::GetInstance()->Stop(); });
+	InputDispatch(VK_ESCAPE, [](){ ProcessManager::GetInstance()->Stop(); });
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
 
