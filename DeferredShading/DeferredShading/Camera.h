@@ -13,7 +13,10 @@ public:
 	~Camera() {}
 
 	void		Update();
-	void		MoveFront(float speed);
+	void		Walk(float speed);
+	void		Strafe(float speed);
+	void		Pitch(float angle);
+	void		RotateY(float angle);
 
 	float		GetNear() { return mNear; }
 	float		GetFar() { return mFar; }
@@ -24,6 +27,7 @@ public:
 	D3DXMATRIX	GetMatProj() { return mMatProj; }
 	D3DXMATRIX	GetMatInverseProj();
 	D3DXMATRIX	GetMatInverseViewProj();
+	void	UpdateMatView();
 
 private:
 
@@ -38,5 +42,12 @@ private:
 
 	D3DXMATRIX	mMatView;
 	D3DXMATRIX	mMatProj;
+
+	//바꿀게요
+	D3DXVECTOR3 mPosition; // 카메라 워점
+	D3DXVECTOR3 mRight; //x
+	D3DXVECTOR3 mEup; //y
+	D3DXVECTOR3 mLook; //z
+
 };
 

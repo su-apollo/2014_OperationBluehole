@@ -20,8 +20,22 @@ void Contents::Init()
 	ID3D11Device* device = Renderer::GetInstance()->GetDevice();
 
 	InputDispatch(VK_ESCAPE, [](){ ProcessManager::GetInstance()->Stop(); });
-	InputDispatch(VK_UP, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(0.05f); });
-	InputDispatch(VK_DOWN, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });
+	//InputDispatch(VK_UP, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(0.05f); });
+	InputDispatch(VK_UP, [](){ Camera::GetInstance()->Walk(30); });
+	InputDispatch(VK_DOWN, [](){ Camera::GetInstance()->Walk(-30); });
+	InputDispatch(VK_RIGHT, [](){ Camera::GetInstance()->Strafe(30); });
+	InputDispatch(VK_LEFT, [](){ Camera::GetInstance()->Strafe(-30); });
+	InputDispatch('S', [](){ Camera::GetInstance()->Pitch(1); });
+	InputDispatch('W', [](){ Camera::GetInstance()->Pitch(-1); });
+	InputDispatch('D', [](){ Camera::GetInstance()->RotateY(1); });
+	InputDispatch('A', [](){ Camera::GetInstance()->RotateY(-1); });
+
+
+
+
+
+
+	//InputDispatch(VK_DOWN, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
 
