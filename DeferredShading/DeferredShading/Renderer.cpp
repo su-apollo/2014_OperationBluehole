@@ -32,6 +32,7 @@ BOOL Renderer::Init()
 		DestroyDevice();
 		return FALSE;
 	}
+	mElin.CleanUp();
 
 	if (!mRoom.Init())
 	{
@@ -39,6 +40,7 @@ BOOL Renderer::Init()
 		DestroyDevice();
 		return FALSE;
 	}
+	mRoom.CleanUp();
 
 	return TRUE;
 }
