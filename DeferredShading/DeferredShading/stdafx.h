@@ -41,5 +41,6 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <queue>
 #include <Array>
-
+#include <functional>

@@ -3,11 +3,7 @@
 #include "LightManager.h"
 #include "InputDispatcher.h"
 #include "Camera.h"
-
-REGISTER_KEY_HANDLER(VK_UP)
-{
-	Camera::GetInstance()->MoveFront(10);
-}
+#include "ProcessManager.h"
 
 Contents::Contents()
 {
@@ -19,6 +15,8 @@ Contents::~Contents()
 
 void Contents::Init()
 {
+	InputDispatcher::GetInstance()->RegisterKeyTask(VK_ESCAPE, [](){ ProcessManager::GetInstance()->Stop(); });
+
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
 
 	//todo : ºû À§Ä¡ ¼³Á¤
@@ -31,4 +29,5 @@ void Contents::Render()
 {
 
 }
+
 

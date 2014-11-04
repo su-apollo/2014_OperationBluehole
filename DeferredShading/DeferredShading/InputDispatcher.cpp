@@ -3,25 +3,11 @@
 #include "App.h"
 #include "ProcessManager.h"
 
-static void DefaultKeyHandler(KeyInput inputKey)
-{
-}
-
-//사용하지 않는 구조체를 하나 만듦으로서 초기화 진행
-struct InitKeyHandlers
-{
-	InitKeyHandlers()
-	{
-		for (int i = 0; i < MAX_KEY; ++i)
-		{
-			KeyHandlerTable[i] = DefaultKeyHandler;
-		}
-	}
-} _init_key_handlers_;
-
 InputDispatcher::InputDispatcher() : mUpdatedMousePos(0, 0)
 {
 	mIsKeyPressed.fill(false);
+	for (int i = 0; i < MAX_KEY; ++i)
+		mKeyTaskTable[i] = [](){};
 }
 
 InputDispatcher::~InputDispatcher()
@@ -71,23 +57,19 @@ void InputDispatcher::DispatchKeyInput()
 		if (IsPressed(*(iter)))
 		{
 			//이게 실행 구문
-			KeyHandlerTable[iter->mKeyValue](*(iter));
+			mKeyTaskTable[iter->mKeyValue]();
 			iter->mKeyState = KeyStatusType::KEY_PRESSED;
 			++iter;
 		}
 		else
 		{
 			(iter)->mKeyState = KeyStatusType::KEY_UP;
-			//여기서 키 실행
-			KeyHandlerTable[iter->mKeyValue](*(iter));
-
+			mKeyTaskTable[iter->mKeyValue]();
 			mKeyInputList.erase(iter);
 			break;
 		}
 	}
 }
 
-REGISTER_KEY_HANDLER(VK_ESCAPE)
-{
-	ProcessManager::GetInstance()->Stop();
-}
+
+

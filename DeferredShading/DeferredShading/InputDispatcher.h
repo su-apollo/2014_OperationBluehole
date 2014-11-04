@@ -1,6 +1,7 @@
 #pragma once
 #include "Singleton.h"
 #include "KeyCode.h"
+#include <functional>
 
 enum KeyStatusType
 {
@@ -24,14 +25,19 @@ struct MousePosInfo
 	int mPosY;
 };
 
-// 해당 키 이벤트가 발생하면 등록해둔 함수 실행
+// todo : dispatch로 넘기는 함수 인자를 받을 수 있도록 설정 
+// 인자가 필요하면 말해주세요
 class InputDispatcher : public Singleton<InputDispatcher>
 {
+	typedef std::function<void()> KeyTask;
+
 public:
 	InputDispatcher();
 	~InputDispatcher();
 
 	void			EventKeyInput(KeyInput key);
+	void			RegisterKeyTask(unsigned char keyType, const KeyTask& task) { mKeyTaskTable[keyType] = task; }
+
 	void			DispatchKeyInput();
 
 	bool			IsPressed(KeyInput key) const { return IsPressed(key.mKeyValue); }
@@ -40,26 +46,9 @@ public:
 	MousePosInfo	GetMousePosition();
 
 private:
-	std::list<KeyInput>			mKeyInputList;
-	std::array<bool, MAX_KEY>	mIsKeyPressed;
+	std::list<KeyInput>				mKeyInputList;
+	std::array<bool, MAX_KEY>		mIsKeyPressed;
+	std::array<KeyTask, MAX_KEY>	mKeyTaskTable;
 
-	MousePosInfo				mUpdatedMousePos;
+	MousePosInfo					mUpdatedMousePos;
 };
-
-//함수포인터로 사용
-typedef void(*KeyEventHandler)(KeyInput inputKey);
-static KeyEventHandler KeyHandlerTable[MAX_KEY];
-
-struct RegisterKeyHandler
-{
-	RegisterKeyHandler(unsigned char keyType, KeyEventHandler keyHandler)
-	{
-		KeyHandlerTable[keyType] = keyHandler;
-	}
-};
-
-//선언 -> 등록 -> 정의
-#define REGISTER_KEY_HANDLER( KEY_TYPE ) \
-	static void Handler_##KEY_TYPE( KeyInput inputKey ); \
-	static RegisterKeyHandler _register_##KEY_TYPE(KEY_TYPE, Handler_##KEY_TYPE); \
-	static void Handler_##KEY_TYPE( KeyInput inputKey )
