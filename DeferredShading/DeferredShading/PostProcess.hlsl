@@ -78,14 +78,14 @@ float getOcclusion(float3x3 tbn, float4 position)
 		origianlWorldPos /= origianlWorldPos.w;
 
 		//optional calculation? sampleViewPosition.z > originalPos.z면 차폐된것이다.
-		float rangeCheck = distance(position.xyz, origianlWorldPos.xyz) < radius ? 1 : 0;
+		float rangeCheck = (distance(position.xyz, sampleWorldPos.xyz) < radius) ? 1 : 0;
 		//occlusion += step(origianlWorldPos.z, sampleWorldPos.z)* rangeCheck;
-		occlusion += step(origianlDepth, sampleProjected.z);
+		occlusion += step(origianlDepth, sampleProjected.z)* rangeCheck;
 
 	}
 
 	//more occluded means darker.
-	occlusion = 1 - (occlusion / 8) * 0.5;
+	occlusion = 1 - (occlusion / 8) * 0.8;
 
 	return occlusion;
 }
@@ -120,7 +120,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 diffuse = txDiffuse.Sample(samLinear, Input.Tex);
 	float4 specular = txSpecular.Sample(samLinear, Input.Tex);
 	float4 depth = txDepth.Sample(samLinear, Input.Tex);
-	float4 ambient = float4(0.2f,0.15f,0.08f, 1) * 0.4f;
+	float4 ambient = float4(0.3f,0.3f,0.2f, 1) * 0.5f;
 	//float4 ambient = float4(0,0,0,1);
 
 	normal = normal * 2 - 1;
@@ -166,7 +166,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	//SSAO
 	//texture size 어떻게 얻지? 일단 숫자로 넣어놨지만 찾아서 바꿀 것.
-	float2 noiseTexCoords = float2(1024.0f, 768.0f) / float2(128, 128);
+	float2 noiseTexCoords = float2(1024.0f, 768.0f) / float2(64, 64);
 	noiseTexCoords *= Input.Tex;
 	float4 noise = txNoise.Sample(samLinear, noiseTexCoords);
 	//set noise.z to 0 cuz we want to orient hemisphere on z axis.
@@ -181,11 +181,12 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float3x3 kernelTBN = float3x3(tangent, bitangent, normal.xyz);
 
 	float occlusion = getOcclusion(kernelTBN, position);
+	ambient *= occlusion;
 
 	float4 finalColor = 0;
-	finalColor = saturate(ambient + specular + diffuse);
-	//finalColor = specular * 4;
-	//finalColor = float4(occlusion, occlusion, occlusion, 1);
+	//finalColor = saturate(ambient+diffuse+specular);
+	//finalColor = ambient;
+	finalColor = float4(occlusion, occlusion, occlusion, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);
 	return finalColor;
 }

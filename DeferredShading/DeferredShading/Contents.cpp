@@ -20,7 +20,9 @@ void Contents::Init()
 	ID3D11Device* device = Renderer::GetInstance()->GetDevice();
 
 	InputDispatch(VK_ESCAPE, [](){ ProcessManager::GetInstance()->Stop(); });
-	//InputDispatch(VK_UP, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(0.05f); });
+	InputDispatch('Z', [](){ PostProcessor::GetInstance()->ChangeKernelRadius(0.05f); });
+	InputDispatch('X', [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });
+	
 	InputDispatch(VK_UP, [](){ Camera::GetInstance()->Walk(30); });
 	InputDispatch(VK_DOWN, [](){ Camera::GetInstance()->Walk(-30); });
 	InputDispatch(VK_RIGHT, [](){ Camera::GetInstance()->Strafe(30); });
