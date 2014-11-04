@@ -25,6 +25,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{8692b25a-4d73-4203-ba34-3665e8e7b1b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mesh">
+      <UniqueIdentifier>{cd999352-c6b1-441d-aadf-1ae31a33718d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -63,9 +66,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Contents</Filter>
     </ClInclude>
-    <ClInclude Include="Elin.h">
-      <Filter>Contents</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Contents</Filter>
     </ClInclude>
@@ -75,17 +75,11 @@
     <ClInclude Include="PostProcessor.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="ModelManager.h">
-      <Filter>Contents</Filter>
-    </ClInclude>
     <ClInclude Include="RenderTarget.h">
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="RTManager.h">
       <Filter>Render</Filter>
-    </ClInclude>
-    <ClInclude Include="SamplerManager.h">
-      <Filter>Contents</Filter>
     </ClInclude>
     <ClInclude Include="PointLight.h">
       <Filter>Light</Filter>
@@ -93,23 +87,35 @@
     <ClInclude Include="RSManager.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="Room.h">
-      <Filter>Contents</Filter>
-    </ClInclude>
     <ClInclude Include="Contents.h">
       <Filter>Contents</Filter>
-    </ClInclude>
-    <ClInclude Include="FBXLoader.h">
-      <Filter>trash</Filter>
-    </ClInclude>
-    <ClInclude Include="FBXRenderer.h">
-      <Filter>trash</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>trash</Filter>
     </ClInclude>
     <ClInclude Include="InputDispatcher.h">
       <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Elin.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelManager.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="SamplerManager.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="FBXLoader.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="FBXRenderer.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedMesh.h">
+      <Filter>Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -137,9 +143,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Contents</Filter>
     </ClCompile>
-    <ClCompile Include="Elin.cpp">
-      <Filter>Contents</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Contents</Filter>
     </ClCompile>
@@ -149,17 +152,11 @@
     <ClCompile Include="PostProcessor.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="ModelManager.cpp">
-      <Filter>Contents</Filter>
-    </ClCompile>
     <ClCompile Include="RenderTarget.cpp">
       <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="RTManager.cpp">
       <Filter>Render</Filter>
-    </ClCompile>
-    <ClCompile Include="SamplerManager.cpp">
-      <Filter>Contents</Filter>
     </ClCompile>
     <ClCompile Include="PointLight.cpp">
       <Filter>Light</Filter>
@@ -167,23 +164,35 @@
     <ClCompile Include="RSManager.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="Room.cpp">
-      <Filter>Contents</Filter>
-    </ClCompile>
     <ClCompile Include="Contents.cpp">
       <Filter>Contents</Filter>
-    </ClCompile>
-    <ClCompile Include="FBXLoader.cpp">
-      <Filter>trash</Filter>
-    </ClCompile>
-    <ClCompile Include="FBXRenderer.cpp">
-      <Filter>trash</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>trash</Filter>
     </ClCompile>
     <ClCompile Include="InputDispatcher.cpp">
       <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Elin.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelManager.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="SamplerManager.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXLoader.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXRenderer.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedMesh.cpp">
+      <Filter>Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

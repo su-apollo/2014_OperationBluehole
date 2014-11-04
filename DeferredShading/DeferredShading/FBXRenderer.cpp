@@ -147,23 +147,23 @@ HRESULT CFBXRenderDX11::VertexConstruction(ID3D11Device*	pd3dDevice, FBX_MESH_NO
 	for (size_t i = 0; i < meshNode.vertexCount; i++)
 	{
 		FbxVector4 v = fbxNode.m_positionArray[i];
-		pV[i].vPos = DirectX::XMFLOAT3((float)v.mData[0],
+		pV[i].vPos = D3DXVECTOR3((float)v.mData[0],
 			(float)v.mData[1],
 			(float)v.mData[2]);
 
 		v = fbxNode.m_normalArray[i];
 
-		pV[i].vNor = DirectX::XMFLOAT3((float)v.mData[0],
+		pV[i].vNor = D3DXVECTOR3((float)v.mData[0],
 			(float)v.mData[1],
 			(float)v.mData[2]);
 
 		if ((float)fbxNode.m_texcoordArray.size() > 0)
 		{
-			pV[i].vTexcoord = DirectX::XMFLOAT2((float)abs(1.0f - fbxNode.m_texcoordArray[i].mData[0]),
+			pV[i].vTexcoord = D3DXVECTOR2((float)abs(1.0f - fbxNode.m_texcoordArray[i].mData[0]),
 				(float)abs(1.0f - fbxNode.m_texcoordArray[i].mData[1]));
 		}
 		else
-			pV[i].vTexcoord = DirectX::XMFLOAT2(0, 0);
+			pV[i].vTexcoord = D3DXVECTOR2(0, 0);
 	}
 
 	CreateVertexBuffer(pd3dDevice, &meshNode.m_pVB, pV, sizeof(VERTEX_DATA), meshNode.vertexCount);
@@ -187,13 +187,13 @@ HRESULT CFBXRenderDX11::MaterialConstruction(ID3D11Device*	pd3dDevice, FBX_MESH_
 	meshNode.materialData.TransparencyFactor = fbxMaterial.TransparencyFactor;
 
 	meshNode.materialData.ambient
-		= DirectX::XMFLOAT4(fbxMaterial.ambient.r, fbxMaterial.ambient.g, fbxMaterial.ambient.b, fbxMaterial.ambient.a);
+		= D3DXVECTOR4(fbxMaterial.ambient.r, fbxMaterial.ambient.g, fbxMaterial.ambient.b, fbxMaterial.ambient.a);
 	meshNode.materialData.diffuse
-		= DirectX::XMFLOAT4(fbxMaterial.diffuse.r, fbxMaterial.diffuse.g, fbxMaterial.diffuse.b, fbxMaterial.diffuse.a);
+		= D3DXVECTOR4(fbxMaterial.diffuse.r, fbxMaterial.diffuse.g, fbxMaterial.diffuse.b, fbxMaterial.diffuse.a);
 	meshNode.materialData.specular
-		= DirectX::XMFLOAT4(fbxMaterial.specular.r, fbxMaterial.specular.g, fbxMaterial.specular.b, fbxMaterial.specular.a);
+		= D3DXVECTOR4(fbxMaterial.specular.r, fbxMaterial.specular.g, fbxMaterial.specular.b, fbxMaterial.specular.a);
 	meshNode.materialData.emmisive
-		= DirectX::XMFLOAT4(fbxMaterial.emmisive.r, fbxMaterial.emmisive.g, fbxMaterial.emmisive.b, fbxMaterial.emmisive.a);
+		= D3DXVECTOR4(fbxMaterial.emmisive.r, fbxMaterial.emmisive.g, fbxMaterial.emmisive.b, fbxMaterial.emmisive.a);
 
 	if (fbxMaterial.diffuse.textureSetArray.size() > 0)
 	{
@@ -202,11 +202,11 @@ HRESULT CFBXRenderDX11::MaterialConstruction(ID3D11Device*	pd3dDevice, FBX_MESH_
 		{
 			std::string path = it->second[0];
 
-			// texture
 			WCHAR	wstr[512];
 			size_t wLen = 0;
 			mbstowcs_s(&wLen, wstr, path.size() + 1, path.c_str(), _TRUNCATE);
-			CreateDDSTextureFromFile(pd3dDevice, wstr, NULL, &meshNode.materialData.pSRV, 0);	// DXTex‚©‚ç
+			//CreateDDSTextureFromFile(pd3dDevice, wstr, NULL, &meshNode.materialData.pSRV, 0);
+			D3DX11CreateShaderResourceViewFromFile(pd3dDevice, wstr, NULL, NULL, &meshNode.materialData.pSRV, NULL);
 		}
 	}
 

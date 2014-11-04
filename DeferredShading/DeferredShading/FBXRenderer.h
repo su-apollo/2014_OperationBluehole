@@ -3,25 +3,25 @@
 
 struct	VERTEX_DATA
 {
-	DirectX::XMFLOAT3	vPos;
-	DirectX::XMFLOAT3	vNor;
-	DirectX::XMFLOAT2	vTexcoord;
+	D3DXVECTOR3	vPos;
+	D3DXVECTOR3	vNor;
+	D3DXVECTOR2	vTexcoord;
 };
 
 struct MATERIAL_CONSTANT_DATA
 {
-	DirectX::XMFLOAT4	ambient;
-	DirectX::XMFLOAT4	diffuse;
-	DirectX::XMFLOAT4	specular;
-	DirectX::XMFLOAT4	emmisive;
+	D3DXVECTOR4	ambient;
+	D3DXVECTOR4	diffuse;
+	D3DXVECTOR4	specular;
+	D3DXVECTOR4	emmisive;
 };
 
 struct MATERIAL_DATA
 {
-	DirectX::XMFLOAT4	ambient;
-	DirectX::XMFLOAT4	diffuse;
-	DirectX::XMFLOAT4	specular;
-	DirectX::XMFLOAT4	emmisive;
+	D3DXVECTOR4	ambient;
+	D3DXVECTOR4	diffuse;
+	D3DXVECTOR4	specular;
+	D3DXVECTOR4	emmisive;
 	float specularPower;
 	float TransparencyFactor;
 

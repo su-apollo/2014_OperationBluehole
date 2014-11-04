@@ -1,8 +1,8 @@
 #pragma once
 #include "Singleton.h"
 
-typedef std::tr1::unordered_map<std::string, int> UVsetID;
-typedef std::tr1::unordered_map<std::string, std::vector<std::string>> TextureSet;
+typedef std::map<std::string, int> UVsetID;
+typedef std::map<std::string, std::vector<std::string>> TextureSet;
 
 struct FBX_MATRIAL_ELEMENT
 {
