@@ -111,9 +111,6 @@
     <ClInclude Include="InputDispatcher.h">
       <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="KeyCode.h">
-      <Filter>App</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

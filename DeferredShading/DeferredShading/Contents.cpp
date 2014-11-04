@@ -16,6 +16,7 @@ Contents::~Contents()
 void Contents::Init()
 {
 	InputDispatch(VK_ESCAPE, [](){ ProcessManager::GetInstance()->Stop(); });
+	InputDispatch(VK_UP, [](){ Camera::GetInstance()->MoveFront(100.f); });
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
 

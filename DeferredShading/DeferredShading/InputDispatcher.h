@@ -1,7 +1,8 @@
 #pragma once
 #include "Singleton.h"
-#include "KeyCode.h"
 #include <functional>
+
+const int MAX_KEY = 256;
 
 enum KeyStatusType
 {
