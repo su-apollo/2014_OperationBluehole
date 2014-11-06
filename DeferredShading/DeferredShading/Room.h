@@ -11,6 +11,9 @@ static const CHAR*		ROOM_PATH = "bg/BG_ColorBleedTest00_SM.FBX";
 static const LPCWSTR	ROOM_TEXTURE_DIFF = L"bg/BG_ColorBleedTest00_diff.bmp";
 static const LPCWSTR	ROOM_TEXTURE_NORM = L"bg/BG_ColorBleedTest00_norm.bmp";
 
+static const LPCWSTR	ROOM_ITEM_TEXTURE_DIFF = L"bg/BG_ColorBleedTest01_diff.bmp";
+static const LPCWSTR	ROOM_ITEM_TEXTURE_NORM = L"bg/BG_ColorBleedTest01_norm.bmp";
+
 static const WCHAR*		ROOM_VS_PATH = L"ElinVertexShader.hlsl";
 static const LPCSTR		ROOM_VS_MAIN = "main";
 static const LPCSTR		ROOM_VS_MODEL = "vs_4_0_level_9_3";

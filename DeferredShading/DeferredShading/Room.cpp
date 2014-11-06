@@ -320,17 +320,25 @@ BOOL Room::CreateMeshCB(MeshPointer mesh, MeshDataPointer meshData)
 
 BOOL Room::LoadTexture()
 {
-	mModel[0]->mTexutreDiff = ROOM_TEXTURE_DIFF;
-	mModel[0]->mTexutreNorm = ROOM_TEXTURE_NORM;
+	mModel[0]->mTexutreDiff = ROOM_ITEM_TEXTURE_DIFF;
+	mModel[0]->mTexutreNorm = ROOM_ITEM_TEXTURE_NORM;
+	mModel[1]->mTexutreDiff = ROOM_TEXTURE_DIFF;
+	mModel[1]->mTexutreNorm = ROOM_TEXTURE_NORM;
 
 	// Load the Texture
-	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mModel[0]->mTexutreDiff, NULL, NULL, &mMeshData[0]->mTextureRVDiff, NULL);
-	if (FAILED(hr))
-		return FALSE;
 
-	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mModel[0]->mTexutreNorm, NULL, NULL, &mMeshData[0]->mTextureRVNorm, NULL);
-	if (FAILED(hr))
-		return FALSE;
+	for (unsigned int i = 0; i < mModel.size(); ++i)
+	{
+		hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mModel[i]->mTexutreDiff, NULL, NULL, &mMeshData[i]->mTextureRVDiff, NULL);
+		if (FAILED(hr))
+			return FALSE;
+
+		hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, mModel[i]->mTexutreNorm, NULL, NULL, &mMeshData[i]->mTextureRVNorm, NULL);
+		if (FAILED(hr))
+			return FALSE;
+
+	}
+
 
 	return TRUE;
 }
