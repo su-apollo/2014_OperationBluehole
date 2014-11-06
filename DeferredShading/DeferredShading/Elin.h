@@ -69,6 +69,8 @@ public:
 	void Release();
 	void CleanUp();
 
+	void StopRotation(BOOL isRotating);
+
 private:
 
 	void GetModelMeshData();
@@ -113,5 +115,7 @@ private:
 	//여러 매쉬를 포함하고 있는 전체 모델
 	std::vector<MeshPointer> mModel;
 	std::vector <MeshDataPointer>	mMeshData;
+
+	BOOL					mIsRotating = TRUE;
 };
 

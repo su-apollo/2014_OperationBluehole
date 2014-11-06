@@ -86,7 +86,12 @@ void Elin::Render()
 {
 	// rotate
 	D3DXMATRIX matRotate;
-	D3DXMatrixRotationY(&matRotate, Timer::GetInstance()->GetDeltaTime());
+
+	float rotation = 0;
+	if (mIsRotating)
+		rotation = Timer::GetInstance()->GetDeltaTime();
+
+	D3DXMatrixRotationY(&matRotate, rotation);
 	mWorld *= matRotate;
 
 	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
@@ -367,6 +372,11 @@ BOOL Elin::LoadMeshTexture(MeshPointer mesh, MeshDataPointer meshData)
 		return FALSE;
 
 	return TRUE;
+}
+
+void Elin::StopRotation(BOOL isRotating)
+{
+	mIsRotating = isRotating;
 }
 
 
