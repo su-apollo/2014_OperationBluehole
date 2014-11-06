@@ -17,6 +17,7 @@ public:
 	void		Strafe(float speed);
 	void		Pitch(float angle);
 	void		RotateY(float angle);
+	void		changeNearFar(float range);
 
 	float		GetNear() { return mNear; }
 	float		GetFar() { return mFar; }

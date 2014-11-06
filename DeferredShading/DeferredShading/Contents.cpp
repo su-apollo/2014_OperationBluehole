@@ -31,8 +31,11 @@ void Contents::Init()
 	InputDispatch('W', [](){ Camera::GetInstance()->Pitch(-1); });
 	InputDispatch('D', [](){ Camera::GetInstance()->RotateY(1); });
 	InputDispatch('A', [](){ Camera::GetInstance()->RotateY(-1); });
+	InputDispatch(VK_NUMPAD8, [](){ Camera::GetInstance()->changeNearFar(10); });
+	InputDispatch(VK_NUMPAD2, [](){ Camera::GetInstance()->changeNearFar(-10); });
 	InputDispatch('R', [](){ Renderer::GetInstance()->StopElinRotation(TRUE); });
 	InputDispatch('P', [](){ Renderer::GetInstance()->StopElinRotation(FALSE); });
+
 
 
 	//InputDispatch(VK_DOWN, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });

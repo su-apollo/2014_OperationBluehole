@@ -118,4 +118,10 @@ void Camera::UpdateMatView()
 	mMatView(3, 3) = 1.0f;
 }
 
+void Camera::changeNearFar(float range)
+{
+	mNear += range*Timer::GetInstance()->GetDeltaTime();
+	mFar += range*Timer::GetInstance()->GetDeltaTime();
+}
+
 

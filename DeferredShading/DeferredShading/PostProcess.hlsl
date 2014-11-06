@@ -73,7 +73,7 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 		float4 originalWorldPos = mul(float4(sampleProjected.x, sampleProjected.y, originalDepth, 1), mInverseViewProj);
 		originalWorldPos /= originalWorldPos.w;
 
-		//optional calculation? sampleViewPosition.z > originalPos.z면 차폐된것이다.
+		//차폐에 기여하는가 검사. 같은 평면에 가까이 있는 점일 경우 차폐에 별로 기여하지 않는다고 봄.
 		float rangeCheck = max(dot(normal.xyz, normalize(originalWorldPos.xyz - position.xyz)), 0);
 
 		//거리에 따라 차폐에 기여하는 정도를 계산
@@ -99,7 +99,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 diffuse = txDiffuse.Sample(samLinear, Input.Tex);
 	float4 specular = txSpecular.Sample(samLinear, Input.Tex);
 	float4 depth = txDepth.Sample(samLinear, Input.Tex);
-	float4 ambient = float4(0.3f,0.3f,0.2f, 1) * 0.5f;
+	float4 ambient = float4(0.5f,0.5f,0.2f, 1) * 0.5f;
 
 	normal = normal * 2 - 1;
 
@@ -158,9 +158,9 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float occlusion = getOcclusion(kernelTBN, position,normal);
 	ambient *= occlusion;
 
-	float4 finalColor = specular;
-	//finalColor = saturate(ambient+diffuse+specular);
-	finalColor = float4(saturate(diffuse.xyz + ambient.xyz + specular.xyz),1);
+	float4 finalColor = ambient;
+	finalColor = saturate(ambient + diffuse + specular);
+	//finalColor = float4(saturate(diffuse.xyz + ambient.xyz + specular.xyz),1);
 	//finalColor = float4(occlusion, occlusion, occlusion, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);
 	return finalColor;
