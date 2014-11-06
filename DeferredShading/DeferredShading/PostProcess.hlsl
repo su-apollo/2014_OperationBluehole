@@ -123,7 +123,6 @@ float4 main(PS_INPUT Input) : SV_TARGET
 		lightDir /= distance;
 
 		float3 attr = float3(0, 0, 1);
-		//빛 풀파워 주는 영역 변수로 고칠 것.
 		float attrFactor = 1.0f - saturate((distance - vLightRange[i].y) / vLightRange[i].x);
 		attrFactor = pow(attrFactor, 2);
 
@@ -141,6 +140,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	specular *= specularFactor;
 	diffuse *= diffuseFactor;
+	diffuse *= 0.8;
 
 
 
@@ -158,10 +158,10 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float occlusion = getOcclusion(kernelTBN, position,normal);
 	ambient *= occlusion;
 
-	float4 finalColor = ambient;
+	float4 finalColor = specular;
 	//finalColor = saturate(ambient+diffuse+specular);
-	//finalColor = ambient;
-	finalColor = float4(occlusion, occlusion, occlusion, 1);
+	finalColor = float4(saturate(diffuse.xyz + ambient.xyz + specular.xyz),1);
+	//finalColor = float4(occlusion, occlusion, occlusion, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);
 	return finalColor;
 }
