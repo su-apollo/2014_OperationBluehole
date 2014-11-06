@@ -15,11 +15,11 @@ struct PostProcessorConstantBuffer
 	D3DXMATRIX	mViewProj;
 	D3DXMATRIX	mInverseProj;
 	D3DXVECTOR4 vEye;
-	D3DXVECTOR4 vNearFar;
 	D3DXVECTOR4 vLightPos[MAX_LIGHT];
 	D3DXVECTOR4 vLightColor[MAX_LIGHT];
 	D3DXVECTOR4	vLightRange[MAX_LIGHT];
 	D3DXVECTOR4 vKernelVariables;
+	D3DXVECTOR4 vSampleSphere[KERNEL_NUM];
 };
 
 static const LPCWSTR	NOISE_TEXTURE = L"noise_texture.bmp";
@@ -76,5 +76,6 @@ private:
 
 	// changeable varialbes
 	float					mKernelRadius = 2;
+	D3DXVECTOR4				mSampleSphere[KERNEL_NUM];
 };
 

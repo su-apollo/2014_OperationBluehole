@@ -102,15 +102,18 @@ void PostProcessor::Render()
 	pcb.mViewProj = matViewProj;
 	pcb.mInverseProj = matInverseProj;
 	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
-	pcb.vNearFar = D3DXVECTOR4(Camera::GetInstance()->GetNear(), Camera::GetInstance()->GetFar(), 0, 1);
 	for (int i = 0; i < MAX_LIGHT; ++i)
 	{
 		PLightPointer light = LightManager::GetInstance()->mPLightList[i];
 		pcb.vLightPos[i] = light->mPos;
 		pcb.vLightColor[i] = light->mColor;
-		pcb.vLightRange[i] = D3DXVECTOR4(light->mRange, light->mRange, light->mRange, 1);
+		pcb.vLightRange[i] = D3DXVECTOR4(light->mRange, light->mFullRange, light->mRange, 1);
 	}
 	pcb.vKernelVariables = D3DXVECTOR4(mKernelRadius,0,0,0);
+	for (int i = 0; i < KERNEL_NUM; ++i)
+	{
+		pcb.vSampleSphere[i] = mSampleSphere[i];
+	}
 	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
 
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &normalTexRV);
@@ -139,6 +142,15 @@ BOOL PostProcessor::CreateConstBuffer()
 	if (FAILED(hr))
 		return FALSE;
 
+	//some variables
+	mSampleSphere[0] = { 0.5381f, -0.4856f, 0.4319f, 1.0f };
+	mSampleSphere[1] = { 0.1379f, 0.2486f, 0.4430f, 1.0f };
+	mSampleSphere[2] = { -0.3371f, 0.5679f, 0.0057f, 1.0f };
+	mSampleSphere[3] = { -0.6999f, -0.2451f, 0.0019f, 1.0f };
+	mSampleSphere[4] = { 0.4689f, -0.1598f, 0.8547f, 1.0f };
+	mSampleSphere[5] = { 0.2560f, 0.8069f, 0.1843f, 1.0f };
+	mSampleSphere[6] = { -0.4146f, 0.1402f, 0.0762f, 1.0f };
+	mSampleSphere[7] = { -0.7100f, -0.1924f, 0.7344f, 1.0f };
 	return TRUE;
 }
 

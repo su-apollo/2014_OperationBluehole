@@ -3,17 +3,20 @@
 //--------------------------------------------------------------------------------------
 // Globals
 //--------------------------------------------------------------------------------------
+// vKernelVaraibles : x) kernelRadius
+// vLightRange : x) lightRange y)full powere range
+
 cbuffer ConstantBuffer : register(b0)
 {
 	matrix mInverseViewProj;
 	matrix mViewProj;
 	matrix mInverseProj;
 	float4 vEye;
-	float4 vNearFar;
 	float4 vLightPos[2];
 	float4 vLightColor[2];
 	float4 vLightRange[2];
 	float4 vKernelVariables;
+	float3 vSampleSphere[8];
 };
 
 //--------------------------------------------------------------------------------------
@@ -45,20 +48,13 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 {
-	//set z values to 0~1 cuz we want to orient kernels on z axis.
-	float3 sample_sphere[8] = {
-		float3(0.5381, -0.4856, 0.4319), float3(0.1379, 0.2486, 0.4430),
-		float3(-0.3371, 0.5679, 0.0057), float3(-0.6999, -0.2451, 0.0019),
-		float3(0.4689, -0.1598, 0.8547), float3(0.2560, 0.8069, 0.1843),
-		float3(-0.4146, 0.1402, 0.0762), float3(-0.7100, -0.1924, 0.7344)
-	};
 	float radius = vKernelVariables.x;
 
 	float occlusion = 0.0f;
 	for (int i = 0; i < 8; ++i)
 	{
 		//make sample kernels
-		float3 sampleWorldPos = sample_sphere[i];
+		float3 sampleWorldPos = vSampleSphere[i].xyz;
 		sampleWorldPos = mul(tbn, sampleWorldPos);
 
 		float scale = float(i) / float(8);
@@ -82,10 +78,9 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 
 		//거리에 따라 차폐에 기여하는 정도를 계산
 		float dist = sampleProjected.z - originalDepth;
+
 		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
-
 		//occlusion += step(originalDepth, sampleProjected.z)* rangeCheck;
-
 	}
 
 	//more occluded means darker.
@@ -94,26 +89,6 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 	return occlusion;
 }
 
-
-float3 normal_from_depth(float depth, float2 texcoords) {
-
-	const float2 offset1 = float2(0.0, 0.0001);
-	const float2 offset2 = float2(0.0001, 0.0);
-
-	float depth1 = txDepth.Sample(samLinear, texcoords + offset1).x;
-	float depth2 = txDepth.Sample(samLinear, texcoords + offset2).x;
-
-	float3 p1 = float3(offset1, depth1 - depth);
-	float3 p2 = float3(offset2, depth2 - depth);
-
-	float3 normal = cross(p1, p2);
-
-	//y축이 뒤집혔는데?
-	normal.y = -normal.y;
-	//normal.z = -normal.z;
-
-	return normalize(normal);
-}
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
@@ -125,7 +100,6 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 specular = txSpecular.Sample(samLinear, Input.Tex);
 	float4 depth = txDepth.Sample(samLinear, Input.Tex);
 	float4 ambient = float4(0.3f,0.3f,0.2f, 1) * 0.5f;
-	//float4 ambient = float4(0,0,0,1);
 
 	normal = normal * 2 - 1;
 
@@ -139,7 +113,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	position /= position.w;
 
 	float4 diffuseFactor = float4(0, 0, 0, 0);
-	float4 specularFactor = float4(0, 0, 0, 0);;
+	float4 specularFactor = float4(0, 0, 0, 0);
 
 	for (int i = 0; i < 2; ++i)
 	{
@@ -150,7 +124,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 		float3 attr = float3(0, 0, 1);
 		//빛 풀파워 주는 영역 변수로 고칠 것.
-		float attrFactor = 1.0f - saturate((distance - 0.1f) / vLightRange[i].x);
+		float attrFactor = 1.0f - saturate((distance - vLightRange[i].y) / vLightRange[i].x);
 		attrFactor = pow(attrFactor, 2);
 
 		//calculate diffuseFactor
@@ -169,16 +143,13 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	diffuse *= diffuseFactor;
 
 
-	//SSAO
+
 	float2 noiseTexCoords = float2(1024.0f, 768.0f) / float2(128, 128);
 	noiseTexCoords *= Input.Tex;
 	float4 noise = txNoise.Sample(samLinear, noiseTexCoords);
-	//set noise.z to 0 cuz we want to orient hemisphere on z axis.
-	noise.z = 0;
 
-	//make randomVector -1 ~ 1
-	float3 randomVector;
-	randomVector.xyz = noise.xyz *  2.0 - 1.0; //-1~1
+	float3 randomVector = noise.xyz *  2.0 - 1.0; //-1~1
+	randomVector.z = 0;
 
 	float3 tangent = normalize(randomVector - normal.xyz*dot(randomVector, normal.xyz));
 	float3 bitangent = cross(tangent, normal.xyz);
@@ -187,7 +158,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float occlusion = getOcclusion(kernelTBN, position,normal);
 	ambient *= occlusion;
 
-	float4 finalColor = normal;
+	float4 finalColor = ambient;
 	//finalColor = saturate(ambient+diffuse+specular);
 	//finalColor = ambient;
 	finalColor = float4(occlusion, occlusion, occlusion, 1);
