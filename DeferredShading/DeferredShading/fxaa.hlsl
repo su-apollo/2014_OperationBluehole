@@ -17,7 +17,17 @@ Texture2D txScene : register(t0);
 SamplerState samLinear : register(s0);
 
 
-float4 main() : SV_TARGET
+//--------------------------------------------------------------------------------------
+// Input / Output structures
+//--------------------------------------------------------------------------------------
+struct PS_INPUT
+{
+	float4 Pos : SV_POSITION;
+	float2 Tex : TEXCOORD0;
+};
+
+
+float4 main(PS_INPUT Input) : SV_TARGET
 {
 	float2 fxaaFrame;
 	txScene.GetDimensions(fxaaFrame.x, fxaaFrame.y);
@@ -27,7 +37,6 @@ float4 main() : SV_TARGET
 
 	FxaaTex tex = { samLinear, txScene };
 	
-	//return FxaaPixelShader(Input.Tex, 0, tex, tex, tex, 1 / fxaaFrame, 0, 0, 0, fxaaSubpix, fxaaEdgeThreshold, fxaaEdgeThresholdMin, 0, 0, 0, 0);
-
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	return FxaaPixelShader(Input.Tex, 0, tex, tex, tex, 1 / fxaaFrame, 0, 0, 0, fxaaSubpix, fxaaEdgeThreshold, fxaaEdgeThresholdMin, 0, 0, 0, 0);
+	//return txScene.Sample(samLinear, Input.Tex);;
 }

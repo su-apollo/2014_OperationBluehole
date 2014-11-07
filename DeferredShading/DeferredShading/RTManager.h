@@ -17,6 +17,7 @@ public:
 	void ClearRenderTargets();
 	void SetRenderTargetToGBuff();
 	void SetRenderTargetToSDOBuff();
+	void SetRenderTargetToSceneBuff();
 
 	ID3D11ShaderResourceView* GetNormalTexRV() { return mNormalsBuff.GetShaderResourceView(); }
 	ID3D11ShaderResourceView* GetDiffuseTexRV() { return mDiffuseBuff.GetShaderResourceView(); }
@@ -24,6 +25,7 @@ public:
 	ID3D11ShaderResourceView* GetDepthTexRV() { return mDepthBuff.GetShaderResourceView(); }
 
 	ID3D11ShaderResourceView* GetSDOTexRV() { return mSDOBuff.GetShaderResourceView(); }
+	ID3D11ShaderResourceView* GetSceneTexRV() { return mSceneBuff.GetShaderResourceView(); }
 
 private:
 
@@ -34,6 +36,9 @@ private:
 	DepthRenderTarget		mDepthBuff;
 
 	RenderTarget			mSDOBuff;
+
+	// buffer with out FXAA processing
+	RenderTarget			mSceneBuff;
 
 	// get from renderer
 	ID3D11Device*			mD3DDevice = NULL;

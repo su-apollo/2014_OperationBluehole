@@ -56,8 +56,11 @@ BOOL PostProcessor::Init()
 
 void PostProcessor::Render()
 {
+	RTManager::GetInstance()->SetRenderTargetToSDOBuff();
 	LightPass();
+	RTManager::GetInstance()->SetRenderTargetToSceneBuff();
 	OccBlurPass();
+	FXAAPass();
 }
 
 BOOL PostProcessor::CreateConstBuffer()
@@ -136,6 +139,17 @@ BOOL PostProcessor::CompileShader()
 
 	hr = mD3DDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
 		pPSBlob->GetBufferSize(), NULL, &mOccBlurShader);
+
+	SafeRelease(pPSBlob);
+	if (FAILED(hr))
+		return FALSE;
+
+	hr = CompileShaderFromFile(mFXAAShaderPath, mPixelShaderMain, mPixelShaderModel, &pPSBlob);
+	if (FAILED(hr))
+		return FALSE;
+
+	hr = mD3DDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
+		pPSBlob->GetBufferSize(), NULL, &mFXAAShader);
 
 	SafeRelease(pPSBlob);
 	if (FAILED(hr))
@@ -306,11 +320,24 @@ void PostProcessor::LightPass()
 
 void PostProcessor::OccBlurPass()
 {
-	mD3DDeviceContext->OMSetRenderTargets(1, &mBackBuffRTV, NULL);
-
 	mD3DDeviceContext->PSSetShader(mOccBlurShader, NULL, 0);
 
 	ID3D11ShaderResourceView* TexRV = RTManager::GetInstance()->GetSDOTexRV();
+	mD3DDeviceContext->PSSetShaderResources(0, 1, &TexRV);
+
+	// draw
+	mD3DDeviceContext->DrawIndexed(6, 0, 0);
+}
+
+void PostProcessor::FXAAPass()
+{
+	// last pass
+	mD3DDeviceContext->OMSetRenderTargets(1, &mBackBuffRTV, NULL);
+
+	// set pixel shader
+	mD3DDeviceContext->PSSetShader(mFXAAShader, NULL, 0);
+
+	ID3D11ShaderResourceView* TexRV = RTManager::GetInstance()->GetSceneTexRV();
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &TexRV);
 
 	// draw

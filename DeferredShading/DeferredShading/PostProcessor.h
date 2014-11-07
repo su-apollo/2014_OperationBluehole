@@ -34,13 +34,15 @@ public:
 	float					GetKernelRadius() { return mKernelRadius; }
 
 	void					Render();
+	void					LightPass();
+	void					OccBlurPass();
+	void					FXAAPass();
+
 	void					RenderCleanUp();
 	void					ChangeKernelRadius(float radius);
 
 private:
 
-	void					LightPass();
-	void					OccBlurPass();
 
 	BOOL					CompileShader();
 	BOOL					CreateConstBuffer();
@@ -51,8 +53,10 @@ private:
 
 	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11PixelShader*		mPixelShader = NULL;
-	ID3D11PixelShader*		mOccBlurShader = NULL;
 	ID3D11Buffer*			mPSConstBuffer = NULL;
+
+	ID3D11PixelShader*		mOccBlurShader = NULL;
+	ID3D11PixelShader*		mFXAAShader = NULL;
 
 	ID3D11InputLayout*      mVertexLayout11 = NULL;
 
@@ -65,6 +69,7 @@ private:
 
 	WCHAR*					mPixelShaderPath = L"PostProcess.hlsl";
 	WCHAR*					mOccBlurShaderPath = L"OcclusionBlur.hlsl";
+	WCHAR*					mFXAAShaderPath = L"fxaa.hlsl";
 	LPCSTR					mPixelShaderMain = "main";
 	LPCSTR					mPixelShaderModel = "ps_5_0";
 
