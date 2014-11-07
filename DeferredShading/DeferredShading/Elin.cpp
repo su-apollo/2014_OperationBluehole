@@ -374,9 +374,13 @@ BOOL Elin::LoadMeshTexture(MeshPointer mesh, MeshDataPointer meshData)
 	return TRUE;
 }
 
-void Elin::StopRotation(BOOL isRotating)
+void Elin::IsRotate()
 {
-	mIsRotating = isRotating;
+	if (mIsRotating)
+		mIsRotating = FALSE;
+	else
+		mIsRotating = TRUE;
 }
+
 
 

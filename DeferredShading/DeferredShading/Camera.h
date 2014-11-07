@@ -2,8 +2,8 @@
 #include "Singleton.h"
 
 enum {
-	FRUSTUM_NEAR = 100,
-	FRUSTUM_FAR = 300
+	FRUSTUM_NEAR = 10,
+	FRUSTUM_FAR = 600
 };
 
 class Camera : public Singleton<Camera>

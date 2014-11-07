@@ -69,7 +69,7 @@ public:
 	void Release();
 	void CleanUp();
 
-	void StopRotation(BOOL isRotating);
+	void IsRotate();
 
 private:
 

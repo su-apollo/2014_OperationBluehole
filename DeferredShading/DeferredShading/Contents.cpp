@@ -33,10 +33,7 @@ void Contents::Init()
 	InputDispatch('A', [](){ Camera::GetInstance()->RotateY(-1); });
 	InputDispatch(VK_NUMPAD8, [](){ Camera::GetInstance()->changeNearFar(10); });
 	InputDispatch(VK_NUMPAD2, [](){ Camera::GetInstance()->changeNearFar(-10); });
-	InputDispatch('R', [](){ Renderer::GetInstance()->StopElinRotation(TRUE); });
-	InputDispatch('P', [](){ Renderer::GetInstance()->StopElinRotation(FALSE); });
-
-
+	InputDispatch('P', [](){ if (!InputDispatcher::GetInstance()->IsPressed('P')) Renderer::GetInstance()->ElinRotate(); });
 
 	//InputDispatch(VK_DOWN, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });
 

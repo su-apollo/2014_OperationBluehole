@@ -25,7 +25,7 @@ public:
 	ID3D11DeviceContext*		GetDeviceContext() { return mD3DDeviceContext; }
 	ID3D11RenderTargetView*		GetRenderTargetView() { return mRenderTargetView; }
 
-	void StopElinRotation(BOOL isRotating) { mElin.StopRotation(isRotating); }
+	void ElinRotate() { mElin.IsRotate(); }
 private:
 
 	BOOL CreateDevice(HWND hWnd);
