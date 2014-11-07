@@ -60,6 +60,7 @@ BOOL ProcessManager::Process() const
 	// render line
 	Renderer::GetInstance()->Render();
 	Renderer::GetInstance()->ClearBackBuff();
+	RTManager::GetInstance()->SetRenderTargetToSDOBuff();
 	PostProcessor::GetInstance()->Render();
 
 	// render stage clean up

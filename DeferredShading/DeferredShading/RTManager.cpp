@@ -45,6 +45,9 @@ BOOL RTManager::CreateRenderTargets()
 	if (!mDepthBuff.Init(width, height))
 		return FALSE;
 
+	if (!mSDOBuff.Init(width, height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
+		return FALSE;
+
 	return TRUE;
 }
 
@@ -72,6 +75,12 @@ void RTManager::SetRenderTargetToGBuff()
 	renderTargets[2] = mSpecularBuff.GetRenderTargetView();
 
 	mD3DDeviceContext->OMSetRenderTargets(3, renderTargets, mDepthBuff.GetDepthStencilView());
+}
+
+void RTManager::SetRenderTargetToSDOBuff()
+{
+	ID3D11RenderTargetView* renderTarget = mSDOBuff.GetRenderTargetView();
+	mD3DDeviceContext->OMSetRenderTargets(1, &renderTarget, NULL);
 }
 
 

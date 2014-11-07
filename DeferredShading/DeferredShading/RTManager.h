@@ -16,11 +16,14 @@ public:
 	BOOL CreateRenderTargets();
 	void ClearRenderTargets();
 	void SetRenderTargetToGBuff();
+	void SetRenderTargetToSDOBuff();
 
 	ID3D11ShaderResourceView* GetNormalTexRV() { return mNormalsBuff.GetShaderResourceView(); }
 	ID3D11ShaderResourceView* GetDiffuseTexRV() { return mDiffuseBuff.GetShaderResourceView(); }
 	ID3D11ShaderResourceView* GetSpecularTexRV() { return mSpecularBuff.GetShaderResourceView(); }
 	ID3D11ShaderResourceView* GetDepthTexRV() { return mDepthBuff.GetShaderResourceView(); }
+
+	ID3D11ShaderResourceView* GetSDOTexRV() { return mSDOBuff.GetShaderResourceView(); }
 
 private:
 
@@ -29,6 +32,8 @@ private:
 	RenderTarget			mDiffuseBuff;
 	RenderTarget			mSpecularBuff;
 	DepthRenderTarget		mDepthBuff;
+
+	RenderTarget			mSDOBuff;
 
 	// get from renderer
 	ID3D11Device*			mD3DDevice = NULL;

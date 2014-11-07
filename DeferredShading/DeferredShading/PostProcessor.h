@@ -39,6 +39,9 @@ public:
 
 private:
 
+	void					LightPass();
+	void					OccBlurPass();
+
 	BOOL					CompileShader();
 	BOOL					CreateConstBuffer();
 	BOOL					CreateQuad();
@@ -48,6 +51,7 @@ private:
 
 	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11PixelShader*		mPixelShader = NULL;
+	ID3D11PixelShader*		mOccBlurShader = NULL;
 	ID3D11Buffer*			mPSConstBuffer = NULL;
 
 	ID3D11InputLayout*      mVertexLayout11 = NULL;
@@ -60,6 +64,7 @@ private:
 	LPCSTR					mVertexShaderModel = "vs_5_0";
 
 	WCHAR*					mPixelShaderPath = L"PostProcess.hlsl";
+	WCHAR*					mOccBlurShaderPath = L"OcclusionBlur.hlsl";
 	LPCSTR					mPixelShaderMain = "main";
 	LPCSTR					mPixelShaderModel = "ps_5_0";
 

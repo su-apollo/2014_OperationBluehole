@@ -1,15 +1,5 @@
 
 //--------------------------------------------------------------------------------------
-// include / define
-//--------------------------------------------------------------------------------------
-
-#define FXAA_PC 1
-#define FXAA_HLSL_5 1
-#define FXAA_GREEN_AS_LUMA 1
-#define FXAA_QUALITY__PRESET 12
-#include "fxaa.h"
-
-//--------------------------------------------------------------------------------------
 // Globals
 //--------------------------------------------------------------------------------------
 // vKernelVaraibles : x) kernelRadius
@@ -167,21 +157,11 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float occlusion = getOcclusion(kernelTBN, position,normal);
 	ambient *= occlusion;
 
-	float4 finalColor = ambient;
-	//finalColor = saturate(ambient + diffuse + specular);
+	float4 finalColor = 0;
+	finalColor = saturate(float4((diffuse + specular).xyz, occlusion));
 	//finalColor = float4(saturate(diffuse.xyz + ambient.xyz + specular.xyz),1);
-	finalColor = float4(occlusion, occlusion, occlusion, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);
-	/*
-	float2 fxaaFrame;
-	txDiffuse.GetDimensions(fxaaFrame.x, fxaaFrame.y);
-	float fxaaSubpix = 0.75;
-	float fxaaEdgeThreshold = 0.166;
-	float fxaaEdgeThresholdMin = 0.0833;
-
-	FxaaTex tex = { samLinear, txDiffuse };
-	*/
-	//return FxaaPixelShader(Input.Tex, 0, tex, tex, tex, 1 / fxaaFrame, 0, 0, 0, fxaaSubpix, fxaaEdgeThreshold, fxaaEdgeThresholdMin, 0, 0, 0, 0);
+	
 	return finalColor;
 }
 
