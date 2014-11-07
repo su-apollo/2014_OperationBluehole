@@ -1,4 +1,13 @@
 
+//--------------------------------------------------------------------------------------
+// include / define
+//--------------------------------------------------------------------------------------
+
+#define FXAA_PC 1
+#define FXAA_HLSL_5 1
+#define FXAA_GREEN_AS_LUMA 1
+#define FXAA_QUALITY__PRESET 12
+#include "fxaa.h"
 
 //--------------------------------------------------------------------------------------
 // Globals
@@ -60,7 +69,7 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 		float scale = float(i) / float(8);
 		scale = lerp(0.1f, 1.0f, scale * scale);
 		sampleWorldPos *= scale;
-
+		
 		sampleWorldPos = sampleWorldPos * radius + position.xyz;
 
 		//project position
@@ -159,10 +168,20 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	ambient *= occlusion;
 
 	float4 finalColor = ambient;
-	finalColor = saturate(ambient + diffuse + specular);
+	//finalColor = saturate(ambient + diffuse + specular);
 	//finalColor = float4(saturate(diffuse.xyz + ambient.xyz + specular.xyz),1);
-	//finalColor = float4(occlusion, occlusion, occlusion, 1);
+	finalColor = float4(occlusion, occlusion, occlusion, 1);
 	//finalColor = float4(originalViewPos.yyy, 1);
+	/*
+	float2 fxaaFrame;
+	txDiffuse.GetDimensions(fxaaFrame.x, fxaaFrame.y);
+	float fxaaSubpix = 0.75;
+	float fxaaEdgeThreshold = 0.166;
+	float fxaaEdgeThresholdMin = 0.0833;
+
+	FxaaTex tex = { samLinear, txDiffuse };
+	*/
+	//return FxaaPixelShader(Input.Tex, 0, tex, tex, tex, 1 / fxaaFrame, 0, 0, 0, fxaaSubpix, fxaaEdgeThreshold, fxaaEdgeThresholdMin, 0, 0, 0, 0);
 	return finalColor;
 }
 

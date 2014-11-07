@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Timer.h"
 #include "Logger.h"
+#include "PostProcessor.h"
 
 Timer::Timer()
 {
@@ -41,8 +42,10 @@ void Timer::CountFPS()
 		mFrameCounter = 0;
 		mFPSTimer = 0.0f;
 
+		float r = PostProcessor::GetInstance()->GetKernelRadius();
 		Log("DT : %f\n", mDeltaTime);
 		Log("FPS : %f\n", mFPS);
+		Log("Radius : %f\n", r);
 	}
 }
 

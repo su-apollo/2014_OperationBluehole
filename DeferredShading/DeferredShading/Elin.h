@@ -29,11 +29,11 @@ static const CHAR* ELIN_PATH = "ElinModel/Popori_F_H00_dance_good.FBX";
 
 static const WCHAR* ELIN_VS_PATH = L"ElinVertexShader.hlsl";
 static const LPCSTR	ELIN_VS_MAIN = "main";
-static const LPCSTR ELIN_VS_MODEL = "vs_4_0_level_9_3";
+static const LPCSTR ELIN_VS_MODEL = "vs_5_0";
 
 static const WCHAR* ELIN_PS_PATH = L"ElinPixelShader.hlsl";
 static const LPCSTR	ELIN_PS_MAIN = "main";
-static const LPCSTR ELIN_PS_MODEL = "ps_4_0_level_9_3";
+static const LPCSTR ELIN_PS_MODEL = "ps_5_0";
 
 struct VSConstantBuffer
 {

@@ -102,6 +102,9 @@
     <ClInclude Include="SamplerManager.h">
       <Filter>Contents</Filter>
     </ClInclude>
+    <ClInclude Include="fxaa.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

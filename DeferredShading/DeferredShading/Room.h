@@ -16,11 +16,11 @@ static const LPCWSTR	ROOM_ITEM_TEXTURE_NORM = L"bg/BG_ColorBleedTest01_norm.bmp"
 
 static const WCHAR*		ROOM_VS_PATH = L"ElinVertexShader.hlsl";
 static const LPCSTR		ROOM_VS_MAIN = "main";
-static const LPCSTR		ROOM_VS_MODEL = "vs_4_0_level_9_3";
+static const LPCSTR		ROOM_VS_MODEL = "vs_5_0";
 
 static const WCHAR*		ROOM_PS_PATH = L"ElinPixelShader.hlsl";
 static const LPCSTR		ROOM_PS_MAIN = "main";
-static const LPCSTR		ROOM_PS_MODEL = "ps_4_0_level_9_3";
+static const LPCSTR		ROOM_PS_MODEL = "ps_5_0";
 
 class Room
 {

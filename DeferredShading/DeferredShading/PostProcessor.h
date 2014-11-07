@@ -31,6 +31,7 @@ public:
 	~PostProcessor();
 
 	BOOL					Init();
+	float					GetKernelRadius() { return mKernelRadius; }
 
 	void					Render();
 	void					RenderCleanUp();
@@ -56,11 +57,11 @@ private:
 
 	WCHAR*					mVertexShaderPath = L"Quad.hlsl";
 	LPCSTR					mVertexShaderMain = "main";
-	LPCSTR					mVertexShaderModel = "vs_4_0_level_9_3";
+	LPCSTR					mVertexShaderModel = "vs_5_0";
 
 	WCHAR*					mPixelShaderPath = L"PostProcess.hlsl";
 	LPCSTR					mPixelShaderMain = "main";
-	LPCSTR					mPixelShaderModel = "ps_4_0_level_9_3";
+	LPCSTR					mPixelShaderModel = "ps_5_0";
 
 	// draw quad
 	ID3D11Buffer*           mVertexBuffer = NULL;
