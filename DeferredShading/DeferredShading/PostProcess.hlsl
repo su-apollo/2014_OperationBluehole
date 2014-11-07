@@ -74,6 +74,7 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 
 		//차폐에 기여하는가 검사. 같은 평면에 가까이 있는 점일 경우 차폐에 별로 기여하지 않는다고 봄.
 		float rangeCheck = max(dot(normal.xyz, normalize(originalWorldPos.xyz - position.xyz)), 0);
+		if (originalDepth == 1) rangeCheck = 0;
 
 		//거리에 따라 차폐에 기여하는 정도를 계산
 		float dist = sampleProjected.z - originalDepth;
@@ -143,7 +144,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 
 
-	float2 noiseTexCoords = float2(1024.0f, 768.0f) / float2(128, 128);
+	float2 noiseTexCoords = float2(1024.0f, 768.0f) / float2(4, 4);
 	noiseTexCoords *= Input.Tex;
 	float4 noise = txNoise.Sample(samLinear, noiseTexCoords);
 

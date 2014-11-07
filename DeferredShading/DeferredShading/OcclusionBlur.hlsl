@@ -1,6 +1,5 @@
 
 
-
 //--------------------------------------------------------------------------------------
 // Input / Output structures
 //--------------------------------------------------------------------------------------
@@ -21,6 +20,27 @@ SamplerState samLinear : register(s0);
 
 float4 main(PS_INPUT Input) : SV_TARGET
 {
-	float4 finalColor = txSDO.Sample(samLinear, Input.Tex);
+	float3 diffuseSpecular = txSDO.Sample(samLinear, Input.Tex).xyz;
+	float3 ambient = float3(1.0f,1.0f,1.0f)*0.15;
+
+
+	float2 texelSize = 1.0 / float2(1024,768);
+	float result = 0.0;
+	float blurSize = 4;
+
+	float2 hlim = (float(-blurSize) * 0.5 + 0.5);
+	for (int i = 0; i < blurSize; ++i) {
+		for (int j = 0; j < blurSize; ++j) {
+			float2 offset = (hlim + float2(float(i), float(j))) * texelSize;
+			result += txSDO.Sample(samLinear, Input.Tex + offset).a;
+		}
+	}
+
+	result = (result / float(blurSize * blurSize));
+
+	ambient *= result;
+	
+	//addBlur
+	float4 finalColor = float4(saturate(ambient+diffuseSpecular),1);
 	return finalColor;
 }

@@ -22,7 +22,7 @@ struct PostProcessorConstantBuffer
 	D3DXVECTOR4 vSampleSphere[KERNEL_NUM];
 };
 
-static const LPCWSTR	NOISE_TEXTURE = L"noise_texture.bmp";
+static const LPCWSTR	NOISE_TEXTURE = L"noise_texture44.bmp";
 
 class PostProcessor : public Singleton<PostProcessor>
 {
