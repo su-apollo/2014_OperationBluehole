@@ -142,9 +142,12 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	diffuse *= diffuseFactor;
 	diffuse *= 0.8;
 
+	float2 texSize;
+	float2 noiseTexSize;
+	txDiffuse.GetDimensions(texSize.x, texSize.y);
+	txNoise.GetDimensions(noiseTexSize.x, noiseTexSize.y);
 
-
-	float2 noiseTexCoords = float2(1024.0f, 768.0f) / float2(4, 4);
+	float2 noiseTexCoords = texSize / noiseTexSize;
 	noiseTexCoords *= Input.Tex;
 	float4 noise = txNoise.Sample(samLinear, noiseTexCoords);
 
