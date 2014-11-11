@@ -99,7 +99,6 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 diffuse = txDiffuse.Sample(samLinear, Input.Tex);
 	float4 specular = txSpecular.Sample(samLinear, Input.Tex);
 	float4 depth = txDepth.Sample(samLinear, Input.Tex);
-	float4 ambient = float4(0.5f,0.5f,0.2f, 1) * 0.5f;
 
 	normal = normal * 2 - 1;
 
@@ -159,13 +158,9 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float3x3 kernelTBN = float3x3(tangent, bitangent, normal.xyz);
 
 	float occlusion = getOcclusion(kernelTBN, position,normal);
-	ambient *= occlusion;
 
 	float4 finalColor = 0;
 	finalColor = saturate(float4((diffuse + specular).xyz, occlusion));
-	//finalColor = float4(saturate(diffuse.xyz + ambient.xyz + specular.xyz),1);
-	//finalColor = float4(originalViewPos.yyy, 1);
-	
 	return finalColor;
 }
 
