@@ -190,5 +190,8 @@
     <FxCompile Include="fxaa.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="ssdo.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
