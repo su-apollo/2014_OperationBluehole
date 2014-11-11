@@ -23,7 +23,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float3 diffuseSpecular = txSDO.Sample(samLinear, Input.Tex).xyz;
 	float3 ambient = float3(1.0f, 1.0f, 1.0f)*0.15;
 
-	float2 texSize = float2(4.0f, 4.0f);
+	float2 texSize;
+	txSDO.GetDimensions(texSize.x, texSize.y);
 	float2 texelSize = 1.0 / texSize;
 	float result = 0.0;
 	float blurSize = 4;
