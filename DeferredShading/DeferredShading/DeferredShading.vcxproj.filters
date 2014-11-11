@@ -193,5 +193,8 @@
     <FxCompile Include="ssdo.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="ssdo_bounce.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
