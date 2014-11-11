@@ -40,12 +40,10 @@ struct PS_INPUT
 };
 
 
-
-
 //--------------------------------------------------------------------------------------
 // SSDO
 // compute the product of incoming radiance, visibility and the diffuse BRDF.
-// make kernel that covers uniform range. ( 360/kernelNum )
+// make kernel that covers uniform range. ( 360/kernelNum ) but why uniform? to use BRDF?
 //--------------------------------------------------------------------------------------
 float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 {
@@ -53,6 +51,41 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 	float occlusion = 0.0f;
 
 	//make kernels here!
+	for (int i = 0; i < 8; ++i)
+	{
+		//make sample kernels
+		float3 sampleWorldPos = vSampleSphere[i].xyz;
+		sampleWorldPos = mul(tbn, sampleWorldPos);
+
+		float scale = float(i) / float(8);
+		scale = lerp(0.1f, 1.0f, scale * scale);
+		sampleWorldPos *= scale;
+
+		sampleWorldPos = sampleWorldPos * radius + position.xyz;
+
+		//project position
+		float4 sampleProjected = mul(float4(sampleWorldPos, 1), mViewProj); // -1~1
+		sampleProjected.xyz /= sampleProjected.w;
+		float2 projCoord = float2(sampleProjected.x*0.5 + 0.5, 0.5 - sampleProjected.y*0.5); // 0~1
+
+		//get original depth
+		float	originalDepth = txDepth.Sample(samLinear, projCoord).x; // 0~1
+		float4 originalWorldPos = mul(float4(sampleProjected.x, sampleProjected.y, originalDepth, 1), mInverseViewProj);
+		originalWorldPos /= originalWorldPos.w;
+
+		float rangeCheck = max(dot(normal.xyz, normalize(originalWorldPos.xyz - position.xyz)), 0);
+		if (originalDepth == 1) rangeCheck = 0;
+		//차폐에 기여하는가 검사. 같은 평면에 가까이 있는 점일 경우 차폐에 별로 기여하지 않는다고 봄.
+
+		//거리에 따라 차폐에 기여하는 정도를 계산
+		float dist = sampleProjected.z - originalDepth;
+
+		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
+		//occlusion += step(originalDepth, sampleProjected.z)* rangeCheck;
+	}
+
+	//more occluded means darker.
+	occlusion = 1 - (occlusion / 8);
 
 	return occlusion;
 }
@@ -79,53 +112,20 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	position = mul(position, mInverseViewProj);
 	position /= position.w;
 
-	float4 diffuseFactor = float4(0, 0, 0, 0);
-	float4 specularFactor = float4(0, 0, 0, 0);
 
-	for (int i = 0; i < 2; ++i)
-	{
-		// get lightDirection and distance
-		float4 lightDir = vLightPos[i] - position;
-		float distance = length(lightDir.xyz);
-		lightDir /= distance;
-
-		float3 attr = float3(0, 0, 1);
-		float attrFactor = 1.0f - saturate((distance - vLightRange[i].y) / vLightRange[i].x);
-		attrFactor = pow(attrFactor, 2);
-
-		//calculate diffuseFactor
-		diffuseFactor += dot(lightDir, normal) * vLightColor[i] * attrFactor;
-
-		//variables to calculate specular
-		float4 reflection = normalize(reflect(lightDir, normal));
-		float4 viewDir = normalize(position - vEye);
-
-		//calculate specularFactor
-		float specularResult = saturate(dot(viewDir, reflection));
-		specularFactor += pow(specularResult, 1.0f) * vLightColor[i] * attrFactor;
-		}
-
-	specular *= specularFactor;
-	diffuse *= diffuseFactor;
-	diffuse *= 0.8;
-
-
-
+	// get random vector
 	float2 noiseTexCoords = float2(1024.0f, 768.0f) / float2(4, 4);
 	noiseTexCoords *= Input.Tex;
 	float4 noise = txNoise.Sample(samLinear, noiseTexCoords);
-
 	float3 randomVector = noise.xyz *  2.0 - 1.0; //-1~1
 	randomVector.z = 0;
 
+	// make TBN
 	float3 tangent = normalize(randomVector - normal.xyz*dot(randomVector, normal.xyz));
 	float3 bitangent = cross(tangent, normal.xyz);
 	float3x3 kernelTBN = float3x3(tangent, bitangent, normal.xyz);
 
-	float occlusion = getOcclusion(kernelTBN, position, normal);
 
 	float4 finalColor = 0;
-	finalColor = saturate(float4((diffuse + specular).xyz, occlusion));
-
 	return finalColor;
 }

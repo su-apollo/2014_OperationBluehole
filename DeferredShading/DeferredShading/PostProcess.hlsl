@@ -44,6 +44,7 @@ struct PS_INPUT
 
 //--------------------------------------------------------------------------------------
 // SSAO
+// find occlusion value from 8 sample kernels.
 //--------------------------------------------------------------------------------------
 float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 {
@@ -72,13 +73,15 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 		float4 originalWorldPos = mul(float4(sampleProjected.x, sampleProjected.y, originalDepth, 1), mInverseViewProj);
 		originalWorldPos /= originalWorldPos.w;
 
-		//차폐에 기여하는가 검사. 같은 평면에 가까이 있는 점일 경우 차폐에 별로 기여하지 않는다고 봄.
+		// 차폐에 기여하는가 검사. 같은 평면에 가까이 있는 점일 경우 차폐에 별로 기여하지 않는다고 봄.
 		float rangeCheck = max(dot(normal.xyz, normalize(originalWorldPos.xyz - position.xyz)), 0);
 		if (originalDepth == 1) rangeCheck = 0;
 
-		//거리에 따라 차폐에 기여하는 정도를 계산
+		// 차폐 여부 검사
 		float dist = sampleProjected.z - originalDepth;
+		if (dist < 0) rangeCheck = 0;
 
+		// 거리에 따라 영향을 주도록.
 		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
 		//occlusion += step(originalDepth, sampleProjected.z)* rangeCheck;
 	}
@@ -164,3 +167,4 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	return finalColor;
 }
 
+	
