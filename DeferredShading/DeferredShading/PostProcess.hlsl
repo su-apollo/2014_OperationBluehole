@@ -92,6 +92,68 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 	return occlusion;
 }
 
+
+//--------------------------------------------------------------------------------------
+// SSDO - one indirect bounce
+// This function will be moved to ssdo_bounce.hlsl (!!!!!)
+// JUST FOR THE TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//--------------------------------------------------------------------------------------
+float4 indirectBounce(float3x3 tbn, float4 position, float4 normal)
+{
+	float4 bouncedColor = float4(0.0f, 0.0f, 0.0f, 1);
+	float radius = vKernelVariables.x;
+
+	for (int i = 0; i < 8; ++i)
+	{
+		//make sample kernels
+		float3 sampleWorldPos = vSampleSphere[i].xyz;
+		sampleWorldPos = mul(tbn, sampleWorldPos);
+
+		float scale = float(i) / float(8);
+		scale = lerp(0.1f, 1.0f, scale * scale);
+		sampleWorldPos *= scale;
+		
+		sampleWorldPos = sampleWorldPos * radius + position.xyz;
+
+		//project position
+		float4 sampleProjected = mul(float4(sampleWorldPos, 1), mViewProj); // -1~1
+		sampleProjected.xyz /= sampleProjected.w;
+		float2 projCoord = float2(sampleProjected.x*0.5 + 0.5, 0.5 - sampleProjected.y*0.5); // 0~1
+
+		//get original depth
+		float	originalDepth = txDepth.Sample(samLinear, projCoord).x; // 0~1
+		float4 originalWorldPos = mul(float4(sampleProjected.x, sampleProjected.y, originalDepth, 1), mInverseViewProj);
+		originalWorldPos /= originalWorldPos.w;
+
+		//get original normal
+		float4 originalWorldNormal = txNormal.Sample(samLinear, projCoord);
+
+		//get original diffuse color
+		float4 originalColor = txDiffuse.Sample(samLinear, projCoord);
+
+		//get a vector from original pos to position pos
+		float4 originalToPos = originalWorldPos - position;
+		//get a distance
+		float distance = length(originalToPos);
+		//normalize vector
+		originalToPos = normalize(originalToPos);
+
+		float rangeCheck = max(dot(normal.xyz, originalToPos.xyz), 0);
+		if (originalDepth == 1) rangeCheck = 0;
+
+		// 차폐 여부 검사
+		float dist = sampleProjected.z - originalDepth;
+		if (dist < 0) rangeCheck = 0;
+
+		if (dot(originalToPos, originalWorldNormal) < 0) rangeCheck = 0;
+		
+		bouncedColor += originalColor*((radius*0.8 - distance) / radius)*rangeCheck;
+
+	}
+	return bouncedColor;
+}
+
+
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
@@ -162,8 +224,9 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	float occlusion = getOcclusion(kernelTBN, position,normal);
 
+
 	float4 finalColor = 0;
-	finalColor = saturate(float4((diffuse + specular).xyz, occlusion));
+		finalColor = float4((diffuse + specular).xyz, occlusion);
 	return finalColor;
 }
 
