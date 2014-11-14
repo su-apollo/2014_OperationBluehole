@@ -132,13 +132,14 @@ float4 indirectBounce(float3x3 tbn, float4 position, float4 normal)
 		float4 originalColor = txDiffuse.Sample(samLinear, projCoord);
 
 		//get a vector from original pos to position pos
-		float4 originalToPos = originalWorldPos - position;
+		float4 originalToPos = position - originalWorldPos;
 		//get a distance
 		float distance = length(originalToPos);
 		//normalize vector
 		originalToPos = normalize(originalToPos);
 
-		float rangeCheck = max(dot(normal.xyz, originalToPos.xyz), 0);
+		//float rangeCheck = max(dot(normal.xyz, originalToPos.xyz), 0);
+		float rangeCheck = 1;
 		if (originalDepth == 1) rangeCheck = 0;
 
 		// 차폐 여부 검사
@@ -147,7 +148,7 @@ float4 indirectBounce(float3x3 tbn, float4 position, float4 normal)
 
 		if (dot(originalToPos, originalWorldNormal) < 0) rangeCheck = 0;
 		
-		bouncedColor += originalColor*((radius*0.8 - distance) / radius)*rangeCheck;
+		bouncedColor += originalColor*((radius - distance) / radius)*rangeCheck;
 
 	}
 	return bouncedColor;
@@ -223,10 +224,12 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float3x3 kernelTBN = float3x3(tangent, bitangent, normal.xyz);
 
 	float occlusion = getOcclusion(kernelTBN, position,normal);
+	float4 bleeding = indirectBounce(kernelTBN, position, normal);
 
 
 	float4 finalColor = 0;
-		finalColor = float4((diffuse + specular).xyz, occlusion);
+	finalColor = float4((diffuse + specular).xyz, occlusion);
+	//finalColor = float4((bleeding).xyz, occlusion);
 	return finalColor;
 }
 

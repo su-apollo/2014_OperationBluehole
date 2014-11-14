@@ -45,8 +45,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	ambient *= result;
 	
 	//addBlur
-	float4 finalColor = float4(saturate(diffuseSpecular), 1);
+	float4 finalColor = float4(saturate(ambient+diffuseSpecular), 1);
 	//finalColor = txSDO.Sample(samLinear, Input.Tex).a;
-	finalColor = float4(ambient,1);
+	//finalColor = float4(ambient,1);
 	return finalColor;
 }
