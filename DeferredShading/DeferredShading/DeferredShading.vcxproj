@@ -92,6 +92,7 @@
     <ClInclude Include="DeferredShading.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Elin.h" />
+    <ClInclude Include="FBXLoader.h" />
     <ClInclude Include="fxaa.h" />
     <ClInclude Include="InputDispatcher.h" />
     <ClInclude Include="PointLight.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="DeferredShading.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Elin.cpp" />
+    <ClCompile Include="FBXLoader.cpp" />
     <ClCompile Include="InputDispatcher.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Room.cpp" />

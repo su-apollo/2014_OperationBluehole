@@ -105,6 +105,9 @@
     <ClInclude Include="fxaa.h">
       <Filter>Shader</Filter>
     </ClInclude>
+    <ClInclude Include="FBXLoader.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -169,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="SamplerManager.cpp">
       <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXLoader.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
