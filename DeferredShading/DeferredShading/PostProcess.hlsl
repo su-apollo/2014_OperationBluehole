@@ -100,7 +100,7 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 //--------------------------------------------------------------------------------------
 float4 indirectBounce(float3x3 tbn, float4 position, float4 normal)
 {
-	float4 bouncedColor = float4(0.0f, 0.0f, 0.0f, 1);
+	float4 bouncedColor = float4(0.6f, 0.6f, 0.6f, 1);
 	float radius = vKernelVariables.x;
 
 	for (int i = 0; i < 8; ++i)
@@ -139,19 +139,19 @@ float4 indirectBounce(float3x3 tbn, float4 position, float4 normal)
 		originalToPos = normalize(originalToPos);
 
 		//float rangeCheck = max(dot(normal.xyz, originalToPos.xyz), 0);
-		float rangeCheck = 1;
+		float rangeCheck = max(dot(normal.xyz, normalize(originalWorldPos.xyz - position.xyz)), 0);
 		if (originalDepth == 1) rangeCheck = 0;
 
 		// 차폐 여부 검사
 		float dist = sampleProjected.z - originalDepth;
 		if (dist < 0) rangeCheck = 0;
 
-		if (dot(originalToPos, originalWorldNormal) < 0) rangeCheck = 0;
-		
-		bouncedColor += originalColor*((radius - distance) / radius)*rangeCheck;
+		//if (dot(originalWorldNormal, originalToPos) < 0) rangeCheck = 0;
+
+		bouncedColor += originalColor*max(dot(originalWorldNormal, originalToPos),0)*(1/(1+distance))*rangeCheck;
 
 	}
-	return bouncedColor;
+	return saturate(bouncedColor);
 }
 
 
