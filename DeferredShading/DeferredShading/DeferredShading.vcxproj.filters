@@ -108,6 +108,9 @@
     <ClInclude Include="FBXLoader.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="TestMesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -175,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="FBXLoader.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMesh.cpp">
+      <Filter>Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
