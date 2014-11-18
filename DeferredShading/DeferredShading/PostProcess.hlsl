@@ -68,20 +68,20 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 		sampleProjected.xyz /= sampleProjected.w;
 		float2 projCoord = float2(sampleProjected.x*0.5 + 0.5, 0.5 - sampleProjected.y*0.5); // 0~1
 
-		//get original depth
+		// get original depth
 		float	originalDepth = txDepth.Sample(samLinear, projCoord).x; // 0~1
 		float4 originalWorldPos = mul(float4(sampleProjected.x, sampleProjected.y, originalDepth, 1), mInverseViewProj);
 		originalWorldPos /= originalWorldPos.w;
 
-		// 차폐에 기여하는가 검사. 같은 평면에 가까이 있는 점일 경우 차폐에 별로 기여하지 않는다고 봄.
+		// the sample point too close to original point must be ignored.
 		float rangeCheck = max(dot(normal.xyz, normalize(originalWorldPos.xyz - position.xyz)), 0);
 		if (originalDepth == 1) rangeCheck = 0;
 
-		// 차폐 여부 검사
+		// check if it's an occluder
 		float dist = sampleProjected.z - originalDepth;
 		if (dist < 0) rangeCheck = 0;
 
-		// 거리에 따라 영향을 주도록.
+		// occlusion value decreases with distance.
 		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
 		//occlusion += step(originalDepth, sampleProjected.z)* rangeCheck;
 	}
@@ -100,7 +100,8 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 //--------------------------------------------------------------------------------------
 float4 indirectBounce(float3x3 tbn, float4 position, float4 normal)
 {
-	float4 bouncedColor = float4(0.6f, 0.6f, 0.6f, 1);
+	float3 bouncedColor = float3(0,0,0);
+	float occlusion = 0.0f;
 	float radius = vKernelVariables.x;
 
 	for (int i = 0; i < 8; ++i)
@@ -138,20 +139,23 @@ float4 indirectBounce(float3x3 tbn, float4 position, float4 normal)
 		//normalize vector
 		originalToPos = normalize(originalToPos);
 
-		//float rangeCheck = max(dot(normal.xyz, originalToPos.xyz), 0);
+		// the sample point too close to original point must be ignored.
 		float rangeCheck = max(dot(normal.xyz, normalize(originalWorldPos.xyz - position.xyz)), 0);
 		if (originalDepth == 1) rangeCheck = 0;
 
-		// 차폐 여부 검사
+		// check if it's an occluder
 		float dist = sampleProjected.z - originalDepth;
 		if (dist < 0) rangeCheck = 0;
 
-		//if (dot(originalWorldNormal, originalToPos) < 0) rangeCheck = 0;
-
-		bouncedColor += originalColor*max(dot(originalWorldNormal, originalToPos),0)*(1/(1+distance))*rangeCheck;
+		bouncedColor += originalColor.xyz*max(dot(originalWorldNormal, originalToPos),0)*(1/(1+distance))*rangeCheck;
+		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
 
 	}
-	return saturate(bouncedColor);
+
+	//more occluded means darker.
+	occlusion = 1 - (occlusion / 8);
+
+	return saturate(float4(bouncedColor,occlusion));
 }
 
 
@@ -224,11 +228,14 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float3x3 kernelTBN = float3x3(tangent, bitangent, normal.xyz);
 
 	float occlusion = getOcclusion(kernelTBN, position,normal);
-	float4 bleeding = indirectBounce(kernelTBN, position, normal);
+
+	float4 ssdo = indirectBounce(kernelTBN, position, normal);
+
+	diffuse.xyz += ssdo.xyz;
 
 
 	float4 finalColor = 0;
-	finalColor = float4((diffuse + specular).xyz, occlusion);
+	finalColor = float4((diffuse).xyz, occlusion);
 	//finalColor = float4((bleeding).xyz, occlusion);
 	return finalColor;
 }
