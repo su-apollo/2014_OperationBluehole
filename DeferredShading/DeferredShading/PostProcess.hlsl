@@ -40,8 +40,6 @@ struct PS_INPUT
 };
 
 
-
-
 //--------------------------------------------------------------------------------------
 // SSAO
 // find occlusion value from 8 sample kernels.
@@ -51,6 +49,8 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 	float radius = vKernelVariables.x;
 
 	float occlusion = 0.0f;
+
+	[unroll]
 	for (int i = 0; i < 8; ++i)
 	{
 		//make sample kernels
@@ -83,7 +83,6 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 
 		// occlusion value decreases with distance.
 		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
-		//occlusion += step(originalDepth, sampleProjected.z)* rangeCheck;
 	}
 
 	//more occluded means darker.
@@ -94,16 +93,16 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 
 
 //--------------------------------------------------------------------------------------
-// SSDO - one indirect bounce
-// This function will be moved to ssdo_bounce.hlsl (!!!!!)
-// JUST FOR THE TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// SSDO : occlusion + one indirect bounce
+// return float4(indirect color.xyz,occlusion)
 //--------------------------------------------------------------------------------------
-float4 indirectBounce(float3x3 tbn, float4 position, float4 normal)
+float4 SSDO(float3x3 tbn, float4 position, float4 normal)
 {
 	float3 bouncedColor = float3(0,0,0);
 	float occlusion = 0.0f;
 	float radius = vKernelVariables.x;
 
+	[unroll]
 	for (int i = 0; i < 8; ++i)
 	{
 		//make sample kernels
@@ -184,6 +183,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 diffuseFactor = float4(0, 0, 0, 0);
 	float4 specularFactor = float4(0, 0, 0, 0);
 
+	[unroll]
 	for (int i = 0; i < 2; ++i)
 	{
 		// get lightDirection and distance
@@ -229,13 +229,13 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	float occlusion = getOcclusion(kernelTBN, position,normal);
 
-	float4 ssdo = indirectBounce(kernelTBN, position, normal);
+	float4 ssdo = SSDO(kernelTBN, position, normal);
 
 	diffuse.xyz += ssdo.xyz;
 
 
 	float4 finalColor = 0;
-	finalColor = float4((diffuse).xyz, occlusion);
+	finalColor = float4((ssdo).xyz, occlusion);
 	//finalColor = float4((bleeding).xyz, occlusion);
 	return finalColor;
 }

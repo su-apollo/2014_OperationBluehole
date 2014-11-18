@@ -35,6 +35,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float blurSize = 5;
 
 	float2 hlim = (float(-blurSize) * 0.5 );
+
+	[unroll]
 	for (int i = 0; i < blurSize; ++i) {
 		for (int j = 0; j < blurSize; ++j) {
 			float2 offset = (hlim + float2(float(i), float(j))) * texelSize;
