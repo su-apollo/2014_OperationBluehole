@@ -45,7 +45,10 @@ BOOL RTManager::CreateRenderTargets()
 	if (!mDepthBuff.Init(width, height))
 		return FALSE;
 
-	if (!mSDOBuff.Init(width, height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
+	if (!mSSDOBuff.Init(width, height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
+		return FALSE;
+
+	if (!mDiffSpecBuff.Init(width, height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
 		return FALSE;
 
 	if (!mSceneBuff.Init(width, height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB))
@@ -82,8 +85,14 @@ void RTManager::SetRenderTargetToGBuff()
 
 void RTManager::SetRenderTargetToSDOBuff()
 {
-	ID3D11RenderTargetView* renderTarget = mSDOBuff.GetRenderTargetView();
-	mD3DDeviceContext->OMSetRenderTargets(1, &renderTarget, NULL);
+	//ID3D11RenderTargetView* renderTarget = mSDOBuff.GetRenderTargetView();
+	//mD3DDeviceContext->OMSetRenderTargets(1, &renderTarget, NULL);
+
+	ID3D11RenderTargetView* renderTargets[2] = { NULL };
+	renderTargets[0] = mSSDOBuff.GetRenderTargetView();
+	renderTargets[1] = mDiffSpecBuff.GetRenderTargetView();
+
+	mD3DDeviceContext->OMSetRenderTargets(2, renderTargets, NULL);
 }
 
 void RTManager::SetRenderTargetToSceneBuff()

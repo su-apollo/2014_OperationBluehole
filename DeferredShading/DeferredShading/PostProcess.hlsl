@@ -39,6 +39,11 @@ struct PS_INPUT
 	float2 Tex : TEXCOORD0;
 };
 
+struct OUT
+{
+	float4 SSDO : SV_TARGET0;
+	float4 DiffSpec : SV_TARGET1;
+};
 
 //--------------------------------------------------------------------------------------
 // SSAO
@@ -96,7 +101,7 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 // SSDO : occlusion + one indirect bounce
 // return float4(indirect color.xyz,occlusion)
 //--------------------------------------------------------------------------------------
-float4 SSDO(float3x3 tbn, float4 position, float4 normal)
+float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 {
 	float3 bouncedColor = float3(0,0,0);
 	float occlusion = 0.0f;
@@ -162,7 +167,7 @@ float4 SSDO(float3x3 tbn, float4 position, float4 normal)
 // Pixel Shader
 //--------------------------------------------------------------------------------------
 
-float4 main(PS_INPUT Input) : SV_TARGET
+OUT main(PS_INPUT Input) : SV_TARGET
 {
 	float4 normal = txNormal.Sample(samLinear, Input.Tex);
 	float4 diffuse = txDiffuse.Sample(samLinear, Input.Tex);
@@ -229,15 +234,13 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	float occlusion = getOcclusion(kernelTBN, position,normal);
 
-	float4 ssdo = SSDO(kernelTBN, position, normal);
+	float4 ssdo = ComputeSSDO(kernelTBN, position, normal);
 
-	diffuse.xyz += ssdo.xyz;
+	OUT output;
+	output.SSDO = float4((ssdo).xyz, occlusion);
+	output.DiffSpec = float4((diffuse + specular).xyz, 1);
 
-
-	float4 finalColor = 0;
-	finalColor = float4((ssdo).xyz, occlusion);
-	//finalColor = float4((bleeding).xyz, occlusion);
-	return finalColor;
+	return output;
 }
 
 	

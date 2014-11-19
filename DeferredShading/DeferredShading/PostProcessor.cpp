@@ -323,7 +323,11 @@ void PostProcessor::OccBlurPass()
 	mD3DDeviceContext->PSSetShader(mOccBlurShader, NULL, 0);
 
 	ID3D11ShaderResourceView* TexRV = RTManager::GetInstance()->GetSDOTexRV();
+	ID3D11ShaderResourceView* TexRV0 = RTManager::GetInstance()->GetDiffSpecTexRV();
+
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &TexRV);
+	mD3DDeviceContext->PSSetShaderResources(1, 1, &TexRV0);
+
 
 	// draw
 	mD3DDeviceContext->DrawIndexed(6, 0, 0);

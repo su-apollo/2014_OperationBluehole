@@ -24,7 +24,9 @@ public:
 	ID3D11ShaderResourceView* GetSpecularTexRV() { return mSpecularBuff.GetShaderResourceView(); }
 	ID3D11ShaderResourceView* GetDepthTexRV() { return mDepthBuff.GetShaderResourceView(); }
 
-	ID3D11ShaderResourceView* GetSDOTexRV() { return mSDOBuff.GetShaderResourceView(); }
+	ID3D11ShaderResourceView* GetSDOTexRV() { return mSSDOBuff.GetShaderResourceView(); }
+	ID3D11ShaderResourceView* GetDiffSpecTexRV() { return mDiffSpecBuff.GetShaderResourceView(); }
+
 	ID3D11ShaderResourceView* GetSceneTexRV() { return mSceneBuff.GetShaderResourceView(); }
 
 private:
@@ -35,7 +37,9 @@ private:
 	RenderTarget			mSpecularBuff;
 	DepthRenderTarget		mDepthBuff;
 
-	RenderTarget			mSDOBuff;
+	RenderTarget			mSSDOBuff;
+	RenderTarget			mDiffSpecBuff;
+
 
 	// buffer with out FXAA processing
 	RenderTarget			mSceneBuff;
