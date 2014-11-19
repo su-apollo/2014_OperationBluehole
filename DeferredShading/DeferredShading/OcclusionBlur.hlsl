@@ -21,6 +21,7 @@ SamplerState samLinear : register(s0);
 
 //--------------------------------------------------------------------------------------
 // Blur functions
+// returns blurred bounced color and blurredOcclusion
 //--------------------------------------------------------------------------------------
 float4 SsdoBlur(float blurSize, float texelSize, PS_INPUT Input)
 {
@@ -36,7 +37,7 @@ float4 SsdoBlur(float blurSize, float texelSize, PS_INPUT Input)
 
 	float2 hlim = (float(-blurSize) * 0.5);
 
-		[unroll]
+	[unroll]
 	for (int i = 0; i < blurSize; ++i) {
 		for (int j = 0; j < blurSize; ++j) {
 			float2 offset = (hlim + float2(float(i), float(j))) * texelSize;
@@ -50,8 +51,8 @@ float4 SsdoBlur(float blurSize, float texelSize, PS_INPUT Input)
 
 float4 main(PS_INPUT Input) : SV_TARGET
 {
-	float3 ssdo = txSSDO.Sample(samLinear, Input.Tex).xyz;
-	float4 diffSpec = txDiffSpec.Sample(samLinear, Input.Tex);
+	float4 ssdo = txSSDO.Sample(samLinear, Input.Tex);
+	float3 diffSpec = txDiffSpec.Sample(samLinear, Input.Tex).xyz;
 	float3 ambient = float3(1.0f, 1.0f, 1.0f)*0.15;
 
 	float2 texSize;
@@ -61,12 +62,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	float4 blurredSSDO = SsdoBlur(blurSize, texelSize, Input);
 
-	//ambient *= result;
-	//diffuseSpecular += result;
-	
-	//addBlur
-	//float4 finalColor = float4(saturate(ssdo.xyz), 1);
-	//finalColor = txSSDO.Sample(samLinear, Input.Tex).a;
-	//finalColor = float4(ambient,1);
-	return diffSpec;
+	ambient *= blurredSSDO.a;
+	diffSpec += blurredSSDO.xyz;
+
+	return float4(blurredSSDO.aaa, 1);
 }
