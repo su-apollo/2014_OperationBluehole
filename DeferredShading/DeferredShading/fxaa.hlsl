@@ -37,6 +37,6 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	FxaaTex tex = { samLinear, txScene };
 	
-	//return FxaaPixelShader(Input.Tex, 0, tex, tex, tex, 1 / fxaaFrame, 0, 0, 0, fxaaSubpix, fxaaEdgeThreshold, fxaaEdgeThresholdMin, 0, 0, 0, 0);
-	return txScene.Sample(samLinear, Input.Tex);;
+	return FxaaPixelShader(Input.Tex, 0, tex, tex, tex, 1 / fxaaFrame, 0, 0, 0, fxaaSubpix, fxaaEdgeThreshold, fxaaEdgeThresholdMin, 0, 0, 0, 0);
+	//return txScene.Sample(samLinear, Input.Tex);;
 }

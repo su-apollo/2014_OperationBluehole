@@ -26,7 +26,7 @@ SamplerState samLinear : register(s0);
 float4 SsdoBlur(float blurSize, float texelSize, PS_INPUT Input)
 {
 	float3 blurredBounce = float3(0, 0, 0);
-		float	blurredOcclusion = 0.0f;
+	float	blurredOcclusion = 0.0f;
 
 	float weight[25] = { 0.003765, 0.015019, 0.023792, 0.015019, 0.003765,
 		0.015019, 0.059912, 0.094907, 0.059912, 0.015019,
@@ -63,7 +63,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 blurredSSDO = SsdoBlur(blurSize, texelSize, Input);
 
 	ambient *= blurredSSDO.a;
-	diffSpec += blurredSSDO.xyz;
+	//diffSpec += blurredSSDO.xyz;
 
-	return float4(blurredSSDO.aaa, 1);
+	return float4(diffSpec.xyz, 1);
 }

@@ -232,12 +232,13 @@ OUT main(PS_INPUT Input) : SV_TARGET
 	float3 bitangent = cross(tangent, normal.xyz);
 	float3x3 kernelTBN = float3x3(tangent, bitangent, normal.xyz);
 
-	float occlusion = getOcclusion(kernelTBN, position,normal);
+	// only SSAO
+	//float occlusion = getOcclusion(kernelTBN, position,normal);
 
 	float4 ssdo = ComputeSSDO(kernelTBN, position, normal);
 
 	OUT output;
-	output.SSDO = float4((ssdo).xyz, occlusion);
+	output.SSDO = ssdo;
 	output.DiffSpec = float4((diffuse + specular).xyz, 1);
 
 	return output;
