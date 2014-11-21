@@ -63,7 +63,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 blurredSSDO = SsdoBlur(blurSize, texelSize, Input);
 
 	ambient *= blurredSSDO.a;
-	//diffSpec += blurredSSDO.xyz;
+	diffSpec += blurredSSDO.xyz*0.3;
 
 	return float4(diffSpec.xyz, 1);
 }
