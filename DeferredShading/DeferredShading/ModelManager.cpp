@@ -95,6 +95,7 @@ MeshPointer ModelManager::ProcessMesh(FbxNode* inNode)
 		FbxStringList lUVSetNameList;
 		pMesh->GetUVSetNames(lUVSetNameList);
 
+		int numUVSet = lUVSetNameList.GetCount();
 
 		// Polygon을 돌면서 노말과 인덱스 저장
 		for (int j = 0; j < pMesh->GetPolygonCount(); j++)
