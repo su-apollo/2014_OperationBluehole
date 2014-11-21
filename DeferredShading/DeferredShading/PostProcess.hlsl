@@ -226,7 +226,7 @@ OUT main(PS_INPUT Input) : SV_TARGET
 	float4 noise = txNoise.Sample(samLinear, noiseTexCoords);
 
 	float3 randomVector = noise.xyz *  2.0 - 1.0; //-1~1
-	randomVector.z = 0;
+	randomVector.y = 0;
 
 	float3 tangent = normalize(randomVector - normal.xyz*dot(randomVector, normal.xyz));
 	float3 bitangent = cross(tangent, normal.xyz);
