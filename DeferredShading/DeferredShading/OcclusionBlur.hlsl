@@ -28,14 +28,14 @@ float4 SsdoBlur(float blurSize, float texelSize, PS_INPUT Input)
 	float3 blurredBounce = float3(0, 0, 0);
 	float	blurredOcclusion = 0.0f;
 
-	float weight[25] = { 0.003765, 0.015019, 0.023792, 0.015019, 0.003765,
-		0.015019, 0.059912, 0.094907, 0.059912, 0.015019,
-		0.023792, 0.094907, 0.150342, 0.094907, 0.023792,
-		0.015019, 0.059912, 0.094907, 0.059912, 0.015019,
-		0.003765, 0.015019, 0.023792, 0.015019, 0.003765
+	float weight[25] = { 0.031827f, 0.037541f, 0.039665f, 0.037541f, 0.031827f,
+		0.037541f, 0.044281f, 0.046787f, 0.044281f, 0.037541f,
+		0.039665f, 0.046787f, 0.049434f, 0.046787f, 0.039665f,
+		0.037541f, 0.044281f, 0.046787f, 0.044281f, 0.037541f,
+		0.031827f, 0.037541f, 0.039665f, 0.037541f, 0.031827f
 	};
 
-	float2 hlim = (float(-blurSize) * 0.5);
+	float2 hlim = (float(-blurSize) * 0.5 + 0.5);
 
 	[unroll]
 	for (int i = 0; i < blurSize; ++i) {
@@ -65,5 +65,5 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	ambient *= blurredSSDO.a;
 	diffSpec += blurredSSDO.xyz*0.3;
 
-	return float4(diffSpec.xyz, 1);
+	return float4(ambient, 1);
 }

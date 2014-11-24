@@ -78,13 +78,13 @@ BOOL PostProcessor::CreateConstBuffer()
 
 	//some variables
 	mSampleSphere[0] = { 0.5381f, 0.4856f, 0.4319f, 1.0f };
-	mSampleSphere[1] = { 0.1379f, 0.2486f, -0.6430f, 1.0f };
-	mSampleSphere[2] = { -0.3371f, 0.5679f, -0.2057f, 1.0f };
+	mSampleSphere[1] = { 0.1379f, -0.7486f, 0.6430f, 1.0f };
+	mSampleSphere[2] = { -0.3371f, -0.5679f, 0.2057f, 1.0f };
 	mSampleSphere[3] = { -0.6999f, 0.2451f, 0.9019f, 1.0f };
-	mSampleSphere[4] = { 0.4689f, 0.1598f, 0.8547f, 1.0f };
-	mSampleSphere[5] = { 0.2560f, 0.8069f, -0.0843f, 1.0f };
-	mSampleSphere[6] = { -0.4146f, 0.1402f, 0.1762f, 1.0f };
-	mSampleSphere[7] = { -0.7100f, 0.1924f, -0.7344f, 1.0f };
+	mSampleSphere[4] = { 0.4689f, -0.1598f, 0.8547f, 1.0f };
+	mSampleSphere[5] = { 0.2560f, 0.8069f, 0.0843f, 1.0f };
+	mSampleSphere[6] = { -0.4146f, -0.1402f, 0.1762f, 1.0f };
+	mSampleSphere[7] = { -0.7100f, 0.3924f, 0.7344f, 1.0f };
 	return TRUE;
 }
 
@@ -205,7 +205,7 @@ BOOL PostProcessor::CreateQuad()
 	mD3DDevice->CreateBuffer(&desc, &initData, &mVertexBuffer);
 	if (FAILED(hr))
 		return FALSE;
-	
+
 	unsigned short indices[6] = { 0, 1, 2, 2, 3, 0 };
 
 	desc.Usage = D3D11_USAGE_IMMUTABLE;

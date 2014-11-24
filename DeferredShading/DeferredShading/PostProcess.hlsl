@@ -118,7 +118,7 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 		scale = lerp(0.1f, 1.0f, scale * scale);
 		sampleWorldPos *= scale;
 		
-		sampleWorldPos = sampleWorldPos * radius + position.xyz;
+		sampleWorldPos = - sampleWorldPos * radius + position.xyz;
 
 		//project position
 		float4 sampleProjected = mul(float4(sampleWorldPos, 1), mViewProj); // -1~1
@@ -226,7 +226,7 @@ OUT main(PS_INPUT Input) : SV_TARGET
 	float4 noise = txNoise.Sample(samLinear, noiseTexCoords);
 
 	float3 randomVector = noise.xyz *  2.0 - 1.0; //-1~1
-	randomVector.y = 0;
+	randomVector.z = 0;
 
 	float3 tangent = normalize(randomVector - normal.xyz*dot(randomVector, normal.xyz));
 	float3 bitangent = cross(tangent, normal.xyz);
