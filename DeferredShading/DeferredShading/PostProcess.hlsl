@@ -201,7 +201,7 @@ OUT main(PS_INPUT Input) : SV_TARGET
 		attrFactor = pow(attrFactor, 2);
 
 		//calculate diffuseFactor
-		diffuseFactor += dot(lightDir, normal) * vLightColor[i] * attrFactor;
+		diffuseFactor += saturate(dot(lightDir, normal) * vLightColor[i] * attrFactor);
 
 		//variables to calculate specular
 		float4 reflection = normalize(reflect(lightDir, normal));
@@ -209,7 +209,7 @@ OUT main(PS_INPUT Input) : SV_TARGET
 
 		//calculate specularFactor
 		float specularResult = saturate(dot(viewDir, reflection));
-		specularFactor += pow(specularResult, 1.0f) * vLightColor[i] * attrFactor;
+		specularFactor += saturate(pow(specularResult, 1.0f) * vLightColor[i] * attrFactor);
 	}
 
 	specular *= specularFactor;
