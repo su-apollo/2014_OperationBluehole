@@ -26,23 +26,26 @@ SamplerState samLinear : register(s0);
 float4 SsdoBlur(float blurSize, float texelSize, PS_INPUT Input)
 {
 	float3 blurredBounce = float3(0, 0, 0);
-	float	blurredOcclusion = 0.0f;
+	float  blurredOcclusion = 0.0f;
 
-	float weight[25] = { 0.031827f, 0.037541f, 0.039665f, 0.037541f, 0.031827f,
+	float weight[25] = { 
+		0.031827f, 0.037541f, 0.039665f, 0.037541f, 0.031827f,
 		0.037541f, 0.044281f, 0.046787f, 0.044281f, 0.037541f,
 		0.039665f, 0.046787f, 0.049434f, 0.046787f, 0.039665f,
 		0.037541f, 0.044281f, 0.046787f, 0.044281f, 0.037541f,
 		0.031827f, 0.037541f, 0.039665f, 0.037541f, 0.031827f
 	};
 
-	float2 hlim = (float(-blurSize) * 0.5 + 0.5);
+	float2 hlim = (float(-blurSize) * 0.5f + 0.5f);
 
 	[unroll]
-	for (int i = 0; i < blurSize; ++i) {
-		for (int j = 0; j < blurSize; ++j) {
+	for (int i = 0; i < blurSize; ++i) 
+	{
+		for (int j = 0; j < blurSize; ++j) 
+		{
 			float2 offset = (hlim + float2(float(i), float(j))) * texelSize;
-			blurredBounce += (txSSDO.Sample(samLinear, Input.Tex + offset).xyz*weight[blurSize*i + j]);
-			blurredOcclusion += (txSSDO.Sample(samLinear, Input.Tex + offset).a*weight[blurSize*i + j]);
+			blurredBounce += (txSSDO.Sample(samLinear, Input.Tex + offset*2).xyz*weight[blurSize*i + j]);
+			blurredOcclusion += (txSSDO.Sample(samLinear, Input.Tex + offset*2).a*weight[blurSize*i + j]);
 		}
 	}
 
@@ -53,7 +56,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 {
 	float4 ssdo = txSSDO.Sample(samLinear, Input.Tex);
 	float3 diffSpec = txDiffSpec.Sample(samLinear, Input.Tex).xyz;
-	float3 ambient = float3(1.0f, 1.0f, 1.0f)*0.15;
+	float3 ambient = float3(1.0f, 1.0f, 1.0f);
 
 	float2 texSize;
 	txSSDO.GetDimensions(texSize.x, texSize.y);
@@ -63,7 +66,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	float4 blurredSSDO = SsdoBlur(blurSize, texelSize, Input);
 
 	ambient *= blurredSSDO.a;
-	diffSpec += blurredSSDO.xyz*0.3;
+	diffSpec += blurredSSDO.xyz;
 
 	return float4(ambient, 1);
 }
