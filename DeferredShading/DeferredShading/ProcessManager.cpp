@@ -47,6 +47,7 @@ BOOL ProcessManager::Process() const
 		return FALSE;
 
 	InputDispatcher::GetInstance()->DispatchKeyInput();
+	InputDispatcher::GetInstance()->DispatchMouseInput();
 
 	Timer::GetInstance()->OnTick();
 

@@ -33,6 +33,8 @@ void Contents::Init()
 	InputDispatch('A', [](){ Camera::GetInstance()->Yaw(-1); });
 	InputDispatch('P', [](){ if (!InputDispatcher::GetInstance()->IsPressed('P')) Renderer::GetInstance()->ElinRotate(); });
 
+	MouseDispatch(MouseStatusType::MOUSE_MOVE, [](){});
+
 	//InputDispatch(VK_DOWN, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);

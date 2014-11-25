@@ -147,13 +147,31 @@ LRESULT App::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) const
 
 	case WM_MOUSEMOVE:
 	{
-		int MouseX = LOWORD(lParam);
-		int MouseY = HIWORD(lParam);
+		MouseInput event;
+		event.mMousestate = MouseStatusType::MOUSE_MOVE;
+		event.mPosX = LOWORD(lParam);
+		event.mPosY = HIWORD(lParam);
+		InputDispatcher::GetInstance()->EventMouseInput(event);
 	}
 		return 0;
-
 	case WM_LBUTTONDOWN:
+	{
+		MouseInput event;
+		event.mMousestate = MouseStatusType::MOUSE_LDOWN;
+		event.mPosX = LOWORD(lParam);
+		event.mPosY = HIWORD(lParam);
+		InputDispatcher::GetInstance()->EventMouseInput(event);
+	}
+		return 0;
 	case WM_RBUTTONDOWN:
+	{
+		MouseInput event;
+		event.mMousestate = MouseStatusType::MOUSE_RDOWN;
+		event.mPosX = LOWORD(lParam);
+		event.mPosY = HIWORD(lParam);
+		InputDispatcher::GetInstance()->EventMouseInput(event);
+	}
+		return 0;
 	case WM_SYSKEYDOWN:
 	case WM_KEYDOWN:
 	{
@@ -169,7 +187,23 @@ LRESULT App::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) const
 		return 0;
 
 	case WM_LBUTTONUP:
+	{
+		MouseInput event;
+		event.mMousestate = MouseStatusType::MOUSE_LUP;
+		event.mPosX = LOWORD(lParam);
+		event.mPosY = HIWORD(lParam);
+		InputDispatcher::GetInstance()->EventMouseInput(event);
+	}
+		return 0;
 	case WM_RBUTTONUP:
+	{
+		MouseInput event;
+		event.mMousestate = MouseStatusType::MOUSE_RUP;
+		event.mPosX = LOWORD(lParam);
+		event.mPosY = HIWORD(lParam);
+		InputDispatcher::GetInstance()->EventMouseInput(event);
+	}
+		return 0;
 	case WM_SYSKEYUP:
 	case WM_KEYUP:
 	{
@@ -179,6 +213,7 @@ LRESULT App::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) const
 
 		InputDispatcher::GetInstance()->EventKeyInput(key);
 	}
+		return 0;
 
 	case WM_ERASEBKGND:
 		return 1;

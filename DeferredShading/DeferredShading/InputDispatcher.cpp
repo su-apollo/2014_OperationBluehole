@@ -3,18 +3,21 @@
 #include "App.h"
 #include "ProcessManager.h"
 
-InputDispatcher::InputDispatcher() : mUpdatedMousePos(0, 0)
+InputDispatcher::InputDispatcher()
 {
 	mIsKeyPressed.fill(false);
 	for (int i = 0; i < MAX_KEY; ++i)
 		mKeyTaskTable[i] = [](){};
+
+	for (int i = 0; i < MouseStatusType::MOUSE_STATUS_MAX; ++i)
+		mMouseTaskTable[i] = [](int a, int b){};
 }
 
 InputDispatcher::~InputDispatcher()
 {
 }
 
-void InputDispatcher::EventKeyInput(KeyInput key)
+void InputDispatcher::EventKeyInput(KeyInput& key)
 {
 	switch (key.mKeyState)
 	{
@@ -33,19 +36,6 @@ void InputDispatcher::EventKeyInput(KeyInput key)
 		assert(false);
 		break;
 	}
-}
-
-MousePosInfo InputDispatcher::GetMousePosition()
-{
-	POINT point;
-
-	GetCursorPos(&point);
-	ScreenToClient(App::GetInstance()->GetHandleMainWindow(), &point);
-
-	mUpdatedMousePos.mPosX = point.x;
-	mUpdatedMousePos.mPosY = point.y;
-
-	return mUpdatedMousePos;
 }
 
 void InputDispatcher::DispatchKeyInput()
@@ -69,6 +59,12 @@ void InputDispatcher::DispatchKeyInput()
 			break;
 		}
 	}
+}
+
+void InputDispatcher::DispatchMouseInput()
+{
+	for (int i = 0; i < MouseStatusType::MOUSE_STATUS_MAX; ++i)
+		mMouseTaskTable[i](mMouseInput.mPosX, mMouseInput.mPosY);
 }
 
 
