@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "App.h"
 #include "Contents.h"
 #include "LightManager.h"
 #include "InputDispatcher.h"
@@ -17,6 +18,11 @@ Contents::~Contents()
 
 void Contents::Init()
 {
+	POINT pt;
+	GetCursorPos(&pt);
+	mCurrentMouseX = pt.x;
+	mCurrentMouseY = pt.y;
+
 	ID3D11Device* device = Renderer::GetInstance()->GetDevice();
 
 	InputDispatch(VK_ESCAPE, [](){ ProcessManager::GetInstance()->Stop(); });
@@ -33,7 +39,23 @@ void Contents::Init()
 	InputDispatch('A', [](){ Camera::GetInstance()->Yaw(-1); });
 	InputDispatch('P', [](){ if (!InputDispatcher::GetInstance()->IsPressed('P')) Renderer::GetInstance()->ElinRotate(); });
 
-	MouseDispatch(MouseStatusType::MOUSE_MOVE, [](int x, int y){ printf_s("%d, %d\n", x, y); });
+	MouseDispatch(MouseStatusType::MOUSE_LDOWN,
+		[](int x, int y, int& cx, int& cy){ 
+
+		printf_s("%d, %d\n", x, y);
+
+		/*
+		HWND hwnd = App::GetInstance()->GetHandleMainWindow();
+
+		int dx = x - cx;
+		int dy = y - cy;
+		Camera::GetInstance()->Yaw(dx);
+		Camera::GetInstance()->Pitch(dy);
+
+		cx = x;
+		cy = y;
+		*/
+	}, mCurrentMouseX, mCurrentMouseY);
 
 	//InputDispatch(VK_DOWN, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });
 

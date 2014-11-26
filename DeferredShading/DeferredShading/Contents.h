@@ -12,8 +12,10 @@ public:
 	Contents();
 	~Contents();
 
-
 	void Init();
 	void Render();
+
+	int mCurrentMouseX = 0;
+	int mCurrentMouseY = 0;
 };
 

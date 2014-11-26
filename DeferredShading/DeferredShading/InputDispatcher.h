@@ -18,10 +18,19 @@ enum MouseStatusType
 	MOUSE_NONE = 0,
 	MOUSE_MOVE,
 	MOUSE_LDOWN,
+	MOUSE_LPRESSED,
 	MOUSE_LUP,
 	MOUSE_RDOWN,
+	MOUSE_RPRESSED,
 	MOUSE_RUP,
 	MOUSE_STATUS_MAX
+};
+
+enum MouseInputType
+{
+	MOUSE_L = 0,
+	MOUSE_R,
+	MOUSE_TYPE_MAX
 };
 
 struct KeyInput
@@ -52,11 +61,11 @@ public:
 	bool			IsPressed(KeyInput& key) const { return IsPressed(key.mKeyValue); }
 	bool			IsPressed(unsigned char key) const { return mIsKeyPressed[key]; }
 
-	void			EventMouseInput(MouseInput& mouse) { mMouseInput = mouse; }
+	void			EventMouseInput(MouseInput& mouse);
 	void			RegisterMouseTask(MouseStatusType mouseType, const MouseTask& task) { mMouseTaskTable[mouseType] = task; }
 	void			DispatchMouseInput();
 
-	MouseInput		GetMouseInput() { return mMouseInput; }
+	bool			IsPressed(MouseInputType mouseType) const { return mIsMousePressed[mouseType]; }
 
 private:
 	std::list<KeyInput>				mKeyInputList;
@@ -64,7 +73,8 @@ private:
 	std::array<KeyTask, MAX_KEY>	mKeyTaskTable;
 
 	std::array<MouseTask, MOUSE_STATUS_MAX> mMouseTaskTable;
-	MouseInput								mMouseInput;
+	std::array<bool, MOUSE_TYPE_MAX>		mIsMousePressed;
+	std::list<MouseInput>					mMouseInputList;
 };
 
 template <class F, class... Args>
