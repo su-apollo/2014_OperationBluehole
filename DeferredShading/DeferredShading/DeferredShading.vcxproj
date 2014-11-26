@@ -109,6 +109,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SamplerManager.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="ssdo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestMesh.h" />

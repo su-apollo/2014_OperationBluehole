@@ -111,6 +111,9 @@
     <ClInclude Include="TestMesh.h">
       <Filter>Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="ssdo.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
