@@ -10,7 +10,7 @@ InputDispatcher::InputDispatcher()
 		mKeyTaskTable[i] = [](){};
 
 	for (int i = 0; i < MouseStatusType::MOUSE_STATUS_MAX; ++i)
-		mMouseTaskTable[i] = [](int a, int b){};
+		mMouseTaskTable[i] = [](int x, int y){};
 }
 
 InputDispatcher::~InputDispatcher()

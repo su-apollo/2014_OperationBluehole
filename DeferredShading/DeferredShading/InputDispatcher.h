@@ -40,7 +40,7 @@ class InputDispatcher : public Singleton<InputDispatcher>
 {
 	typedef std::function<void()> KeyTask;
 	typedef std::function<void(int, int)> MouseTask;
-	
+
 public:
 	InputDispatcher();
 	~InputDispatcher();
@@ -55,6 +55,8 @@ public:
 	void			EventMouseInput(MouseInput& mouse) { mMouseInput = mouse; }
 	void			RegisterMouseTask(MouseStatusType mouseType, const MouseTask& task) { mMouseTaskTable[mouseType] = task; }
 	void			DispatchMouseInput();
+
+	MouseInput		GetMouseInput() { return mMouseInput; }
 
 private:
 	std::list<KeyInput>				mKeyInputList;
@@ -75,6 +77,6 @@ void InputDispatch(unsigned char keyType, F memfunc, Args&&... args)
 template <class F, class... Args>
 void MouseDispatch(MouseStatusType mouseType, F memfunc, Args&&... args)
 {
-	auto task = std::bind(memfunc, std::forward<Args>(args)...);
+	auto task = std::bind(memfunc, std::placeholders::_1, std::placeholders::_2, std::forward<Args>(args)...);
 	InputDispatcher::GetInstance()->RegisterMouseTask(mouseType, task);
 }
