@@ -115,7 +115,7 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 		sampleWorldPos = mul(tbn, sampleWorldPos);
 
 		float scale = float(i) / float(8);
-		scale = lerp(0.1f, 1.0f, scale * scale);
+		scale = lerp(0.3f,1.0f, scale * scale);
 		sampleWorldPos *= scale;
 		
 		sampleWorldPos = - sampleWorldPos * radius + position.xyz;

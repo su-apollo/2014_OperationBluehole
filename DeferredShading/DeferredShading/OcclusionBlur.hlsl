@@ -36,7 +36,7 @@ float4 SsdoBlur(float blurSize, float texelSize, PS_INPUT Input)
 		0.031827f, 0.037541f, 0.039665f, 0.037541f, 0.031827f
 	};
 
-	float2 hlim = (float(-blurSize) * 0.5f - 0.5f);
+	float2 hlim = (float(-blurSize) * 0.5f);
 
 	[unroll]
 	for (int i = 0; i < blurSize; ++i) 
@@ -49,7 +49,7 @@ float4 SsdoBlur(float blurSize, float texelSize, PS_INPUT Input)
 		}
 	}
 
-	return float4(blurredBounce*0.5, blurredOcclusion);
+	return float4(blurredBounce, blurredOcclusion);
 }
 
 float4 main(PS_INPUT Input) : SV_TARGET
@@ -69,8 +69,8 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	//ambient *= 0.2;
 	//diffSpec += blurredSSDO.xyz*0.5;
 
-	return float4(saturate(diffSpec + ambient*0.15*blurredSSDO.a), 1);
-	//return float4(saturate(blurredSSDO.aaa), 1);
+	return float4(saturate(diffSpec+ ambient*0.1*blurredSSDO.a), 1);
+	//return float4(saturate(blurredSSDO.xyz), 1);
 	//return float4(saturate(diffSpec)*blurredSSDO.a, 1);
 
 }
