@@ -151,7 +151,7 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 		float dist = sampleProjected.z - originalDepth;
 		if (dist < 0) rangeCheck = 0;
 
-		bouncedColor += originalColor.xyz*max(dot(originalWorldNormal, originalToPos),0)*(1/(1+distance))*rangeCheck;
+		bouncedColor += originalColor.xyz*max(dot(originalWorldNormal, originalToPos), 0)*((radius - distance) / radius) *rangeCheck;
 		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
 
 	}
@@ -209,12 +209,11 @@ OUT main(PS_INPUT Input) : SV_TARGET
 
 		//calculate specularFactor
 		float specularResult = saturate(dot(viewDir, reflection));
-		specularFactor += saturate(pow(specularResult, 1.0f) * vLightColor[i] * attrFactor);
+		specularFactor += saturate(pow(specularResult, 2.0f) * vLightColor[i] * attrFactor);
 	}
 
 	specular *= specularFactor;
 	diffuse *= diffuseFactor;
-	diffuse *= 0.8;
 
 	float2 texSize;
 	float2 noiseTexSize;
@@ -239,7 +238,7 @@ OUT main(PS_INPUT Input) : SV_TARGET
 
 	OUT output;
 	output.SSDO = ssdo;
-	output.DiffSpec = float4((diffuse + specular).xyz, 1);
+	output.DiffSpec = float4(saturate((0.8*diffuse+0.5*specular).xyz), 1);
 
 	return output;
 }
