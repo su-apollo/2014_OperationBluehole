@@ -18,11 +18,6 @@ Contents::~Contents()
 
 void Contents::Init()
 {
-	POINT pt;
-	GetCursorPos(&pt);
-	mCurrentMouseX = pt.x;
-	mCurrentMouseY = pt.y;
-
 	ID3D11Device* device = Renderer::GetInstance()->GetDevice();
 
 	InputDispatch(VK_ESCAPE, [](){ ProcessManager::GetInstance()->Stop(); });
@@ -39,25 +34,29 @@ void Contents::Init()
 	InputDispatch('A', [](){ Camera::GetInstance()->Yaw(-1); });
 	InputDispatch('P', [](){ if (!InputDispatcher::GetInstance()->IsPressed('P')) Renderer::GetInstance()->ElinRotate(); });
 
+	//Cameramove
+	MouseDispatch(MouseStatusType::MOUSE_LDOWN,
+		[](int x, int y, int* cx, int* cy){
+
+		*cx = x;
+		*cy = y;
+
+	}, &mCurrentMouseX, &mCurrentMouseY);
+
 	MouseDispatch(MouseStatusType::MOUSE_LPRESSED,
-		[](int x, int y, int& cx, int& cy){ 
+		[](int x, int y, int* cx, int* cy){ 
+		
+		//HWND hwnd = App::GetInstance()->GetHandleMainWindow();
 
-		printf_s("%d, %d\n", x, y);
-
-		/*
-		HWND hwnd = App::GetInstance()->GetHandleMainWindow();
-
-		int dx = x - cx;
-		int dy = y - cy;
+		int dx = x - *cx;
+		int dy = y - *cy;
 		Camera::GetInstance()->Yaw(dx);
 		Camera::GetInstance()->Pitch(dy);
 
-		cx = x;
-		cy = y;
-		*/
-	}, mCurrentMouseX, mCurrentMouseY);
-
-	//InputDispatch(VK_DOWN, [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });
+		*cx = x;
+		*cy = y;
+		
+	}, &mCurrentMouseX, &mCurrentMouseY);
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
 
