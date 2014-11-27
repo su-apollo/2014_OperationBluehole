@@ -39,7 +39,7 @@ void Contents::Init()
 	InputDispatch('A', [](){ Camera::GetInstance()->Yaw(-1); });
 	InputDispatch('P', [](){ if (!InputDispatcher::GetInstance()->IsPressed('P')) Renderer::GetInstance()->ElinRotate(); });
 
-	MouseDispatch(MouseStatusType::MOUSE_LDOWN,
+	MouseDispatch(MouseStatusType::MOUSE_LPRESSED,
 		[](int x, int y, int& cx, int& cy){ 
 
 		printf_s("%d, %d\n", x, y);

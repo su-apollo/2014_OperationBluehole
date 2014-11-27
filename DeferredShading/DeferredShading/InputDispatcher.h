@@ -75,6 +75,10 @@ private:
 	std::array<MouseTask, MOUSE_STATUS_MAX> mMouseTaskTable;
 	std::array<bool, MOUSE_TYPE_MAX>		mIsMousePressed;
 	std::list<MouseInput>					mMouseInputList;
+
+	bool	mIsMouseMove = false;
+	int		mLastMousePosX = 0;
+	int		mLastMousePosY = 0;
 };
 
 template <class F, class... Args>

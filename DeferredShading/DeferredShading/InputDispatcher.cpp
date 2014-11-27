@@ -67,7 +67,9 @@ void InputDispatcher::EventMouseInput(MouseInput& mouse)
 	switch (mouse.mMousestate)
 	{
 	case MouseStatusType::MOUSE_MOVE:
-		mMouseInputList.push_back(mouse);
+		mIsMouseMove = true;
+		mLastMousePosX = mouse.mPosX;
+		mLastMousePosY = mouse.mPosY;
 		break;
 	case MouseStatusType::MOUSE_LDOWN:
 		mMouseInputList.push_back(mouse);
@@ -92,15 +94,42 @@ void InputDispatcher::EventMouseInput(MouseInput& mouse)
 
 void InputDispatcher::DispatchMouseInput()
 {
+	// mouse move task
+	if (mIsMouseMove)
+	{
+		mMouseTaskTable[MOUSE_MOVE](mLastMousePosX, mLastMousePosY);
+		mIsMouseMove = false;
+	}
+		
+	// mouse input task
 	std::list<MouseInput>::iterator iter = mMouseInputList.begin();
-
 	while (iter != mMouseInputList.end())
 	{
-		mMouseTaskTable[iter->mMousestate](iter->mPosX, iter->mPosY);
-		++iter;
+		MouseInputType inputType = MOUSE_R;
+		if ((iter->mMousestate == MOUSE_LDOWN) ||
+			(iter->mMousestate == MOUSE_LPRESSED))
+			inputType = MOUSE_L;
+
+		if (IsPressed(inputType))
+		{
+			MouseStatusType temp = iter->mMousestate;
+			mMouseTaskTable[iter->mMousestate](mLastMousePosX, mLastMousePosY);
+
+			if (iter->mMousestate == MOUSE_LDOWN)
+				iter->mMousestate = MOUSE_LPRESSED;
+			else if (iter->mMousestate == MOUSE_RDOWN)
+				iter->mMousestate = MOUSE_RPRESSED;
+
+			++iter;
+		}
+		else
+		{
+			mMouseTaskTable[iter->mMousestate](mLastMousePosX, mLastMousePosY);
+			mMouseInputList.erase(iter);
+			break;
+		}
 	}
 
-	mMouseInputList.clear();
 }
 
 
