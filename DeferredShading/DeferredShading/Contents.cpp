@@ -44,8 +44,7 @@ void Contents::Init()
 
 		int dx = x - mCurrentMouseX;
 		int dy = y - mCurrentMouseY;
-		Camera::GetInstance()->Yaw(dx*0.01f);
-		Camera::GetInstance()->Pitch(dy*0.01f);
+		Camera::GetInstance()->Rotate(D3DXVECTOR3(dx*0.01f, dy*0.01f, 0.0f));
 	});
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);

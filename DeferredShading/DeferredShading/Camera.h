@@ -18,9 +18,7 @@ public:
 	void		Fly(float speed); // up vec
 	void		Walk(float speed); // look vec
 
-	void		Pitch(float angle);
-	void		Yaw(float angle);
-	void		Roll(float angle);
+	void		Rotate(D3DXVECTOR3& angle) { mRotation = angle; }
 
 	float		GetNear() { return mNear; }
 	float		GetFar() { return mFar; }
@@ -34,6 +32,10 @@ public:
 
 private:
 
+	void		Yaw(float angle);
+	void		Pitch(float angle);
+	void		Roll(float angle);
+
 	void		UpdateViewMatrix();
 	void		UpdateProjectionMatrix();
 
@@ -42,9 +44,7 @@ private:
 	D3DXVECTOR3 mUp; //y
 	D3DXVECTOR3 mLook; //z
 
-	D3DXVECTOR3 mRealRight;
-	D3DXVECTOR3 mRealUp;
-	D3DXVECTOR3 mRealLook;
+	D3DXVECTOR3 mRotation;
 
 	float		mNear = FRUSTUM_NEAR;
 	float		mFar = FRUSTUM_FAR;
