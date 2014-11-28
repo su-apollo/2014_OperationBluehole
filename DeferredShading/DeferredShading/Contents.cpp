@@ -33,10 +33,8 @@ void Contents::Init()
 	//Cameramove
 	MouseDispatch(MouseStatusType::MOUSE_LDOWN,
 		[&](int x, int y){
-
 		mCurrentMouseX = x;
 		mCurrentMouseY = y;
-
 	});
 
 	MouseDispatch(MouseStatusType::MOUSE_LPRESSED,
@@ -44,14 +42,10 @@ void Contents::Init()
 		
 		//HWND hwnd = App::GetInstance()->GetHandleMainWindow();
 
-		printf_s("%d, %d\n", x, y);
-		printf_s("%d, %d\n", mCurrentMouseX, mCurrentMouseY);
-
 		int dx = x - mCurrentMouseX;
 		int dy = y - mCurrentMouseY;
-		Camera::GetInstance()->Yaw(dx);
-		Camera::GetInstance()->Pitch(dy);
-		
+		Camera::GetInstance()->Yaw(dx*0.01f);
+		Camera::GetInstance()->Pitch(dy*0.01f);
 	});
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);

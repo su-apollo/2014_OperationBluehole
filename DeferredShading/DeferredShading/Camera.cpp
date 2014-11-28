@@ -12,8 +12,6 @@ mRealRight(1.0f, 0.0f, 0.0f), mRealUp(0.0f, 1.0f, 0.0f), mRealLook(0.0f, 0.0f, 1
 
 void Camera::Update()
 {
-	//Yaw(1.f);
-	//Pitch(1.f);
 	UpdateViewMatrix();
 	UpdateProjectionMatrix();
 	mRight = mRealRight;
@@ -57,7 +55,7 @@ void Camera::Walk(float speed)
 void Camera::Pitch(float angle)
 {
 	D3DXMATRIX T;
-	D3DXMatrixRotationAxis(&T, &mRight, Timer::GetInstance()->GetDeltaTime()*angle);
+	D3DXMatrixRotationAxis(&T, &mRight, angle);
 
 	D3DXVec3TransformCoord(&mUp, &mUp, &T);
 	D3DXVec3TransformCoord(&mLook, &mLook, &T);
@@ -66,7 +64,7 @@ void Camera::Pitch(float angle)
 void Camera::Yaw(float angle)
 {
 	D3DXMATRIX T;
-	D3DXMatrixRotationAxis(&T, &mUp, Timer::GetInstance()->GetDeltaTime()*angle);
+	D3DXMatrixRotationAxis(&T, &mUp, angle);
 
 	D3DXVec3TransformCoord(&mRight, &mRight, &T);
 	D3DXVec3TransformCoord(&mLook, &mLook, &T);
@@ -75,7 +73,7 @@ void Camera::Yaw(float angle)
 void Camera::Roll(float angle)
 {
 	D3DXMATRIX T;
-	D3DXMatrixRotationAxis(&T, &mLook, Timer::GetInstance()->GetDeltaTime()*angle);
+	D3DXMatrixRotationAxis(&T, &mLook, angle);
 
 	D3DXVec3TransformCoord(&mRight, &mRight, &T);
 	D3DXVec3TransformCoord(&mUp, &mUp, &T);

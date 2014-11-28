@@ -46,8 +46,8 @@ BOOL ProcessManager::Process() const
 	if (!mIsContinue)
 		return FALSE;
 
-	InputDispatcher::GetInstance()->DispatchKeyInput();
 	InputDispatcher::GetInstance()->DispatchMouseInput();
+	InputDispatcher::GetInstance()->DispatchKeyInput();
 
 	Timer::GetInstance()->OnTick();
 
