@@ -42,6 +42,10 @@ private:
 	D3DXVECTOR3 mUp; //y
 	D3DXVECTOR3 mLook; //z
 
+	D3DXVECTOR3 mRealRight;
+	D3DXVECTOR3 mRealUp;
+	D3DXVECTOR3 mRealLook;
+
 	float		mNear = FRUSTUM_NEAR;
 	float		mFar = FRUSTUM_FAR;
 

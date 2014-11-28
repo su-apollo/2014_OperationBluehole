@@ -24,39 +24,35 @@ void Contents::Init()
 	InputDispatch('Z', [](){ PostProcessor::GetInstance()->ChangeKernelRadius(0.05f); });
 	InputDispatch('X', [](){ PostProcessor::GetInstance()->ChangeKernelRadius(-0.05f); });
 	
-	InputDispatch(VK_UP, [](){ Camera::GetInstance()->Walk(30); });
-	InputDispatch(VK_DOWN, [](){ Camera::GetInstance()->Walk(-30); });
-	InputDispatch(VK_RIGHT, [](){ Camera::GetInstance()->Strafe(30); });
-	InputDispatch(VK_LEFT, [](){ Camera::GetInstance()->Strafe(-30); });
-	InputDispatch('S', [](){ Camera::GetInstance()->Pitch(1); });
-	InputDispatch('W', [](){ Camera::GetInstance()->Pitch(-1); });
-	InputDispatch('D', [](){ Camera::GetInstance()->Yaw(1); });
-	InputDispatch('A', [](){ Camera::GetInstance()->Yaw(-1); });
+	InputDispatch('W', [](){ Camera::GetInstance()->Walk(30); });
+	InputDispatch('S', [](){ Camera::GetInstance()->Walk(-30); });
+	InputDispatch('D', [](){ Camera::GetInstance()->Strafe(30); });
+	InputDispatch('A', [](){ Camera::GetInstance()->Strafe(-30); });
 	InputDispatch('P', [](){ if (!InputDispatcher::GetInstance()->IsPressed('P')) Renderer::GetInstance()->ElinRotate(); });
 
 	//Cameramove
 	MouseDispatch(MouseStatusType::MOUSE_LDOWN,
-		[](int x, int y, int* cx, int* cy){
+		[&](int x, int y){
 
-		*cx = x;
-		*cy = y;
+		mCurrentMouseX = x;
+		mCurrentMouseY = y;
 
-	}, &mCurrentMouseX, &mCurrentMouseY);
+	});
 
 	MouseDispatch(MouseStatusType::MOUSE_LPRESSED,
-		[](int x, int y, int* cx, int* cy){ 
+		[&](int x, int y){
 		
 		//HWND hwnd = App::GetInstance()->GetHandleMainWindow();
 
-		int dx = x - *cx;
-		int dy = y - *cy;
+		printf_s("%d, %d\n", x, y);
+		printf_s("%d, %d\n", mCurrentMouseX, mCurrentMouseY);
+
+		int dx = x - mCurrentMouseX;
+		int dy = y - mCurrentMouseY;
 		Camera::GetInstance()->Yaw(dx);
 		Camera::GetInstance()->Pitch(dy);
-
-		*cx = x;
-		*cy = y;
 		
-	}, &mCurrentMouseX, &mCurrentMouseY);
+	});
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
 

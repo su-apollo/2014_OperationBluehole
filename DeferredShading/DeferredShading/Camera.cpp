@@ -5,14 +5,20 @@
 
 
 Camera::Camera()
-: mPosition(0.0f, 100.0f, -150.0f), mRight(1.0f, 0.0f, 0.0f),mUp(0.0f, 1.0f, 0.0f),mLook(0.0f, 0.0f, 1.0f)
+: mPosition(0.0f, 100.0f, -150.0f), mRight(1.0f, 0.0f, 0.0f),mUp(0.0f, 1.0f, 0.0f),mLook(0.0f, 0.0f, 1.0f),
+mRealRight(1.0f, 0.0f, 0.0f), mRealUp(0.0f, 1.0f, 0.0f), mRealLook(0.0f, 0.0f, 1.0f)
 {
 }
 
 void Camera::Update()
 {
+	//Yaw(1.f);
+	//Pitch(1.f);
 	UpdateViewMatrix();
 	UpdateProjectionMatrix();
+	mRight = mRealRight;
+	mUp = mRealUp;
+	mLook = mRealLook;
 }
 
 D3DXMATRIX Camera::GetMatInverseProj()
