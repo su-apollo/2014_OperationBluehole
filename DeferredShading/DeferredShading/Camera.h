@@ -14,9 +14,9 @@ public:
 
 	void		Update();
 
-	void		Strafe(float speed); // right vec
-	void		Fly(float speed); // up vec
-	void		Walk(float speed); // look vec
+	void		Strafe(float speed);	// right vec
+	void		Fly(float speed);		// up vec
+	void		Walk(float speed);		// look vec
 
 	void		Rotate(D3DXVECTOR3& angle) { mRotation = angle; }
 
@@ -39,10 +39,10 @@ private:
 	void		UpdateViewMatrix();
 	void		UpdateProjectionMatrix();
 
-	D3DXVECTOR3 mPosition; // 카메라 워점
-	D3DXVECTOR3 mRight; //x
-	D3DXVECTOR3 mUp; //y
-	D3DXVECTOR3 mLook; //z
+	D3DXVECTOR3 mPosition;	// 카메라 원점
+	D3DXVECTOR3 mRight;		// x
+	D3DXVECTOR3 mUp;		// y
+	D3DXVECTOR3 mLook;		// z
 
 	D3DXVECTOR3 mRotation;
 

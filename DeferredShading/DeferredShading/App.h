@@ -11,15 +11,17 @@ public:
 	App();
 	~App();
 
-	BOOL	CreateMainWindow(	PCWSTR lpWindowName, 
-							DWORD dwStyle, 
-							DWORD dwExStyle = 0,
-							int x = CW_USEDEFAULT, 
-							int y = CW_USEDEFAULT,
-							int nWidth = WINDOW_WIDTH, 
-							int nHeight = WINDOW_HEIGHT,
-							HWND hWndParent = 0, 
-							HMENU hMenu = 0);
+	BOOL	CreateMainWindow(	
+				PCWSTR lpWindowName, 
+				DWORD dwStyle, 
+				DWORD dwExStyle = 0,
+				int x = CW_USEDEFAULT, 
+				int y = CW_USEDEFAULT,
+				int nWidth = WINDOW_WIDTH, 
+				int nHeight = WINDOW_HEIGHT,
+				HWND hWndParent = 0, 
+				HMENU hMenu = 0
+				);
 
 	//main roof
 	int		Run()const;
