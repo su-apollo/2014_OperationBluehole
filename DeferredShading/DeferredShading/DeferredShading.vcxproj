@@ -91,19 +91,16 @@
     <ClInclude Include="Contents.h" />
     <ClInclude Include="DeferredShading.h" />
     <ClInclude Include="DirectionalLight.h" />
-    <ClInclude Include="Elin.h" />
     <ClInclude Include="FBXLoader.h" />
     <ClInclude Include="fxaa.h" />
     <ClInclude Include="InputDispatcher.h" />
     <ClInclude Include="PointLight.h" />
-    <ClInclude Include="Room.h" />
     <ClInclude Include="RSManager.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="RTManager.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MacroSet.h" />
-    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="ProcessManager.h" />
     <ClInclude Include="Renderer.h" />
@@ -112,7 +109,7 @@
     <ClInclude Include="ssdo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TestMesh.h" />
+    <ClInclude Include="Elin.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -121,17 +118,14 @@
     <ClCompile Include="Contents.cpp" />
     <ClCompile Include="DeferredShading.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
-    <ClCompile Include="Elin.cpp" />
     <ClCompile Include="FBXLoader.cpp" />
     <ClCompile Include="InputDispatcher.cpp" />
     <ClCompile Include="PointLight.cpp" />
-    <ClCompile Include="Room.cpp" />
     <ClCompile Include="RSManager.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="RTManager.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -140,7 +134,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TestMesh.cpp" />
+    <ClCompile Include="Elin.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>

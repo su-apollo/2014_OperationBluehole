@@ -90,29 +90,20 @@
     <ClInclude Include="InputDispatcher.h">
       <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="Elin.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelManager.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Room.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="SamplerManager.h">
       <Filter>Contents</Filter>
     </ClInclude>
     <ClInclude Include="fxaa.h">
       <Filter>Shader</Filter>
     </ClInclude>
-    <ClInclude Include="FBXLoader.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMesh.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="ssdo.h">
       <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="FBXLoader.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Elin.h">
+      <Filter>Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,22 +158,13 @@
     <ClCompile Include="InputDispatcher.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="Elin.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelManager.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Room.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="SamplerManager.cpp">
       <Filter>Contents</Filter>
     </ClCompile>
     <ClCompile Include="FBXLoader.cpp">
-      <Filter>Utils</Filter>
+      <Filter>Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="TestMesh.cpp">
+    <ClCompile Include="Elin.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
   </ItemGroup>

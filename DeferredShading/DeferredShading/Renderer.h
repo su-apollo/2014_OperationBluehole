@@ -3,7 +3,6 @@
 #include "Camera.h"
 #include "RenderTarget.h"
 #include "Elin.h"
-#include "Room.h"
 
 // just draw single obj
 // rasterize단계는 default로 사용해도 상관없음
@@ -46,7 +45,6 @@ private:
 
 	// contents
 	Elin						mElin;
-	Room						mRoom;
 
 	// get last error
 	HRESULT hr = S_OK;
