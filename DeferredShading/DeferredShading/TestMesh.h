@@ -107,6 +107,7 @@ public:
 
 private:
 
+	void	RenderNode(MESH_NODE& node);
 	BOOL	LoadFBX();
 
 	BOOL	CreateNode();

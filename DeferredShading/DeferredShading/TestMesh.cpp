@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "TestMesh.h"
 #include "Renderer.h"
-
+#include "SamplerManager.h"
 
 
 TestMesh::TestMesh()
@@ -300,12 +300,56 @@ HRESULT TestMesh::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, 
 
 void TestMesh::RenderAll()
 {
+	mD3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
 	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
 	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
 	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPSConstBuffer);
 
+	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
 
+	size_t nodeCount = mMeshNodeArray.size();
+
+	if (nodeCount == 0)
+		return;
+
+	for (size_t i = 0; i < nodeCount; ++i)
+		RenderNode(mMeshNodeArray[i]);
+}
+
+void TestMesh::RenderNode(MESH_NODE& node)
+{
+	VS_CONSTBUFF_DATA vcd;
+	D3DXMATRIX matWorld = node.mat4x4;
+	D3DXMATRIX matView = Camera::GetInstance()->GetMatView();
+	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
+
+	// 열 우선 배치
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	D3DXMatrixTranspose(&matView, &matView);
+	D3DXMatrixTranspose(&matProj, &matProj);
+	vcd.mWorld = matWorld;
+	vcd.mView = matView;
+	vcd.mProjection = matProj;
+	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcd, 0, 0);
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	mD3DDeviceContext->IASetVertexBuffers(0, 1, &node.m_pVB, &stride, &offset);
+
+	DXGI_FORMAT indexbit = DXGI_FORMAT_R16_UINT;
+	if (node.m_indexBit == MESH_NODE::INDEX_32BIT)
+		indexbit = DXGI_FORMAT_R32_UINT;
+
+	mD3DDeviceContext->PSSetShaderResources(0, 1, &node.materialData.pSRVDiffuse);
+	mD3DDeviceContext->PSSetShaderResources(1, 1, &node.materialData.pSRVNormal);
+	mD3DDeviceContext->PSSetShaderResources(2, 1, &node.materialData.pSRVSpecular);
+
+	ID3D11SamplerState* linearSampler = SamplerManager::GetInstance()->GetLinearSampler();
+	mD3DDeviceContext->PSSetSamplers(0, 1, &linearSampler);
+
+	mD3DDeviceContext->DrawIndexed(node.indexCount, 0, 0);
 }
 
 BOOL TestMesh::CreateVSConstBuffer()
@@ -323,3 +367,5 @@ BOOL TestMesh::CreateVSConstBuffer()
 
 	return TRUE;
 }
+
+
