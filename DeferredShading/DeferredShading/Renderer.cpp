@@ -28,7 +28,14 @@ BOOL Renderer::Init()
 
 	if (!mElin.Init())
 	{
-		MessageBox(hWnd, L"mTest Init Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		MessageBox(hWnd, L"mElin Init Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		DestroyDevice();
+		return FALSE;
+	}
+
+	if (!mRoom.Init())
+	{
+		MessageBox(hWnd, L"mRoom Init Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		DestroyDevice();
 		return FALSE;
 	}
@@ -42,6 +49,7 @@ void Renderer::Render()
 	mD3DDeviceContext->OMSetDepthStencilState(RenderStateManager::GetInstance()->GetDepthState(), 0);
 
 	mElin.RenderAll();
+	mRoom.RenderAll(mD3DDeviceContext);
 }
 
 BOOL Renderer::CreateDevice(HWND hWnd)

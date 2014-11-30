@@ -105,6 +105,12 @@
     <ClInclude Include="Elin.h">
       <Filter>Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -165,6 +171,12 @@
       <Filter>Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Elin.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
   </ItemGroup>
