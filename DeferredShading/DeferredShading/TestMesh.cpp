@@ -55,6 +55,10 @@ BOOL TestMesh::CreateNode()
 		MESH_NODE meshNode;
 		FBX_MESH_NODE fbxNode = mFBX->GetNode(static_cast<unsigned int>(i));
 
+		// 루트 노드는 제외하고 생성
+		if (fbxNode.name == "RootNode")
+			continue;
+
 		VertexConstruction(fbxNode, meshNode);
 
 		meshNode.indexCount = static_cast<DWORD>(fbxNode.indexArray.size());
@@ -134,9 +138,9 @@ BOOL TestMesh::MaterialConstruction()
 	mMeshNodeArray[4].materialData.specularTexPath = ELIN_TEXTURE_FACE_SPEC;
 	mMeshNodeArray[4].materialData.normalTexPath = ELIN_TEXTURE_FACE_NORM;
 
-	for (auto iter : mMeshNodeArray)
+	for (size_t i = 0; i < mMeshNodeArray.size(); ++i)
 	{
-		BOOL result = CreateMeshTexture(iter);
+		BOOL result = CreateMeshTexture(mMeshNodeArray[i]);
 		if (!result)
 			return FALSE;
 	}
@@ -341,6 +345,7 @@ void TestMesh::RenderNode(MESH_NODE& node)
 	DXGI_FORMAT indexbit = DXGI_FORMAT_R16_UINT;
 	if (node.m_indexBit == MESH_NODE::INDEX_32BIT)
 		indexbit = DXGI_FORMAT_R32_UINT;
+	mD3DDeviceContext->IASetIndexBuffer(node.m_pIB, indexbit, 0);
 
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &node.materialData.pSRVDiffuse);
 	mD3DDeviceContext->PSSetShaderResources(1, 1, &node.materialData.pSRVNormal);
