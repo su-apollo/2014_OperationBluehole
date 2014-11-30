@@ -24,6 +24,9 @@ BOOL TestMesh::Init()
 	if (!CompileShader())
 		return FALSE;
 
+	if (!CreateVSConstBuffer())
+		return FALSE;
+
 	return TRUE;
 }
 
@@ -65,6 +68,8 @@ BOOL TestMesh::CreateNode()
 		mMeshNodeArray.push_back(meshNode);
 	}
 
+	MaterialConstruction();
+
 	return TRUE;
 }
 
@@ -105,6 +110,53 @@ BOOL TestMesh::VertexConstruction(FBX_MESH_NODE& fbxNode, MESH_NODE& meshNode)
 		delete[] pV;
 	
 	return hr;
+}
+
+BOOL TestMesh::MaterialConstruction()
+{
+	mMeshNodeArray[0].materialData.diffuseTexPath = ELIN_TEXTURE_HAND_DIFF;
+	mMeshNodeArray[0].materialData.specularTexPath = ELIN_TEXTURE_HAND_SPEC;
+	mMeshNodeArray[0].materialData.normalTexPath = ELIN_TEXTURE_HAND_NORM;
+
+	mMeshNodeArray[1].materialData.diffuseTexPath = ELIN_TEXTURE_LEG_DIFF;
+	mMeshNodeArray[1].materialData.specularTexPath = ELIN_TEXTURE_LEG_SPEC;
+	mMeshNodeArray[1].materialData.normalTexPath = ELIN_TEXTURE_LEG_NORM;
+
+	mMeshNodeArray[2].materialData.diffuseTexPath = ELIN_TEXTURE_BODY_DIFF;
+	mMeshNodeArray[2].materialData.specularTexPath = ELIN_TEXTURE_BODY_SPEC;
+	mMeshNodeArray[2].materialData.normalTexPath = ELIN_TEXTURE_BODY_NORM;
+
+	mMeshNodeArray[3].materialData.diffuseTexPath = ELIN_TEXTURE_HAIR_DIFF;
+	mMeshNodeArray[3].materialData.specularTexPath = ELIN_TEXTURE_HAIR_SPEC;
+	mMeshNodeArray[3].materialData.normalTexPath = ELIN_TEXTURE_HAIR_NORM;
+
+	mMeshNodeArray[4].materialData.diffuseTexPath = ELIN_TEXTURE_FACE_DIFF;
+	mMeshNodeArray[4].materialData.specularTexPath = ELIN_TEXTURE_FACE_SPEC;
+	mMeshNodeArray[4].materialData.normalTexPath = ELIN_TEXTURE_FACE_NORM;
+
+	for (auto iter : mMeshNodeArray)
+	{
+		BOOL result = CreateMeshTexture(iter);
+		if (!result)
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
+BOOL TestMesh::CreateMeshTexture(MESH_NODE& meshNode)
+{
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, meshNode.materialData.diffuseTexPath, NULL, NULL, &meshNode.materialData.pSRVDiffuse, NULL);
+	if (FAILED(hr))
+		return FALSE;
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, meshNode.materialData.specularTexPath, NULL, NULL, &meshNode.materialData.pSRVSpecular, NULL);
+	if (FAILED(hr))
+		return FALSE;
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, meshNode.materialData.normalTexPath, NULL, NULL, &meshNode.materialData.pSRVNormal, NULL);
+	if (FAILED(hr))
+		return FALSE;
+
+	return TRUE;
 }
 
 BOOL TestMesh::CreateVertexBuffer(ID3D11Buffer** pBuffer, void* pVertices, uint32_t stride, uint32_t vertexCount)
@@ -258,5 +310,16 @@ void TestMesh::RenderAll()
 
 BOOL TestMesh::CreateVSConstBuffer()
 {
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(VS_CONSTBUFF_DATA);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+
+	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mVSConstBuffer);
+	if (FAILED(hr))
+		return FALSE;
+
 	return TRUE;
 }

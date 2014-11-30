@@ -16,29 +16,15 @@ struct	VERTEX_DATA
 	D3DXVECTOR2	vTexcoord;
 };
 
-// dpcall을 하는 단위
-struct	MESH_NODE
+struct MATERIAL_DATA
 {
-	ID3D11Buffer*		m_pVB = nullptr;
-	ID3D11Buffer*		m_pIB = nullptr;
-
-	DWORD	vertexCount = 0;
-	DWORD	indexCount = 0;
+	LPCWSTR	diffuseTexPath;
+	LPCWSTR	specularTexPath;
+	LPCWSTR	normalTexPath;
 
 	ID3D11ShaderResourceView*	pSRVDiffuse;
 	ID3D11ShaderResourceView*	pSRVSpecular;
 	ID3D11ShaderResourceView*	pSRVNormal;
-
-	float		mat4x4[16];
-	// todo : D3DXMATRIX	mat;
-
-	enum INDEX_BIT
-	{
-		INDEX_NOINDEX = 0,
-		INDEX_16BIT,		
-		INDEX_32BIT,		
-	};
-	INDEX_BIT	m_indexBit = INDEX_NOINDEX;
 
 	void Release()
 	{
@@ -59,6 +45,34 @@ struct	MESH_NODE
 			pSRVNormal->Release();
 			pSRVNormal = nullptr;
 		}
+	}
+};
+
+// dpcall을 하는 단위
+struct	MESH_NODE
+{
+	ID3D11Buffer*		m_pVB = nullptr;
+	ID3D11Buffer*		m_pIB = nullptr;
+
+	DWORD	vertexCount = 0;
+	DWORD	indexCount = 0;
+
+	MATERIAL_DATA materialData;
+
+	float		mat4x4[16];
+	// todo : D3DXMATRIX	mat;
+
+	enum INDEX_BIT
+	{
+		INDEX_NOINDEX = 0,
+		INDEX_16BIT,		
+		INDEX_32BIT,		
+	};
+	INDEX_BIT	m_indexBit = INDEX_NOINDEX;
+
+	void Release()
+	{
+		materialData.Release();
 
 		if (m_pIB)
 		{
@@ -93,12 +107,16 @@ public:
 
 private:
 
-	BOOL LoadFBX();
+	BOOL	LoadFBX();
 
 	BOOL	CreateNode();
 	BOOL	VertexConstruction(FBX_MESH_NODE& fbxNode, MESH_NODE& meshNode);
+	// material은 하드코딩으로 구현되어있음
+	BOOL	MaterialConstruction();
+
 	BOOL	CreateVertexBuffer(ID3D11Buffer** pBuffer, void* pVertices, uint32_t stride, uint32_t vertexCount);
 	BOOL	CreateIndexBuffer(ID3D11Buffer** pBuffer, void* pIndices, uint32_t indexCount);
+	BOOL	CreateMeshTexture(MESH_NODE& meshNode);
 
 	BOOL	CompileShader();
 	BOOL	CompileVertexShader();
