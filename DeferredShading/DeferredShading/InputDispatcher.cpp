@@ -78,6 +78,7 @@ void InputDispatcher::EventMouseInput(MouseInput& mouse)
 	case MouseStatusType::MOUSE_LPRESSED:
 		break;
 	case MouseStatusType::MOUSE_LUP:
+		mMouseInputList.push_back(mouse);
 		mIsMousePressed[MOUSE_L] = false;
 		break;
 	case MouseStatusType::MOUSE_RDOWN:
@@ -87,6 +88,7 @@ void InputDispatcher::EventMouseInput(MouseInput& mouse)
 	case MouseStatusType::MOUSE_RPRESSED:
 		break;
 	case MouseStatusType::MOUSE_RUP:
+		mMouseInputList.push_back(mouse);
 		mIsMousePressed[MOUSE_R] = false;
 		break;
 	}

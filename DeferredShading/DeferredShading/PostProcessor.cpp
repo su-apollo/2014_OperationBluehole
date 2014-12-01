@@ -222,12 +222,12 @@ BOOL PostProcessor::CreateQuad()
 
 void PostProcessor::RenderCleanUp()
 {
-	mD3DDeviceContext->VSSetShader(0, 0, 0);
-	mD3DDeviceContext->PSSetShader(0, 0, 0);
-	mD3DDeviceContext->OMSetRenderTargets(0, 0, 0);
 	ID3D11ShaderResourceView* nullSRV[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	mD3DDeviceContext->VSSetShaderResources(0, 8, nullSRV);
 	mD3DDeviceContext->PSSetShaderResources(0, 8, nullSRV);
+	mD3DDeviceContext->VSSetShader(0, 0, 0);
+	mD3DDeviceContext->PSSetShader(0, 0, 0);
+	mD3DDeviceContext->OMSetRenderTargets(0, 0, 0);
 }
 
 BOOL PostProcessor::LoadNoiseTexture()
