@@ -85,7 +85,7 @@ private:
 	HRESULT hr = S_OK;
 
 	// changeable varialbes
-	float					mKernelRadius = 5;
+	float					mKernelRadius = 5.0f;
 	D3DXVECTOR4				mSampleSphere[KERNEL_NUM];
 };
 

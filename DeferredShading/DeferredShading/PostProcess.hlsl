@@ -106,7 +106,7 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 	float3 bouncedColor = float3(0,0,0);
 	float occlusion = 0.0f;
 	float radius = vKernelVariables.x;
-	float bounceRange = 8.0f;
+	float bounceRange = 50.0f;
 
 	[unroll]
 	for (int i = 0; i < 8; ++i)
@@ -145,6 +145,7 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 		originalToPos = normalize(originalToPos);
 
 		// the sample point too close to original point must be ignored.
+		// scale해주는게 나을듯.
 		float rangeCheck = max(dot(normal.xyz, normalize(originalWorldPos.xyz - position.xyz)), 0);
 		if (originalDepth == 1) rangeCheck = 0;
 
@@ -156,9 +157,11 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 		if (sampleProjected.y<-1)rangeCheck = 0;
 		if (sampleProjected.x>1)rangeCheck = 0;
 		if (sampleProjected.y>1)rangeCheck = 0;
+
+		if (distance > bounceRange) rangeCheck = 0;
 		
 
-		bouncedColor += originalColor.xyz*max(dot(originalWorldNormal, originalToPos), 0)*((radius - distance) / radius) *rangeCheck;
+		bouncedColor += originalColor.xyz*max(dot(originalWorldNormal, originalToPos), 0)*max(((radius - distance) / radius),0) *rangeCheck;
 		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
 
 	}
