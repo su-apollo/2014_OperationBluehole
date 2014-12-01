@@ -17,5 +17,8 @@ public:
 
 	int mCurrentMouseX = 0;
 	int mCurrentMouseY = 0;
+	int dx = 0, dy = 0;
+	float mCameraX = 0.0f;
+	float mCameraY = 0.0f;
 };
 

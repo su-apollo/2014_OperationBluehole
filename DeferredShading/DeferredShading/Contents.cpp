@@ -42,9 +42,15 @@ void Contents::Init()
 		
 		//HWND hwnd = App::GetInstance()->GetHandleMainWindow();
 
-		int dx = x - mCurrentMouseX;
-		int dy = y - mCurrentMouseY;
-		Camera::GetInstance()->Rotate(D3DXVECTOR3(dx*0.01f, dy*0.01f, 0.0f));
+		dx = x - mCurrentMouseX;
+		dy = y - mCurrentMouseY;
+		Camera::GetInstance()->Rotate(D3DXVECTOR3(mCameraX + dx*0.01f, mCameraY + dy*0.01f, 0.0f));
+	});
+
+	MouseDispatch(MouseStatusType::MOUSE_LUP,
+		[&](int x, int y){ 
+		mCameraX += dx*0.01f;
+		mCameraY += dy*0.01f;
 	});
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);

@@ -121,6 +121,8 @@ public:
 
 protected:
 
+	virtual void	CleanUp(ID3D11DeviceContext* dc);
+
 	// material은 하드코딩으로 구현해야함
 	virtual BOOL	MaterialConstruction(ID3D11Device* device) = 0;
 

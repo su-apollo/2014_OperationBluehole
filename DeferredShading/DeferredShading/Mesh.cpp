@@ -314,6 +314,17 @@ void Mesh::RenderAll(ID3D11DeviceContext* dc)
 
 	for (size_t i = 0; i < nodeCount; ++i)
 		RenderNode(dc, mMeshNodeArray[i]);
+
+	CleanUp(dc);
+}
+
+void Mesh::CleanUp(ID3D11DeviceContext* dc)
+{
+	dc->VSSetShader(0, 0, 0);
+	dc->PSSetShader(0, 0, 0);
+	ID3D11ShaderResourceView* nullSRV[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	dc->VSSetShaderResources(0, 8, nullSRV);
+	dc->PSSetShaderResources(0, 8, nullSRV);
 }
 
 

@@ -49,6 +49,7 @@ void Renderer::Render()
 	mD3DDeviceContext->OMSetDepthStencilState(RenderStateManager::GetInstance()->GetDepthState(), 0);
 
 	mElin.RenderAll();
+
 	mRoom.RenderAll(mD3DDeviceContext);
 }
 
