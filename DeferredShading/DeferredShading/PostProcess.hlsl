@@ -106,8 +106,7 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 	float3 bouncedColor = float3(0,0,0);
 	float occlusion = 0.0f;
 	float radius = vKernelVariables.x;
-	float radiusB = 15.0f;
-	float bounceRange = 10.0f;
+	float bounceRange = 8.0f;
 
 	[unroll]
 	for (int i = 0; i < 8; ++i)
@@ -120,7 +119,6 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 		scale = lerp(0.3f,1.0f, scale * scale);
 		sampleWorldPos *= scale;
 		
-		float3 sampleWorldPosB = -sampleWorldPos*radiusB + position.xyz;
 		sampleWorldPos = - sampleWorldPos * radius + position.xyz;
 
 		//project position
@@ -128,27 +126,19 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 		sampleProjected.xyz /= sampleProjected.w;
 		float2 projCoord = float2(sampleProjected.x*0.5 + 0.5, 0.5 - sampleProjected.y*0.5); // 0~1
 			
-		float4 sampleProjectedB = mul(float4(sampleWorldPosB, 1), mViewProj); // -1~1
-		sampleProjectedB.xyz /= sampleProjectedB.w;
-		float2 projCoordB = float2(sampleProjectedB.x*0.5 + 0.5, 0.5 - sampleProjectedB.y*0.5); // 0~1
-
 		//get original depth
 		float	originalDepth = txDepth.Sample(samLinear, projCoord).x; // 0~1
 		float4 originalWorldPos = mul(float4(sampleProjected.x, sampleProjected.y, originalDepth, 1), mInverseViewProj);
 		originalWorldPos /= originalWorldPos.w;
 
-		float	originalDepthB = txDepth.Sample(samLinear, projCoordB).x; // 0~1
-		float4 originalWorldPosB = mul(float4(sampleProjectedB.x, sampleProjectedB.y, originalDepthB, 1), mInverseViewProj);
-		originalWorldPosB /= originalWorldPosB.w;
-
 		//get original normal
-		float4 originalWorldNormal = txNormal.Sample(samLinear, projCoordB);
+		float4 originalWorldNormal = txNormal.Sample(samLinear, projCoord);
 
 		//get original diffuse color
-		float4 originalColor = txDiffuse.Sample(samLinear, projCoordB);
+		float4 originalColor = txDiffuse.Sample(samLinear, projCoord);
 
 		//get a vector from original pos to position pos
-		float4 originalToPos = position - originalWorldPosB;
+		float4 originalToPos = position - originalWorldPos;
 		//get a distance
 		float distance = length(originalToPos);
 		//normalize vector
@@ -158,19 +148,17 @@ float4 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 		float rangeCheck = max(dot(normal.xyz, normalize(originalWorldPos.xyz - position.xyz)), 0);
 		if (originalDepth == 1) rangeCheck = 0;
 
-		float rangeCheckB = max(dot(normal.xyz, normalize(originalWorldPosB.xyz - position.xyz)), 0);
-		if (originalDepthB == 1) rangeCheckB = 0;
-
 		// check if it's an occluder
 		float dist = sampleProjected.z - originalDepth;
 		if (dist < 0) rangeCheck = 0;
 		
-		float distB = sampleProjectedB.z - originalDepthB;
-		if (distB < 0) rangeCheckB = 0;
-		if (distance > bounceRange) rangeCheckB = 0;
+		if (sampleProjected.x<-1)rangeCheck = 0;
+		if (sampleProjected.y<-1)rangeCheck = 0;
+		if (sampleProjected.x>1)rangeCheck = 0;
+		if (sampleProjected.y>1)rangeCheck = 0;
+		
 
-
-		bouncedColor += originalColor.xyz*max(dot(originalWorldNormal, originalToPos), 0)*((radiusB - distance) / radiusB) *rangeCheckB;
+		bouncedColor += originalColor.xyz*max(dot(originalWorldNormal, originalToPos), 0)*((radius - distance) / radius) *rangeCheck;
 		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
 
 	}
