@@ -320,11 +320,11 @@ void Mesh::RenderAll(ID3D11DeviceContext* dc)
 
 void Mesh::CleanUp(ID3D11DeviceContext* dc)
 {
-	dc->VSSetShader(0, 0, 0);
-	dc->PSSetShader(0, 0, 0);
 	ID3D11ShaderResourceView* nullSRV[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	dc->VSSetShaderResources(0, 8, nullSRV);
 	dc->PSSetShaderResources(0, 8, nullSRV);
+	dc->VSSetShader(0, 0, 0);
+	dc->PSSetShader(0, 0, 0);
 }
 
 
