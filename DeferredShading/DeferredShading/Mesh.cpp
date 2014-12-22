@@ -229,6 +229,12 @@ BOOL Mesh::VertexConstruction(ID3D11Device* device, FBX_MESH_NODE& fbxNode, MESH
 			(float)v.mData[1],
 			(float)v.mData[2]);
 
+		v = fbxNode.m_tangentArray[i];
+
+		pV[i].vTan = D3DXVECTOR3((float)v.mData[0],
+			(float)v.mData[1],
+			(float)v.mData[2]);
+
 		// uv에서 v값에 -를 곱해야한다. 이유는 잘 모르겠음
 		if ((float)fbxNode.m_texcoordArray.size() > 0)
 			/*pV[i].vTexcoord = D3DXVECTOR2((float)abs(1.0f - fbxNode.m_texcoordArray[i].mData[0]),

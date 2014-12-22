@@ -368,6 +368,7 @@ void CFBXLoader::CopyVertexData(FbxMesh*	pMesh, FBX_MESH_NODE* meshNode)
 
 	unsigned int indx = 0;
 
+	// triangle list형식으로 뽑아내고 있음
 	for (int i = 0; i < lPolygonCount; i++)
 	{
 		int lPolygonsize = pMesh->GetPolygonSize(i);
@@ -375,8 +376,11 @@ void CFBXLoader::CopyVertexData(FbxMesh*	pMesh, FBX_MESH_NODE* meshNode)
 		for (int pol = 0; pol < lPolygonsize; pol++)
 		{
 			int index = pMesh->GetPolygonVertex(i, pol);
+			// list 형식이기 때문에 인덱스는 그냥 순서대로 들어간다.
 			meshNode->indexArray.push_back(indx);
 
+			// 정육면체 하나 - 24개의 ControlPoint
+			// 여기서는 Vertex == ControlPoint
 			pos = pMesh->GetControlPointAt(index);
 			pMesh->GetPolygonVertexNormal(i, pol, nor);
 
@@ -410,6 +414,45 @@ void CFBXLoader::CopyVertexData(FbxMesh*	pMesh, FBX_MESH_NODE* meshNode)
 			}
 		}
 	}
+
+	//todo : compute tangent
+	//위의 과정과 중복되는 부분이 있음 -> 따로 기능을 뺄 예정
+	//삼각형 폴리곤을 사용한다는 가정하에 계산
+	for (int i = 0; i < lPolygonCount; ++i)
+	{
+		int lPolygonsize = pMesh->GetPolygonSize(i);
+
+		// 대충 0번 uvsetID를 사용해서 뽑아낸 uv를 이용해서 계산
+		FbxString name = uvsetName.GetStringAt(0);
+
+		FbxVector2 texCoord0, texCoord1, texCoord2;
+		pMesh->GetPolygonVertexUV(i, 0, name, texCoord0, unmapped);
+		pMesh->GetPolygonVertexUV(i, 1, name, texCoord1, unmapped);
+		pMesh->GetPolygonVertexUV(i, 2, name, texCoord2, unmapped);
+
+		FbxVector4 pos0, pos1, pos2;
+		int index = pMesh->GetPolygonVertex(i, 0);
+		pos0 = pMesh->GetControlPointAt(index);
+		index = pMesh->GetPolygonVertex(i, 1);
+		pos1 = pMesh->GetControlPointAt(index);
+		index = pMesh->GetPolygonVertex(i, 2);
+		pos2 = pMesh->GetControlPointAt(index);
+
+		FbxVector4 deltaPos0 = pos1 - pos0;
+		FbxVector4 deltaPos1 = pos2 - pos1;
+		FbxVector2 deltaUV0 = texCoord1 - texCoord0;
+		FbxVector2 deltaUV1 = texCoord2 - texCoord1;
+
+		float r = 1.0f / (deltaUV0[0] * deltaUV1[1] - deltaUV0[1] * deltaUV1[0]);
+		FbxVector4 tangent = (deltaPos0 * deltaUV1[1] - deltaPos1 * deltaUV0[1])*r;
+
+		for (int i = 0; i < 3; ++i)
+			meshNode->m_tangentArray.push_back(tangent);
+	}
+
+	//pMesh->GenerateTangentsData();
+	//pMesh->GetElementTangentCount();
+	//pMesh->GetElementTangent();
 }
 
 
