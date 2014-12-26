@@ -39,6 +39,8 @@ private:
 	void		UpdateViewMatrix();
 	void		UpdateProjectionMatrix();
 
+	void		UpdateBillMatrix();
+
 	D3DXVECTOR3 mPosition;	// 카메라 원점
 	D3DXVECTOR3 mRight;		// x
 	D3DXVECTOR3 mUp;		// y
@@ -51,5 +53,7 @@ private:
 
 	D3DXMATRIX	mMatView;
 	D3DXMATRIX	mMatProj;
+
+	D3DXMATRIX	mMatBill;
 };
 

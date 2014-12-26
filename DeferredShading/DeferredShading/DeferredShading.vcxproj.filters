@@ -111,6 +111,9 @@
     <ClInclude Include="Room.h">
       <Filter>Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Billboard.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -177,6 +180,9 @@
       <Filter>Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Room.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Billboard.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
   </ItemGroup>
