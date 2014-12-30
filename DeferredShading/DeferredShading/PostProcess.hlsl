@@ -202,23 +202,32 @@ OUT main(PS_INPUT Input) : SV_TARGET
 	{
 		// get lightDirection and distance
 		float4 lightDir = vLightPos[i] - position;
-		float distance = length(lightDir.xyz);
+		float distance = length(lightDir);
 		lightDir /= distance;
 
 		float3 attr = float3(0, 0, 1);
-		float attrFactor = 1.0f - saturate((distance - vLightRange[i].y) / vLightRange[i].x);
+		float attrFactor = 1.0f - (max(distance - vLightRange[i].y,0) / vLightRange[i].x);
 		attrFactor = pow(attrFactor, 2);
 
-		//calculate diffuseFactor
-		diffuseFactor += saturate(dot(lightDir, normal) * vLightColor[i] * attrFactor);
+		//if (distance > vLightRange[i].x)
+		//	attrFactor = 0.0f;
 
-		//variables to calculate specular
-		float4 reflection = normalize(reflect(lightDir, normal));
-		float4 viewDir = normalize(position - vEye);
+		float lDotN = dot(lightDir, normal);
 
-		//calculate specularFactor
-		float specularResult = saturate(dot(viewDir, reflection));
-		specularFactor += saturate(pow(specularResult, 2.0f) * vLightColor[i] * attrFactor);
+		if (lDotN > 0.0f)
+		{
+			//calculate diffuseFactor
+			diffuseFactor += lDotN * vLightColor[i] * attrFactor;
+
+			//variables to calculate specular
+			float4 reflection = reflect(-lightDir, normal);
+			float4 viewDir = normalize(vEye-position);
+
+			//calculate specularFactor
+			float vDotN = dot(viewDir, reflection);
+			specularFactor += pow(vDotN, 2.0f) * vLightColor[i] * attrFactor;
+		}
+		
 	}
 
 	specular *= specularFactor;
