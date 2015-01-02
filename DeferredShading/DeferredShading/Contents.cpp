@@ -29,6 +29,7 @@ void Contents::Init()
 	InputDispatch('D', [](){ Camera::GetInstance()->Strafe(30); });
 	InputDispatch('A', [](){ Camera::GetInstance()->Strafe(-30); });
 	InputDispatch('P', [](){ if (!InputDispatcher::GetInstance()->IsPressed('P')) Renderer::GetInstance()->ElinRotate(); });
+	InputDispatch('O', [](){ if (!InputDispatcher::GetInstance()->IsPressed('O')) PostProcessor::GetInstance()->mBillSwitch = !PostProcessor::GetInstance()->mBillSwitch; });
 
 	//Cameramove
 	MouseDispatch(MouseStatusType::MOUSE_LDOWN,

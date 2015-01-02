@@ -40,8 +40,9 @@ public:
 	void					RenderCleanUp();
 	void					ChangeKernelRadius(float radius);
 
-private:
+	BOOL					mBillSwitch = TRUE;
 
+private:
 
 	BOOL					CompileShader();
 	BOOL					CreateConstBuffer();
@@ -82,7 +83,7 @@ private:
 	ID3D11RenderTargetView* mBackBuffRTV = NULL;
 
 	// get last error
-	HRESULT hr = S_OK;
+	HRESULT					hr = S_OK;
 
 	// changeable varialbes
 	float					mKernelRadius = 5.0f;

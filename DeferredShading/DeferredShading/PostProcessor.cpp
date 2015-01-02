@@ -63,7 +63,8 @@ void PostProcessor::Render()
 	// todo : BillBoard render
 	FXAAPass();
 
-	LightManager::GetInstance()->RenderBill();
+	if (mBillSwitch)
+		LightManager::GetInstance()->RenderBill();
 }
 
 BOOL PostProcessor::CreateConstBuffer()
