@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "Billboard.h"
 #include "Renderer.h"
-
-
+#include "App.h"
+#include "RTManager.h"
+#include "Camera.h"
 
 Billboard::Billboard()
 {
@@ -17,8 +18,61 @@ BOOL Billboard::Init()
 {
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
+	HWND hWnd = App::GetInstance()->GetHandleMainWindow();
+
+	if (!CompileShader())
+	{
+		MessageBox(hWnd, L"Billboard CompileShader Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		return FALSE;
+	}
+
+	if (!CreateConstBuffer())
+	{
+		MessageBox(hWnd, L"Billboard CreateConstBuffer Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		return FALSE;
+	}
+
+	if (!CreateQuad())
+	{
+		MessageBox(hWnd, L"Billboard Quad Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		return FALSE;
+	}
 
 	return TRUE;
+}
+
+void Billboard::Render()
+{
+	// set lay out
+	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
+
+	// set vertex
+	UINT stride = sizeof(QuadVertex);
+	UINT offset = 0;
+	mD3DDeviceContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
+
+	// set index
+	mD3DDeviceContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+	// set primitive
+	mD3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// set shader
+	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
+	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
+	mD3DDeviceContext->VSSetConstantBuffers(0, 1, &mVSConstBuffer);
+
+	// set const buff
+	BillboardConstBuffer vcb;
+	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
+	D3DXMatrixTranspose(&matProj, &matProj);
+	vcb.mProjection = matProj;
+	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
+
+	// todo : set sampler
+
+	// draw
+	mD3DDeviceContext->DrawIndexed(6, 0, 0);
 }
 
 BOOL Billboard::CreateQuad()
@@ -130,4 +184,22 @@ HRESULT Billboard::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint,
 
 	return S_OK;
 }
+
+BOOL Billboard::CreateConstBuffer()
+{
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	// Create the constant buffer
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.ByteWidth = sizeof(BillboardConstBuffer);
+	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mVSConstBuffer);
+	if (FAILED(hr))
+		return FALSE;
+
+	return TRUE;
+}
+
+
 

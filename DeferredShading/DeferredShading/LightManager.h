@@ -20,6 +20,8 @@ public:
 	LightManager();
 	~LightManager();
 
+	void RenderBill();
+
 	void CreateDirectionalLights(int num);
 	void CreatePointLights(int num);
 

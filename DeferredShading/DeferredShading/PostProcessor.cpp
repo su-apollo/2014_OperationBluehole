@@ -60,6 +60,8 @@ void PostProcessor::Render()
 	LightPass();
 	RTManager::GetInstance()->SetRenderTargetToSceneBuff();
 	OccBlurPass();
+	// todo : BillBoard render
+	//LightManager::GetInstance()->RenderBill();
 	FXAAPass();
 }
 
@@ -245,9 +247,6 @@ void PostProcessor::ChangeKernelRadius(float radius)
 
 void PostProcessor::LightPass()
 {
-	// set render target view
-	//mD3DDeviceContext->OMSetRenderTargets(1, &mBackBuffRTV, NULL);
-
 	// set lay out
 	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
 

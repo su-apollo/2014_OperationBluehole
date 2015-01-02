@@ -1,7 +1,10 @@
 #pragma once
 #include "PostProcessor.h"
 
-
+struct BillboardConstBuffer
+{
+	D3DXMATRIX mProjection;
+};
 
 class Billboard
 {
@@ -9,17 +12,20 @@ public:
 	Billboard();
 	virtual ~Billboard();
 
-
 	BOOL	Init();
-
-	BOOL	CreateQuad();
-	BOOL	CompileShader();
-
-	HRESULT	CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+	void	Render();
 
 private:
 
+	BOOL	CompileShader();
+	BOOL	CreateQuad();
+	BOOL	CreateConstBuffer();
+	HRESULT	CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+
+	D3DXMATRIX				mWorld;
+
 	ID3D11VertexShader*     mVertexShader = NULL;
+	ID3D11Buffer*			mVSConstBuffer = NULL;
 	ID3D11PixelShader*		mPixelShader = NULL;
 
 	ID3D11Buffer*           mVertexBuffer = NULL;
@@ -27,11 +33,11 @@ private:
 
 	ID3D11InputLayout*      mVertexLayout11 = NULL;
 
-	WCHAR*					mVertexShaderPath = L".hlsl";
+	WCHAR*					mVertexShaderPath = L"BillBoardVertexShader.hlsl";
 	LPCSTR					mVertexShaderMain = "main";
 	LPCSTR					mVertexShaderModel = "vs_5_0";
 
-	WCHAR*					mPixelShaderPath = L".hlsl";
+	WCHAR*					mPixelShaderPath = L"BillBoardPixelShader.hlsl";
 	LPCSTR					mPixelShaderMain = "main";
 	LPCSTR					mPixelShaderModel = "ps_5_0";
 

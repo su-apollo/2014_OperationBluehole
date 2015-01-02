@@ -31,3 +31,9 @@ void LightManager::CreatePointLights(int num)
 		mPLightList.push_back(PLightPointer(new PointLight));
 }
 
+void LightManager::RenderBill()
+{
+	for (auto iter : mPLightList)
+		iter->RenderBill();
+}
+
