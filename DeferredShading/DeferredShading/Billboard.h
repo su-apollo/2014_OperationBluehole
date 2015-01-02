@@ -3,6 +3,8 @@
 
 struct BillboardConstBuffer
 {
+	D3DXMATRIX mWorld;
+	D3DXMATRIX mView;
 	D3DXMATRIX mProjection;
 };
 
@@ -12,17 +14,16 @@ public:
 	Billboard();
 	virtual ~Billboard();
 
-	BOOL	Init();
-	void	Render();
+	BOOL					Init();
+	void					Render();
 
+	D3DXVECTOR4				mPos;
 private:
 
-	BOOL	CompileShader();
-	BOOL	CreateQuad();
-	BOOL	CreateConstBuffer();
-	HRESULT	CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
-
-	D3DXMATRIX				mWorld;
+	BOOL					CompileShader();
+	BOOL					CreateQuad();
+	BOOL					CreateConstBuffer();
+	HRESULT					CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
 	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11Buffer*			mVSConstBuffer = NULL;

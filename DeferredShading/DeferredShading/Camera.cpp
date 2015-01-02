@@ -22,7 +22,6 @@ void Camera::Update()
 	Pitch(mRotation.y);
 	Roll(mRotation.z);
 	UpdateViewMatrix();
-	UpdateBillMatrix();
 	UpdateProjectionMatrix();
 }
 
@@ -131,13 +130,6 @@ void Camera::UpdateProjectionMatrix()
 	D3DXMatrixPerspectiveFovLH(&mMatProj, D3DX_PI / 4, width / (FLOAT)height, mNear, mFar);
 }
 
-void Camera::UpdateBillMatrix()
-{
-	D3DXMatrixInverse(&mMatBill, NULL, &mMatView);
-	mMatBill._41 = 0.0f;
-	mMatBill._42 = 0.0f;
-	mMatBill._43 = 0.0f;
-}
 
 
 

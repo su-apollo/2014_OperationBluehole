@@ -4,7 +4,10 @@
 //--------------------------------------------------------------------------------------
 cbuffer ConstantBuffer : register(b0)
 {
+	matrix World;
+	matrix View;
 	matrix Projection;
+	matrix Bill;
 }
 
 
@@ -31,6 +34,8 @@ struct VS_OUTPUT
 VS_OUTPUT main(VS_INPUT Input)
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
+	output.Pos = mul(Input.Pos, World);
+	output.Pos = mul(output.Pos, View);
 	output.Pos = mul(output.Pos, Projection);
 	output.Tex = Input.Tex;
 

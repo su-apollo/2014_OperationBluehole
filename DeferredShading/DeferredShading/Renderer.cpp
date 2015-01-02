@@ -3,7 +3,7 @@
 #include "App.h"
 #include "Logger.h"
 #include "RSManager.h"
-
+#include "LightManager.h"
 
 Renderer::Renderer()
 {

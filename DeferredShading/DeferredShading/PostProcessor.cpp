@@ -61,8 +61,9 @@ void PostProcessor::Render()
 	RTManager::GetInstance()->SetRenderTargetToSceneBuff();
 	OccBlurPass();
 	// todo : BillBoard render
-	//LightManager::GetInstance()->RenderBill();
 	FXAAPass();
+
+	LightManager::GetInstance()->RenderBill();
 }
 
 BOOL PostProcessor::CreateConstBuffer()

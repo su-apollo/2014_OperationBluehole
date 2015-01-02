@@ -13,7 +13,7 @@ public:
 	}
 	~PointLight() {}
 
-	void RenderBill() { mLightBill.Render(); };
+	void RenderBill() { mLightBill.mPos = mPos, mLightBill.Render(); };
 
 	D3DXVECTOR4 mPos;
 	D3DXVECTOR4 mColor;

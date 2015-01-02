@@ -5,13 +5,16 @@
 #include "RTManager.h"
 #include "Camera.h"
 
-Billboard::Billboard()
+Billboard::Billboard() : mPos(0, 0, 0, 0)
 {
 }
 
-
 Billboard::~Billboard()
 {
+	SafeRelease(mPixelShader);
+	SafeRelease(mVSConstBuffer);
+	SafeRelease(mVertexBuffer);
+	SafeRelease(mIndexBuffer);
 }
 
 BOOL Billboard::Init()
@@ -64,9 +67,22 @@ void Billboard::Render()
 
 	// set const buff
 	BillboardConstBuffer vcb;
+	D3DXMATRIX matView = Camera::GetInstance()->GetMatView();
+	D3DXMATRIX matWorld;
+	D3DXMatrixInverse(&matWorld, NULL, &matView);
+	matWorld._41 = mPos.x;
+	matWorld._42 = mPos.y;
+	matWorld._43 = mPos.z;
 	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
+
+	D3DXMatrixTranspose(&matWorld, &matWorld);
+	D3DXMatrixTranspose(&matView, &matView);
 	D3DXMatrixTranspose(&matProj, &matProj);
+	
+	vcb.mWorld = matWorld;
+	vcb.mView = matView;
 	vcb.mProjection = matProj;
+	
 	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
 
 	// todo : set sampler
@@ -79,10 +95,10 @@ BOOL Billboard::CreateQuad()
 {
 	QuadVertex verts[4] =
 	{
-		{ D3DXVECTOR3(1, 1, 0), D3DXVECTOR2(1, 0) },
-		{ D3DXVECTOR3(1, -1, 0), D3DXVECTOR2(1, 1) },
-		{ D3DXVECTOR3(-1, -1, 0), D3DXVECTOR2(0, 1) },
-		{ D3DXVECTOR3(-1, 1, 0), D3DXVECTOR2(0, 0) }
+		{ D3DXVECTOR3(10, 10, 0), D3DXVECTOR2(1, 0) },
+		{ D3DXVECTOR3(10, -10, 0), D3DXVECTOR2(1, 1) },
+		{ D3DXVECTOR3(-10, -10, 0), D3DXVECTOR2(0, 1) },
+		{ D3DXVECTOR3(-10, 10, 0), D3DXVECTOR2(0, 0) }
 	};
 
 	D3D11_BUFFER_DESC desc;
