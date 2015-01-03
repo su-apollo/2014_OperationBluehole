@@ -1,5 +1,10 @@
 
+//--------------------------------------------------------------------------------------
+// Textures and Samplers
+//--------------------------------------------------------------------------------------
+Texture2D txBillBoard : register(t0);
 
+SamplerState samLinear : register(s0);
 
 //--------------------------------------------------------------------------------------
 // Input / Output structures
@@ -17,5 +22,5 @@ struct PS_INPUT
 
 float4 main(PS_INPUT Input) : SV_TARGET
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	return txBillBoard.Sample(samLinear, Input.Tex);
 }

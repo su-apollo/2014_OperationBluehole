@@ -4,6 +4,7 @@
 #include "App.h"
 #include "RTManager.h"
 #include "Camera.h"
+#include "SamplerManager.h"
 
 Billboard::Billboard() : mPos(0, 0, 0, 0)
 {
@@ -17,7 +18,7 @@ Billboard::~Billboard()
 	SafeRelease(mIndexBuffer);
 }
 
-BOOL Billboard::Init()
+BOOL Billboard::Init(const LPCWSTR path)
 {
 	mD3DDevice = Renderer::GetInstance()->GetDevice();
 	mD3DDeviceContext = Renderer::GetInstance()->GetDeviceContext();
@@ -38,6 +39,12 @@ BOOL Billboard::Init()
 	if (!CreateQuad())
 	{
 		MessageBox(hWnd, L"Billboard Quad Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
+		return FALSE;
+	}
+
+	if (!LoadTexture(path))
+	{
+		MessageBox(hWnd, L"Billboard Load Texture Error!", L"Error!", MB_ICONINFORMATION | MB_OK);
 		return FALSE;
 	}
 
@@ -85,7 +92,11 @@ void Billboard::Render()
 	
 	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
 
-	// todo : set sampler
+	// set Texture and sampler
+	mD3DDeviceContext->PSSetShaderResources(0, 1, &mTexture);
+
+	ID3D11SamplerState* linearSampler = SamplerManager::GetInstance()->GetLinearSampler();
+	mD3DDeviceContext->PSSetSamplers(0, 1, &linearSampler);
 
 	// draw
 	mD3DDeviceContext->DrawIndexed(6, 0, 0);
@@ -211,6 +222,15 @@ BOOL Billboard::CreateConstBuffer()
 	bd.CPUAccessFlags = 0;
 	bd.ByteWidth = sizeof(BillboardConstBuffer);
 	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mVSConstBuffer);
+	if (FAILED(hr))
+		return FALSE;
+
+	return TRUE;
+}
+
+BOOL Billboard::LoadTexture(const LPCWSTR path)
+{
+	hr = D3DX11CreateShaderResourceViewFromFile(mD3DDevice, path, NULL, NULL, &mTexture, NULL);
 	if (FAILED(hr))
 		return FALSE;
 

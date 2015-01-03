@@ -9,7 +9,7 @@ class PointLight
 public:
 	PointLight() : mPos(15.f, 60.0f, -50.0f, 1.0f), mRange(100), mFullRange(65), mColor(0.8f, 0.8f, 0.8f, 1.0f) 
 	{
-		mLightBill.Init();
+		mLightBill.Init(mBillBoardTexturePath);
 	}
 	~PointLight() {}
 
@@ -21,5 +21,7 @@ public:
 	float		mFullRange;
 
 	Billboard	mLightBill;
+
+	const LPCWSTR mBillBoardTexturePath = L"moon.png";
 };
 

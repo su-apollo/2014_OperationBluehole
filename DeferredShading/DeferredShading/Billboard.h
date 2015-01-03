@@ -14,7 +14,7 @@ public:
 	Billboard();
 	virtual ~Billboard();
 
-	BOOL					Init();
+	BOOL					Init(const LPCWSTR path);
 	void					Render();
 
 	D3DXVECTOR4				mPos;
@@ -24,6 +24,7 @@ private:
 	BOOL					CreateQuad();
 	BOOL					CreateConstBuffer();
 	HRESULT					CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+	BOOL					LoadTexture(const LPCWSTR path);
 
 	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11Buffer*			mVSConstBuffer = NULL;
@@ -41,6 +42,8 @@ private:
 	WCHAR*					mPixelShaderPath = L"BillBoardPixelShader.hlsl";
 	LPCSTR					mPixelShaderMain = "main";
 	LPCSTR					mPixelShaderModel = "ps_5_0";
+
+	ID3D11ShaderResourceView*	mTexture = NULL;
 
 	// get from renderer
 	ID3D11Device*           mD3DDevice = NULL;
