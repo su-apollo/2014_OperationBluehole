@@ -3,13 +3,9 @@
 #include "DirectionalLight.h"
 
 
-
-
-
-
-
 LightManager::LightManager()
 {
+	mLightBill.Init(mBillBoardTexturePath);
 }
 
 
@@ -33,7 +29,17 @@ void LightManager::CreatePointLights(int num)
 
 void LightManager::RenderBill()
 {
+	UINT num = mPLightList.size();
+	D3DXVECTOR4* posArray = new D3DXVECTOR4[num];
+
+	int i = 0;
 	for (auto iter : mPLightList)
-		iter->RenderBill();
+	{
+		posArray[i] = iter->mPos;
+		++i;
+	}
+
+	mLightBill.RenderInstanced(num, posArray);
+	delete[] posArray;
 }
 

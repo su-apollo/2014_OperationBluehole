@@ -4,12 +4,8 @@
 //--------------------------------------------------------------------------------------
 cbuffer ConstantBuffer : register(b0)
 {
-	matrix World;
-	matrix View;
-	matrix Projection;
-	matrix Bill;
+	matrix WorldViewProjection[2];
 }
-
 
 //--------------------------------------------------------------------------------------
 // Input / Output structures
@@ -31,12 +27,10 @@ struct VS_OUTPUT
 // Vertex Shader
 //--------------------------------------------------------------------------------------
 
-VS_OUTPUT main(VS_INPUT Input)
+VS_OUTPUT main(VS_INPUT Input, uint instID : SV_InstanceID)
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
-	output.Pos = mul(Input.Pos, World);
-	output.Pos = mul(output.Pos, View);
-	output.Pos = mul(output.Pos, Projection);
+	output.Pos = mul(Input.Pos, WorldViewProjection[instID % 2]);
 	output.Tex = Input.Tex;
 
 	return output;

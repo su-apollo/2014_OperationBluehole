@@ -28,5 +28,8 @@ public:
 	DLightList mDLightList;
 	PLightList mPLightList;
 
+	Billboard	mLightBill;
+
+	const LPCWSTR mBillBoardTexturePath = L"moon.png";
 };
 

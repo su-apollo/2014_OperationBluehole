@@ -7,7 +7,7 @@
 #include "SamplerManager.h"
 #include "RSManager.h"
 
-Billboard::Billboard() : mPos(0, 0, 0, 0)
+Billboard::Billboard()
 {
 }
 
@@ -52,7 +52,8 @@ BOOL Billboard::Init(const LPCWSTR path)
 	return TRUE;
 }
 
-void Billboard::Render()
+
+void Billboard::SetRenderState(UINT num, D3DXVECTOR4* pos)
 {
 	// set blend state
 	RenderStateManager::GetInstance()->SetUseAlpha();
@@ -78,22 +79,27 @@ void Billboard::Render()
 
 	// set const buff
 	BillboardConstBuffer vcb;
-	D3DXMATRIX matView = Camera::GetInstance()->GetMatView();
+	D3DXMATRIX matView;
 	D3DXMATRIX matWorld;
-	D3DXMatrixInverse(&matWorld, NULL, &matView);
-	matWorld._41 = mPos.x;
-	matWorld._42 = mPos.y;
-	matWorld._43 = mPos.z;
-	D3DXMATRIX matProj = Camera::GetInstance()->GetMatProj();
+	D3DXMATRIX matProj;
+	D3DXMATRIX matWorldViewProj;
 
-	D3DXMatrixTranspose(&matWorld, &matWorld);
-	D3DXMatrixTranspose(&matView, &matView);
-	D3DXMatrixTranspose(&matProj, &matProj);
-	
-	vcb.mWorld = matWorld;
-	vcb.mView = matView;
-	vcb.mProjection = matProj;
-	
+	for (UINT i = 0; i < num; ++i)
+	{
+		matView = Camera::GetInstance()->GetMatView();
+		D3DXMatrixInverse(&matWorld, NULL, &matView);
+		matWorld._41 = pos[i].x;
+		matWorld._42 = pos[i].y;
+		matWorld._43 = pos[i].z;
+		matProj = Camera::GetInstance()->GetMatProj();
+
+		matWorldViewProj = matWorld*matView*matProj;
+
+		D3DXMatrixTranspose(&matWorldViewProj, &matWorldViewProj);
+
+		vcb.mWorldViewProjection[i] = matWorldViewProj;
+	}
+
 	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
 
 	// set Texture and sampler
@@ -101,9 +107,18 @@ void Billboard::Render()
 
 	ID3D11SamplerState* linearSampler = SamplerManager::GetInstance()->GetLinearSampler();
 	mD3DDeviceContext->PSSetSamplers(0, 1, &linearSampler);
+}
 
-	// draw
+void Billboard::Render(D3DXVECTOR4 pos)
+{
+	SetRenderState(1, &pos);
 	mD3DDeviceContext->DrawIndexed(6, 0, 0);
+}
+
+void Billboard::RenderInstanced(UINT num, D3DXVECTOR4* pos)
+{
+	SetRenderState(num, pos);
+	mD3DDeviceContext->DrawIndexedInstanced(6, num, 0, 0, 0);
 }
 
 BOOL Billboard::CreateQuad()
@@ -240,6 +255,8 @@ BOOL Billboard::LoadTexture(const LPCWSTR path)
 
 	return TRUE;
 }
+
+
 
 
 

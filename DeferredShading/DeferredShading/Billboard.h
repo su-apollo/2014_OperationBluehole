@@ -3,9 +3,7 @@
 
 struct BillboardConstBuffer
 {
-	D3DXMATRIX mWorld;
-	D3DXMATRIX mView;
-	D3DXMATRIX mProjection;
+	D3DXMATRIX mWorldViewProjection[2];
 };
 
 class Billboard
@@ -15,10 +13,12 @@ public:
 	virtual ~Billboard();
 
 	BOOL					Init(const LPCWSTR path);
-	void					Render();
+	void					Render(D3DXVECTOR4 pos);
+	void					RenderInstanced(UINT num, D3DXVECTOR4* pos);
 
-	D3DXVECTOR4				mPos;
 private:
+
+	void					SetRenderState(UINT num, D3DXVECTOR4* pos);
 
 	BOOL					CompileShader();
 	BOOL					CreateQuad();
