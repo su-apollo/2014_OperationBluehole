@@ -5,6 +5,7 @@
 #include "RTManager.h"
 #include "Camera.h"
 #include "SamplerManager.h"
+#include "RSManager.h"
 
 Billboard::Billboard() : mPos(0, 0, 0, 0)
 {
@@ -53,6 +54,9 @@ BOOL Billboard::Init(const LPCWSTR path)
 
 void Billboard::Render()
 {
+	// set blend state
+	RenderStateManager::GetInstance()->SetUseAlpha();
+
 	// set lay out
 	mD3DDeviceContext->IASetInputLayout(mVertexLayout11);
 
@@ -106,10 +110,10 @@ BOOL Billboard::CreateQuad()
 {
 	QuadVertex verts[4] =
 	{
-		{ D3DXVECTOR3(5, 5, 0), D3DXVECTOR2(1, 0) },
-		{ D3DXVECTOR3(5, -5, 0), D3DXVECTOR2(1, 1) },
-		{ D3DXVECTOR3(-5, -5, 0), D3DXVECTOR2(0, 1) },
-		{ D3DXVECTOR3(-5, 5, 0), D3DXVECTOR2(0, 0) }
+		{ D3DXVECTOR3(3, 3, 0), D3DXVECTOR2(1, 0) },
+		{ D3DXVECTOR3(3, -3, 0), D3DXVECTOR2(1, 1) },
+		{ D3DXVECTOR3(-3, -3, 0), D3DXVECTOR2(0, 1) },
+		{ D3DXVECTOR3(-3, 3, 0), D3DXVECTOR2(0, 0) }
 	};
 
 	D3D11_BUFFER_DESC desc;

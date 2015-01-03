@@ -57,6 +57,7 @@ BOOL ProcessManager::Process() const
 	Renderer::GetInstance()->SetupViewPort();
 	RTManager::GetInstance()->ClearRenderTargets();
 	RTManager::GetInstance()->SetRenderTargetToGBuff();
+	RenderStateManager::GetInstance()->SetBlendStateDefault();
 
 	// render line
 	Renderer::GetInstance()->Render();

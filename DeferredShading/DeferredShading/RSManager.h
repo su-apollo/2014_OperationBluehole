@@ -13,8 +13,12 @@ public:
 	~RenderStateManager();
 
 	void Init();
+	void SetUseAlpha();
+	void SetBlendStateDefault();
 
 	ID3D11DepthStencilState*	GetDepthState() { return mDepthState; }
+	ID3D11BlendState*			GetBlendAlpha() { return mBlendAlpha; }
+	ID3D11BlendState*			GetBlendDefault() { return mBlendDefault; }
 
 private:
 
@@ -22,5 +26,8 @@ private:
 	ID3D11DeviceContext*		mD3DDeviceContext = NULL;
 
 	ID3D11DepthStencilState*	mDepthState = NULL;
+
+	ID3D11BlendState*			mBlendAlpha = NULL;
+	ID3D11BlendState*			mBlendDefault = NULL;
 };
 
