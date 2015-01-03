@@ -445,9 +445,15 @@ void CFBXLoader::CopyVertexData(FbxMesh*	pMesh, FBX_MESH_NODE* meshNode)
 
 		float r = 1.0f / (deltaUV0[0] * deltaUV1[1] - deltaUV0[1] * deltaUV1[0]);
 		FbxVector4 tangent = (deltaPos0 * deltaUV1[1] - deltaPos1 * deltaUV0[1])*r;
+		FbxVector4 biTangent = (deltaPos1 * deltaUV0[0] - deltaPos0 * deltaUV1[0])*r;
 
 		for (int i = 0; i < 3; ++i)
+		{
 			meshNode->m_tangentArray.push_back(tangent);
+			meshNode->m_biTangentArray.push_back(biTangent);
+		}
+
+
 	}
 
 	//pMesh->GenerateTangentsData();

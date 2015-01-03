@@ -61,7 +61,7 @@ void Contents::Init()
 	LightManager::GetInstance()->mPLightList[0]->mColor = D3DXVECTOR4(1, 1, 1, 1);
 
 	LightManager::GetInstance()->mPLightList[1]->mPos = D3DXVECTOR4(-15.f, 60.0f, 50.f, 1.0f);
-	LightManager::GetInstance()->mPLightList[1]->mColor = D3DXVECTOR4(1, 1, 1, 1);
+	LightManager::GetInstance()->mPLightList[1]->mColor = D3DXVECTOR4(0, 0, 0, 1);
 
 }
 

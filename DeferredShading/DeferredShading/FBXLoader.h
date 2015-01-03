@@ -78,6 +78,7 @@ struct FBX_MESH_NODE
 	std::vector<FbxVector4>			m_positionArray;		
 	std::vector<FbxVector4>			m_normalArray;		
 	std::vector<FbxVector4>			m_tangentArray;
+	std::vector<FbxVector4>			m_biTangentArray;
 	std::vector<FbxVector2>			m_texcoordArray;	
 
 	float	mat4x4[16];	// Matrix
@@ -95,6 +96,9 @@ struct FBX_MESH_NODE
 		indexArray.clear();
 		m_positionArray.clear();
 		m_normalArray.clear();
+		m_tangentArray.clear();
+		m_biTangentArray.clear();
+
 	}
 };
 

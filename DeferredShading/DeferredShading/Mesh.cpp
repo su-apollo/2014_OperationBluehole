@@ -182,6 +182,7 @@ BOOL Mesh::CompileVertexShader(ID3D11Device* device, WCHAR* path, LPCSTR main, L
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	UINT numElements = ARRAYSIZE(layout);
@@ -234,6 +235,12 @@ BOOL Mesh::VertexConstruction(ID3D11Device* device, FBX_MESH_NODE& fbxNode, MESH
 		pV[i].vTan = D3DXVECTOR3((float)v.mData[0],
 			(float)v.mData[1],
 			(float)v.mData[2]);
+
+		v = fbxNode.m_biTangentArray[i];
+
+		pV[i].vBiTan = D3DXVECTOR3(-(float)v.mData[0],
+			-(float)v.mData[1],
+			-(float)v.mData[2]);
 
 		// uv에서 v값에 -를 곱해야한다. 이유는 잘 모르겠음
 		if ((float)fbxNode.m_texcoordArray.size() > 0)

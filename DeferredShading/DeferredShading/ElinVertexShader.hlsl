@@ -17,6 +17,7 @@ struct VS_INPUT
 	float4 Pos : POSITION;
 	float3 Norm : NORMAL;
 	float3 Tangent : TANGENT;
+	float3 BiTangent : BINORMAL;
 	float2 Tex : TEXCOORD0;
 };
 
@@ -26,6 +27,7 @@ struct VS_OUTPUT
 	float2 Tex : TEXCOORD0;
 	float3 Tang : TEXCOORD1;
 	float3 Norm : TEXCOORD2;
+	float3 BiTang : TEXCOORD3;
 };
 
 //--------------------------------------------------------------------------------------
@@ -44,6 +46,9 @@ VS_OUTPUT main(VS_INPUT Input)
 
 	float3 worldTangent = mul(Input.Tangent, (float3x3)World);
 	output.Tang = normalize(worldTangent);
+
+	float3 worldBiTangent = mul(Input.BiTangent, (float3x3)World);
+	output.BiTang = normalize(worldBiTangent);
 
 	return output;
 }

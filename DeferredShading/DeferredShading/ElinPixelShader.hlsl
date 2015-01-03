@@ -19,6 +19,7 @@ struct PS_INPUT
 	float2 Tex : TEXCOORD0;
 	float3 Tang : TEXCOORD1;
 	float3 Norm : TEXCOORD2;
+	float3 BiTang : TEXCOORD3;
 };
 
 //--------------------------------------------------------------------------------------
@@ -41,7 +42,7 @@ GBuffer main(PS_INPUT Input)
 	tangentNormal = normalize(tangentNormal * 2 - 1);
 
 	float3 bitangent = cross(Input.Norm, Input.Tang);
-	float3x3 TBN = float3x3(normalize(Input.Tang), normalize(bitangent), normalize(Input.Norm));
+	float3x3 TBN = float3x3(normalize(Input.Tang), normalize(Input.BiTang), normalize(Input.Norm));
 	float4 normal = float4(mul(tangentNormal, TBN), 1);
 	normal = normal * 0.5 + 0.5;
 
