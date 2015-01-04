@@ -29,6 +29,7 @@ void LightManager::CreatePointLights(int num)
 
 void LightManager::RenderBill()
 {
+	// 더욱 최적화 할 수 있을 것 같음
 	UINT num = mPLightList.size();
 	D3DXVECTOR4* posArray = new D3DXVECTOR4[num];
 

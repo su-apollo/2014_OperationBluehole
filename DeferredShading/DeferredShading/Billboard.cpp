@@ -99,7 +99,7 @@ void Billboard::SetRenderState(UINT num, D3DXVECTOR4* pos)
 
 		vcb.mWorldViewProjection[i] = matWorldViewProj;
 	}
-
+	// 동적으로 상수를 전달하는 방법을 이용해야함
 	mD3DDeviceContext->UpdateSubresource(mVSConstBuffer, 0, NULL, &vcb, 0, 0);
 
 	// set Texture and sampler

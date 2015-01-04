@@ -41,9 +41,11 @@ GBuffer main(PS_INPUT Input)
 	//convert 0 ~ 1 to -1 ~ +1
 	tangentNormal = normalize(tangentNormal * 2 - 1);
 
-	float3 bitangent = cross(Input.Norm, Input.Tang);
+	//float3 bitangent = cross(Input.Norm, Input.Tang);
 	float3x3 TBN = float3x3(normalize(Input.Tang), normalize(Input.BiTang), normalize(Input.Norm));
 	float4 normal = float4(mul(tangentNormal, TBN), 1);
+	//float4 normal = float4(Input.Norm + tangentNormal.x * Input.Tang + tangentNormal.y * Input.BiTang, 1);
+
 	normal = normal * 0.5 + 0.5;
 
 	GBuffer output;

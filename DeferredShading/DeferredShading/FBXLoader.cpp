@@ -439,9 +439,9 @@ void CFBXLoader::CopyVertexData(FbxMesh*	pMesh, FBX_MESH_NODE* meshNode)
 		pos2 = pMesh->GetControlPointAt(index);
 
 		FbxVector4 deltaPos0 = pos1 - pos0;
-		FbxVector4 deltaPos1 = pos2 - pos1;
+		FbxVector4 deltaPos1 = pos2 - pos0;
 		FbxVector2 deltaUV0 = texCoord1 - texCoord0;
-		FbxVector2 deltaUV1 = texCoord2 - texCoord1;
+		FbxVector2 deltaUV1 = texCoord2 - texCoord0;
 
 		float r = 1.0f / (deltaUV0[0] * deltaUV1[1] - deltaUV0[1] * deltaUV1[0]);
 		FbxVector4 tangent = (deltaPos0 * deltaUV1[1] - deltaPos1 * deltaUV0[1])*r;
@@ -452,13 +452,7 @@ void CFBXLoader::CopyVertexData(FbxMesh*	pMesh, FBX_MESH_NODE* meshNode)
 			meshNode->m_tangentArray.push_back(tangent);
 			meshNode->m_biTangentArray.push_back(biTangent);
 		}
-
-
 	}
-
-	//pMesh->GenerateTangentsData();
-	//pMesh->GetElementTangentCount();
-	//pMesh->GetElementTangent();
 }
 
 
