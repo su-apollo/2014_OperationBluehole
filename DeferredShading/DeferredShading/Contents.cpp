@@ -52,6 +52,17 @@ void Contents::Init()
 		mLightRadius += delta * 10;
 	});
 
+	InputDispatch('Y',
+		[&](){
+		if (!InputDispatcher::GetInstance()->IsPressed('Y'))
+		{
+			if (mLightSpeed)
+				mLightSpeed = 0.0f;
+			else
+				mLightSpeed = 1.0f;
+		}
+	});
+
 	//Cameramove
 	MouseDispatch(MouseStatusType::MOUSE_LDOWN,
 		[&](int x, int y){
@@ -88,13 +99,16 @@ void Contents::Init()
 
 void Contents::Update()
 {
-	mCurrentTime += Timer::GetInstance()->GetDeltaTime();
-	if (mCurrentTime / 360)
-		mCurrentTime -= 360;
-	float r = mCurrentTime * (3.14f / 180);
-	float x = cos(r) * mLightRadius;
-	float z = sin(r) * mLightRadius;
-	LightManager::GetInstance()->mPLightList[0]->mPos = D3DXVECTOR4(x, 70.f, z, 1.0f);
+	if (mLightSpeed)
+	{
+		mCurrentTime += Timer::GetInstance()->GetDeltaTime();
+		if (mCurrentTime / 360)
+			mCurrentTime -= 360;
+		float r = mCurrentTime * (3.14f / 180) * mLightSpeed;
+		float x = cos(r) * mLightRadius;
+		float z = sin(r) * mLightRadius;
+		LightManager::GetInstance()->mPLightList[0]->mPos = D3DXVECTOR4(x, 70.f, z, 1.0f);
+	}
 }
 
 
