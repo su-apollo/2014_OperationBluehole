@@ -18,6 +18,7 @@
 #include <tchar.h>
 #include <atlconv.h>
 #include <assert.h>
+#include <math.h>
 
 // for memory leak check
 #include <memory>

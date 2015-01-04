@@ -4,7 +4,7 @@
 //--------------------------------------------------------------------------------------
 cbuffer ConstantBuffer : register(b0)
 {
-	matrix WorldViewProjection[2];
+	matrix WorldViewProjection[50];
 }
 
 //--------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ struct VS_OUTPUT
 VS_OUTPUT main(VS_INPUT Input, uint instID : SV_InstanceID)
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
-	output.Pos = mul(Input.Pos, WorldViewProjection[instID % 2]);
+	output.Pos = mul(Input.Pos, WorldViewProjection[instID % 50]);
 	output.Tex = Input.Tex;
 
 	return output;

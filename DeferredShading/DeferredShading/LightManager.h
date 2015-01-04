@@ -25,6 +25,8 @@ public:
 	void CreateDirectionalLights(int num);
 	void CreatePointLights(int num);
 
+	void PointLightTurnOff();
+
 	DLightList mDLightList;
 	PLightList mPLightList;
 

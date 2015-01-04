@@ -29,18 +29,26 @@ void LightManager::CreatePointLights(int num)
 
 void LightManager::RenderBill()
 {
-	// 더욱 최적화 할 수 있을 것 같음
 	UINT num = mPLightList.size();
 	D3DXVECTOR4* posArray = new D3DXVECTOR4[num];
 
 	int i = 0;
-	for (auto iter : mPLightList)
+	for (auto& iter : mPLightList)
 	{
-		posArray[i] = iter->mPos;
-		++i;
+		if (iter->mColor != D3DXVECTOR4(0, 0, 0, 0))
+		{
+			posArray[i] = iter->mPos;
+			++i;
+		}
 	}
 
 	mLightBill.RenderInstanced(num, posArray);
 	delete[] posArray;
+}
+
+void LightManager::PointLightTurnOff()
+{
+	for (auto& iter : mPLightList)
+		iter->mColor = D3DXVECTOR4(0, 0, 0, 0);
 }
 

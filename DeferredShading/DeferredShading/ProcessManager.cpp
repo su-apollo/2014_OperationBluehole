@@ -49,6 +49,8 @@ BOOL ProcessManager::Process() const
 	InputDispatcher::GetInstance()->DispatchMouseInput();
 	InputDispatcher::GetInstance()->DispatchKeyInput();
 
+	Contents::GetInstance()->Update();
+
 	Timer::GetInstance()->OnTick();
 
 	Camera::GetInstance()->Update();
