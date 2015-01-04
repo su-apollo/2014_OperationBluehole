@@ -98,7 +98,7 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 		if (distance > bounceRange) rangeCheck = 0;
 
 		// occlusion value decreases with distance.
-		occlusion += saturate((radius*0.8 - dist) / radius) * rangeCheck;
+		occlusion += saturate((radius*0.8 - distance) / radius) * rangeCheck;
 	}
 
 	//more occluded means darker.
@@ -110,8 +110,8 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 float3 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 {
 	float3 bouncedColor = float3(0, 0, 0);
-	float radius = 20.0f;
-	float bounceRange = 50.0f;
+	float radius = 15.0f;
+	float bounceRange = 10.0f;
 
 	[unroll]
 	for (int i = 0; i < 8; ++i)
@@ -164,7 +164,7 @@ float3 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 
 		if (distance > bounceRange) rangeCheck = 0;
 
-		bouncedColor += originalColor.xyz*max(dot(originalWorldNormal, originalToPos), 0)*max(((radius - distance) / radius), 0) *rangeCheck;
+		bouncedColor += originalColor.xyz*saturate((radius - distance) / radius) *rangeCheck;
 	}
 	return saturate(bouncedColor);
 }
