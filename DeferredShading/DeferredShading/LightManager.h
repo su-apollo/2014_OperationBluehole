@@ -30,6 +30,6 @@ public:
 
 	Billboard	mLightBill;
 
-	const LPCWSTR mBillBoardTexturePath = L"moon.png";
+	const LPCWSTR mBillBoardTexturePath = L"light_bulb.png";
 };
 
