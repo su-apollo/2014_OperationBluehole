@@ -11,9 +11,9 @@ cbuffer ConstantBuffer : register(b0)
 	matrix mViewProj;
 	matrix mInverseProj;
 	float4 vEye;
-	float4 vLightPos[2];
-	float4 vLightColor[2];
-	float4 vLightRange[2];
+	float4 vLightPos[50];
+	float4 vLightColor[50];
+	float4 vLightRange[50];
 	float4 vKernelVariables;
 	float3 vSampleSphere[8];
 };
@@ -272,7 +272,7 @@ OUT main(PS_INPUT Input) : SV_TARGET
 	float4 specularFactor = float4(0, 0, 0, 0);
 
 	[unroll]
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 50; ++i)
 	{
 		// get lightDirection and distance
 		float4 lightDir = vLightPos[i] - position;

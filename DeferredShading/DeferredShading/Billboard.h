@@ -3,7 +3,7 @@
 
 struct BillboardConstBuffer
 {
-	D3DXMATRIX mWorldViewProjection[2];
+	D3DXMATRIX mWorldViewProjection[50];
 };
 
 class Billboard

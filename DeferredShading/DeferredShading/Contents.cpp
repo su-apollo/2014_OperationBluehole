@@ -54,12 +54,30 @@ void Contents::Init()
 
 	InputDispatch('Y',
 		[&](){
+		LightManager::GetInstance()->PointLightTurnOff();
+		LightManager::GetInstance()->mPLightList[0]->mColor = D3DXVECTOR4(1, 1, 1, 0);
+
 		if (!InputDispatcher::GetInstance()->IsPressed('Y'))
 		{
 			if (mLightSpeed)
 				mLightSpeed = 0.0f;
 			else
 				mLightSpeed = 1.0f;
+		}
+	});
+
+	InputDispatch('L',
+		[&](){
+		if (!InputDispatcher::GetInstance()->IsPressed('L'))
+		{
+			for (int i = 0; i < MAX_LIGHT; ++i)
+			{
+				float x = i / 5 * 10.f - 40.f;
+				float y = i % 5 * 10.f + 50.f;
+				LightManager::GetInstance()->mPLightList[i]->mPos = D3DXVECTOR4(x, y, 0, 1.0f);
+				LightManager::GetInstance()->mPLightList[i]->mColor = D3DXVECTOR4(1, 1, 1, 0);
+			}
+			mLightSpeed = 0.0f;
 		}
 	});
 
@@ -72,8 +90,6 @@ void Contents::Init()
 
 	MouseDispatch(MouseStatusType::MOUSE_LPRESSED,
 		[&](int x, int y){
-		
-		//HWND hwnd = App::GetInstance()->GetHandleMainWindow();
 
 		dx = x - mCurrentMouseX;
 		dy = y - mCurrentMouseY;
@@ -87,14 +103,11 @@ void Contents::Init()
 	});
 
 	LightManager::GetInstance()->CreatePointLights(MAX_LIGHT);
+	LightManager::GetInstance()->PointLightTurnOff();
 
 	//todo : ºû À§Ä¡ ¼³Á¤
 	LightManager::GetInstance()->mPLightList[0]->mPos = D3DXVECTOR4(15.f, 60.0f, -50.0f, 1.0f);
 	LightManager::GetInstance()->mPLightList[0]->mColor = D3DXVECTOR4(1, 1, 1, 0);
-
-	LightManager::GetInstance()->mPLightList[1]->mPos = D3DXVECTOR4(-15.f, 60.0f, 50.f, 1.0f);
-	LightManager::GetInstance()->mPLightList[1]->mColor = D3DXVECTOR4(0, 0, 0, 0);
-
 }
 
 void Contents::Update()

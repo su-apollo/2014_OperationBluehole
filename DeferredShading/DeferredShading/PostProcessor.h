@@ -2,6 +2,11 @@
 #include "Singleton.h"
 #include "Contents.h"
 
+enum {
+	MAX_LIGHT = 50,
+	KERNEL_NUM = 8
+};
+
 struct QuadVertex
 {
 	D3DXVECTOR3 Pos;
