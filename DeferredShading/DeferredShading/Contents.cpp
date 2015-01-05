@@ -101,10 +101,11 @@ void Contents::Update()
 {
 	if (mLightSpeed)
 	{
-		mCurrentTime += Timer::GetInstance()->GetDeltaTime();
-		if (mCurrentTime / 360)
-			mCurrentTime -= 360;
-		float r = mCurrentTime * (3.14f / 180) * mLightSpeed;
+		float delta = Timer::GetInstance()->GetDeltaTime();
+		mAngle += delta * mLightSpeed;
+		if (mAngle / 360)
+			mAngle -= 360;
+		float r = mAngle * (3.14f / 180);
 		float x = cos(r) * mLightRadius;
 		float z = sin(r) * mLightRadius;
 		LightManager::GetInstance()->mPLightList[0]->mPos = D3DXVECTOR4(x, 70.f, z, 1.0f);

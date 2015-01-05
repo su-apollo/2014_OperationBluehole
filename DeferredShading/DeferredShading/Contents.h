@@ -21,7 +21,7 @@ public:
 	float mCameraX = 0.0f;
 	float mCameraY = 0.0f;
 
-	float mCurrentTime = 0.0f;
+	float mAngle = 0.0f;
 	float mLightRadius = 50.f;
 	float mLightSpeed = 1.0f;
 };
