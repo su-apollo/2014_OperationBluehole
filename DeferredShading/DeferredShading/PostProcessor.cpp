@@ -81,6 +81,13 @@ BOOL PostProcessor::CreateConstBuffer()
 		return FALSE;
 
 	//some variables
+	for (int i = 0; i < 8; ++i)
+	{
+		mSampleSphere[i].x = ((float)rand() / RAND_MAX * 2 - 1);
+		mSampleSphere[i].y = ((float)rand() / RAND_MAX * 2 - 1);
+		mSampleSphere[i].z = ((float)rand() / RAND_MAX);
+	}
+	/*
 	mSampleSphere[0] = { 0.5381f, 0.4856f, 0.4319f, 1.0f };
 	mSampleSphere[1] = { 0.1379f, -0.7486f, 0.6430f, 1.0f };
 	mSampleSphere[2] = { -0.3371f, -0.5679f, 0.2057f, 1.0f };
@@ -89,6 +96,7 @@ BOOL PostProcessor::CreateConstBuffer()
 	mSampleSphere[5] = { 0.2560f, 0.8069f, 0.0843f, 1.0f };
 	mSampleSphere[6] = { -0.4146f, -0.1402f, 0.1762f, 1.0f };
 	mSampleSphere[7] = { -0.7100f, 0.3924f, 0.7344f, 1.0f };
+	*/
 	return TRUE;
 }
 

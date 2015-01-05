@@ -53,7 +53,7 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 {
 	float radius = vKernelVariables.x;
 	float occlusion = 0.0f;
-	float bounceRange = 50.0f;
+	float bounceRange = 15.0f;
 
 	[unroll]
 	for (int i = 0; i < 8; ++i)
@@ -104,14 +104,14 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 	//more occluded means darker.
 	occlusion = 1 - (occlusion / 8);
 
-	return occlusion;
+	return pow(occlusion, 4);
 }
 
 float3 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 {
 	float3 bouncedColor = float3(0, 0, 0);
-	float radius = 15.0f;
-	float bounceRange = 10.0f;
+	float radius = 5.0f;
+	float bounceRange = 20.0f;
 
 	[unroll]
 	for (int i = 0; i < 8; ++i)
@@ -121,7 +121,7 @@ float3 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 		sampleWorldPos = mul(tbn, sampleWorldPos);
 
 		float scale = float(i) / float(8);
-		scale = lerp(0.3f, 1.0f, scale * scale);
+		scale = lerp(0.1f, 1.0f, scale * scale);
 		sampleWorldPos *= scale;
 
 		sampleWorldPos = -sampleWorldPos * radius + position.xyz;
@@ -164,7 +164,7 @@ float3 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 
 		if (distance > bounceRange) rangeCheck = 0;
 
-		bouncedColor += originalColor.xyz*saturate((radius - distance) / radius) *rangeCheck;
+		bouncedColor += originalColor.xyz*max(dot(originalWorldNormal, originalToPos), 0)*saturate((radius - distance) / radius) *rangeCheck;
 	}
 	return saturate(bouncedColor);
 }
