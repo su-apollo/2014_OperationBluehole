@@ -220,7 +220,7 @@ OUT main(PS_INPUT Input) : SV_TARGET
 			float4 viewDir = normalize(vEye-position);
 
 			//calculate specularFactor
-			float vDotN = dot(viewDir, reflection);
+			float vDotN = saturate(dot(viewDir, reflection));
 			specularFactor += pow(vDotN, 1.0f) * vLightColor[i] * attrFactor;
 		}
 		
