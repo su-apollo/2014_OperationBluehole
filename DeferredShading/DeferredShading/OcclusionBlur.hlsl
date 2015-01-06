@@ -74,7 +74,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	//return float4(saturate(diffSpec*blurredSSDO.a + ambient*blurredSSDO.a), 1);
 	//return float4(saturate(diffSpec+blurredSSDO.xyz*0.2), 1);
 	//return float4(saturate(diffSpec*blurredSSDO.a + blurredSSDO.xyz + ambient*blurredSSDO.a), 1);
-	return float4(saturate(diffSpec + ambient + 0.5*blurredSSDO.xyz)*blurredSSDO.a, 1);
+	return float4(saturate(diffSpec + ambient /*+ 0.5*blurredSSDO.xyz*/)*blurredSSDO.a, 1);
 
 
 }
