@@ -81,13 +81,12 @@ BOOL PostProcessor::CreateConstBuffer()
 	if (FAILED(hr))
 		return FALSE;
 
-	D3D11_BUFFER_DESC bd2;
-	ZeroMemory(&bd2, sizeof(bd2));
+	ZeroMemory(&bd, sizeof(bd));
 	// Create the constant buffer
-	bd2.Usage = D3D11_USAGE_DEFAULT;
-	bd2.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd2.CPUAccessFlags = 0;
-	bd2.ByteWidth = sizeof(LightConstantBuffer);
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.ByteWidth = sizeof(LightConstantBuffer);
 	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mLightConstBuffer);
 	if (FAILED(hr))
 		return FALSE;

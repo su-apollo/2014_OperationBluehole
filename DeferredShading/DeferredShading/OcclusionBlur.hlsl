@@ -143,5 +143,5 @@ float4 main(PS_INPUT Input) : SV_TARGET
 	specular *= specularFactor;
 	diffuse *= diffuseFactor;
 
-	return saturate(float4((diffSpec + ambient)*blurredSSDO.a, 1));
+	return (saturate(specular) + saturate(diffuse) + float4(ambient, 1)) * blurredSSDO.a;
 }

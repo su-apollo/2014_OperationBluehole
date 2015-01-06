@@ -106,7 +106,7 @@ float getOcclusion(float3x3 tbn, float4 position, float4 normal)
 float3 ComputeSSDO(float3x3 tbn, float4 position, float4 normal)
 {
 	float3 bouncedColor = float3(0, 0, 0);
-	float radius = 10.0f;
+	float radius = 15.0f;
 	float bounceRange = 20.0f;
 
 	[unroll]
