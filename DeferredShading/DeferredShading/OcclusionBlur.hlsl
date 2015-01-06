@@ -124,7 +124,7 @@ float4 main(PS_INPUT Input) : SV_TARGET
 		if (lDotN > 0.0f)
 		{
 			//calculate diffuseFactor
-			diffuseFactor += lDotN * vLightColor[i] * attrFactor;
+			diffuseFactor += saturate(lDotN * vLightColor[i] * attrFactor);
 
 			//variables to calculate specular
 			float4 reflection = reflect(-lightDir, normal);

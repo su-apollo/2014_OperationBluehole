@@ -74,12 +74,12 @@ void Contents::Init()
 		{
 			for (int i = 0; i < MAX_LIGHT; ++i)
 			{
-				float x = i / 5 * 10.f - 40.f;
-				float y = i % 5 * 10.f + 50.f;
-				LightManager::GetInstance()->mPLightList[i]->mPos = D3DXVECTOR4(x, y, 30.f, 1.0f);
-				LightManager::GetInstance()->mPLightList[i]->mColor = D3DXVECTOR4(1, 1, 1, 0);
-				LightManager::GetInstance()->mPLightList[i]->mRange = 5.f;
-				LightManager::GetInstance()->mPLightList[i]->mFullRange = 3.f;
+				float x = i / 5 * 20.f - 90.f;
+				float y = i % 5 * 20.f + 50.f;
+				LightManager::GetInstance()->mPLightList[i]->mPos = D3DXVECTOR4(x, y, 70.f, 1.0f);
+				LightManager::GetInstance()->mPLightList[i]->mColor = D3DXVECTOR4(0.2, 0.2, 0.2, 0);
+				LightManager::GetInstance()->mPLightList[i]->mRange = 50.f;
+				LightManager::GetInstance()->mPLightList[i]->mFullRange = 35.f;
 			}
 			mLightSpeed = 0.0f;
 		}
