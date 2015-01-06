@@ -1,5 +1,19 @@
 
 //--------------------------------------------------------------------------------------
+// Globals
+//--------------------------------------------------------------------------------------
+
+cbuffer ConstantBuffer : register(b0)
+{
+	matrix mInverseViewProj;
+	float4 vEye;
+	float4 vLightPos[50];
+	float4 vLightColor[50];
+	float4 vLightRange[50];
+};
+
+
+//--------------------------------------------------------------------------------------
 // Input / Output structures
 //--------------------------------------------------------------------------------------
 struct PS_INPUT
@@ -14,6 +28,10 @@ struct PS_INPUT
 
 Texture2D txSSDO : register(t0);
 Texture2D txDiffSpec : register(t1);
+Texture2D txNormal : register(t2);
+Texture2D txDiffuse : register(t3);
+Texture2D txSpecular : register(t4);
+Texture2D txDepth : register(t5);
 SamplerState samLinear : register(s0);
 
 //--------------------------------------------------------------------------------------
@@ -66,15 +84,64 @@ float4 main(PS_INPUT Input) : SV_TARGET
 
 	float4 blurredSSDO = SsdoBlur(blurSize, texelSize, Input);
 
+	// load G-buffer
+	float4 normal = txNormal.Sample(samLinear, Input.Tex);
+	float4 diffuse = txDiffuse.Sample(samLinear, Input.Tex);
+	float4 specular = txSpecular.Sample(samLinear, Input.Tex);
+	float4 depth = txDepth.Sample(samLinear, Input.Tex);
 
-	//return float4(diffSpec, 1);
-//	return float4(saturate(ssdo.aaa), 1);
+	normal = normal * 2 - 1;
 
-	//return float4(saturate(blurredSSDO.xyz), 1);
-	//return float4(saturate(diffSpec*blurredSSDO.a + ambient*blurredSSDO.a), 1);
-	//return float4(saturate(diffSpec+blurredSSDO.xyz*0.2), 1);
-	//return float4(saturate(diffSpec*blurredSSDO.a + blurredSSDO.xyz + ambient*blurredSSDO.a), 1);
-	return float4(saturate(diffSpec + ambient /*+ 0.5*blurredSSDO.xyz*/)*blurredSSDO.a, 1);
+	// reconstruct world pos
+	float4 position;
+	position.x = Input.Tex.x * 2 - 1;
+	position.y = (1 - Input.Tex.y) * 2 - 1;
+	position.z = depth.x;
+	position.w = 1;
+	position = mul(position, mInverseViewProj);
+	position /= position.w;
 
+	//light
+	float4 diffuseFactor = float4(0, 0, 0, 0);
+	float4 specularFactor = float4(0, 0, 0, 0);
 
+	[unroll]
+	for (int i = 0; i < 50; ++i)
+	{
+		// get lightDirection and distance
+		float4 lightDir = vLightPos[i] - position;
+		float distance = length(lightDir);
+		lightDir /= distance;
+
+		float3 attr = float3(0, 0, 1);
+		float attrFactor = 1.0f - (max(distance - vLightRange[i].y,0) / vLightRange[i].x);
+
+		//if (distance > vLightRange[i].x)
+		//	attrFactor = 0.0f;
+
+		float lDotN = dot(lightDir, normal);
+
+		if (lDotN > 0.0f)
+		{
+			//calculate diffuseFactor
+			diffuseFactor += lDotN * vLightColor[i] * attrFactor;
+
+			//variables to calculate specular
+			float4 reflection = reflect(-lightDir, normal);
+			float4 viewDir = normalize(vEye-position);
+
+			//calculate specularFactor
+			float vDotN = saturate(dot(viewDir, reflection));
+			specularFactor += pow(vDotN, 1.0f) * vLightColor[i] * attrFactor;
+		}
+		
+	}
+
+	// compute color
+	diffuse += float4(blurredSSDO.xyz, 1);
+
+	specular *= specularFactor;
+	diffuse *= diffuseFactor;
+
+	return saturate(float4((diffSpec + ambient)*blurredSSDO.a, 1));
 }

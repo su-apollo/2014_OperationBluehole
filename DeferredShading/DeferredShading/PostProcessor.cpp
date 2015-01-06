@@ -16,7 +16,8 @@ PostProcessor::PostProcessor()
 PostProcessor::~PostProcessor()
 {
 	SafeRelease(mPixelShader);
-	SafeRelease(mPSConstBuffer);
+	SafeRelease(mLightConstBuffer);
+	SafeRelease(mPostConstBuffer);
 	SafeRelease(mVertexBuffer);
 	SafeRelease(mIndexBuffer);
 }
@@ -76,7 +77,18 @@ BOOL PostProcessor::CreateConstBuffer()
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = 0;
 	bd.ByteWidth = sizeof(PostProcessorConstantBuffer);
-	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mPSConstBuffer);
+	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mPostConstBuffer);
+	if (FAILED(hr))
+		return FALSE;
+
+	D3D11_BUFFER_DESC bd2;
+	ZeroMemory(&bd2, sizeof(bd2));
+	// Create the constant buffer
+	bd2.Usage = D3D11_USAGE_DEFAULT;
+	bd2.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd2.CPUAccessFlags = 0;
+	bd2.ByteWidth = sizeof(LightConstantBuffer);
+	hr = mD3DDevice->CreateBuffer(&bd, NULL, &mLightConstBuffer);
 	if (FAILED(hr))
 		return FALSE;
 
@@ -274,7 +286,7 @@ void PostProcessor::LightPass()
 	// set shader
 	mD3DDeviceContext->VSSetShader(mVertexShader, NULL, 0);
 	mD3DDeviceContext->PSSetShader(mPixelShader, NULL, 0);
-	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPSConstBuffer);
+	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mPostConstBuffer);
 
 	// set Gbuff
 	ID3D11ShaderResourceView* normalTexRV = RTManager::GetInstance()->GetNormalTexRV();
@@ -283,8 +295,6 @@ void PostProcessor::LightPass()
 	ID3D11ShaderResourceView* depthTexRV = RTManager::GetInstance()->GetDepthTexRV();
 
 	// set constbuff
-	PostProcessorConstantBuffer pcb;
-	//D3DXMATRIX matInverseProj = Camera::GetInstance()->GetMatInverseProj();
 	D3DXMATRIX matInverseViewProj = Camera::GetInstance()->GetMatInverseViewProj();
 	D3DXMatrixTranspose(&matInverseViewProj, &matInverseViewProj);
 
@@ -296,23 +306,16 @@ void PostProcessor::LightPass()
 	D3DXMatrixTranspose(&matView, &matView);
 	D3DXMatrixTranspose(&matViewProj, &matViewProj);
 
+	PostProcessorConstantBuffer pcb;
 	pcb.mInverseViewProj = matInverseViewProj;
 	pcb.mViewProj = matViewProj;
 	pcb.mInverseProj = matInverseProj;
-	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
-	for (int i = 0; i < MAX_LIGHT; ++i)
-	{
-		PLightPointer light = LightManager::GetInstance()->mPLightList[i];
-		pcb.vLightPos[i] = light->mPos;
-		pcb.vLightColor[i] = light->mColor;
-		pcb.vLightRange[i] = D3DXVECTOR4(light->mRange, light->mFullRange, light->mRange, 1);
-	}
 	pcb.vKernelVariables = D3DXVECTOR4(mKernelRadius, 0, 0, 0);
 	for (int i = 0; i < KERNEL_NUM; ++i)
 	{
 		pcb.vSampleSphere[i] = mSampleSphere[i];
 	}
-	mD3DDeviceContext->UpdateSubresource(mPSConstBuffer, 0, NULL, &pcb, 0, 0);
+	mD3DDeviceContext->UpdateSubresource(mPostConstBuffer, 0, NULL, &pcb, 0, 0);
 
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &normalTexRV);
 	mD3DDeviceContext->PSSetShaderResources(1, 1, &diffuseTexRV);
@@ -331,12 +334,40 @@ void PostProcessor::OccBlurPass()
 {
 	mD3DDeviceContext->PSSetShader(mOccBlurShader, NULL, 0);
 
+	// setting constbuffer
+	D3DXMATRIX matInverseViewProj = Camera::GetInstance()->GetMatInverseViewProj();
+	D3DXMatrixTranspose(&matInverseViewProj, &matInverseViewProj);
+
+	LightConstantBuffer pcb;
+	pcb.mInverseViewProj = matInverseViewProj;
+	pcb.vEye = D3DXVECTOR4(Camera::GetInstance()->GetPosition(), 1);
+	for (int i = 0; i < MAX_LIGHT; ++i)
+	{
+		PLightPointer light = LightManager::GetInstance()->mPLightList[i];
+		pcb.vLightPos[i] = light->mPos;
+		pcb.vLightColor[i] = light->mColor;
+		pcb.vLightRange[i] = D3DXVECTOR4(light->mRange, light->mFullRange, light->mRange, 1);
+	}
+
+	mD3DDeviceContext->UpdateSubresource(mLightConstBuffer, 0, NULL, &pcb, 0, 0);
+
+	// set Gbuff
 	ID3D11ShaderResourceView* TexRV = RTManager::GetInstance()->GetSDOTexRV();
 	ID3D11ShaderResourceView* TexRV0 = RTManager::GetInstance()->GetDiffSpecTexRV();
 
+	ID3D11ShaderResourceView* normalTexRV = RTManager::GetInstance()->GetNormalTexRV();
+	ID3D11ShaderResourceView* diffuseTexRV = RTManager::GetInstance()->GetDiffuseTexRV();
+	ID3D11ShaderResourceView* specularTexRV = RTManager::GetInstance()->GetSpecularTexRV();
+	ID3D11ShaderResourceView* depthTexRV = RTManager::GetInstance()->GetDepthTexRV();
+
 	mD3DDeviceContext->PSSetShaderResources(0, 1, &TexRV);
 	mD3DDeviceContext->PSSetShaderResources(1, 1, &TexRV0);
+	mD3DDeviceContext->PSSetShaderResources(2, 1, &normalTexRV);
+	mD3DDeviceContext->PSSetShaderResources(3, 1, &diffuseTexRV);
+	mD3DDeviceContext->PSSetShaderResources(4, 1, &specularTexRV);
+	mD3DDeviceContext->PSSetShaderResources(5, 1, &depthTexRV);
 
+	mD3DDeviceContext->PSSetConstantBuffers(0, 1, &mLightConstBuffer);
 
 	// draw
 	mD3DDeviceContext->DrawIndexed(6, 0, 0);

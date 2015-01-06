@@ -10,10 +10,6 @@ cbuffer ConstantBuffer : register(b0)
 	matrix mInverseViewProj;
 	matrix mViewProj;
 	matrix mInverseProj;
-	float4 vEye;
-	float4 vLightPos[50];
-	float4 vLightColor[50];
-	float4 vLightRange[50];
 	float4 vKernelVariables;
 	float3 vSampleSphere[8];
 };
@@ -190,44 +186,6 @@ OUT main(PS_INPUT Input) : SV_TARGET
 	position.w = 1;
 	position = mul(position, mInverseViewProj);
 	position /= position.w;
-
-	float4 diffuseFactor = float4(0, 0, 0, 0);
-	float4 specularFactor = float4(0, 0, 0, 0);
-
-	[unroll]
-	for (int i = 0; i < 50; ++i)
-	{
-		// get lightDirection and distance
-		float4 lightDir = vLightPos[i] - position;
-		float distance = length(lightDir);
-		lightDir /= distance;
-
-		float3 attr = float3(0, 0, 1);
-		float attrFactor = 1.0f - (max(distance - vLightRange[i].y,0) / vLightRange[i].x);
-
-		//if (distance > vLightRange[i].x)
-		//	attrFactor = 0.0f;
-
-		float lDotN = dot(lightDir, normal);
-
-		if (lDotN > 0.0f)
-		{
-			//calculate diffuseFactor
-			diffuseFactor += lDotN * vLightColor[i] * attrFactor;
-
-			//variables to calculate specular
-			float4 reflection = reflect(-lightDir, normal);
-			float4 viewDir = normalize(vEye-position);
-
-			//calculate specularFactor
-			float vDotN = saturate(dot(viewDir, reflection));
-			specularFactor += pow(vDotN, 1.0f) * vLightColor[i] * attrFactor;
-		}
-		
-	}
-
-	specular *= specularFactor;
-	diffuse *= diffuseFactor;
 
 	float2 texSize;
 	float2 noiseTexSize;

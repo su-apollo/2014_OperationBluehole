@@ -18,12 +18,17 @@ struct PostProcessorConstantBuffer
 	D3DXMATRIX	mInverseViewProj;
 	D3DXMATRIX	mViewProj;
 	D3DXMATRIX	mInverseProj;
+	D3DXVECTOR4 vKernelVariables;
+	D3DXVECTOR4 vSampleSphere[KERNEL_NUM];
+};
+
+struct LightConstantBuffer
+{
+	D3DXMATRIX	mInverseViewProj;
 	D3DXVECTOR4 vEye;
 	D3DXVECTOR4 vLightPos[MAX_LIGHT];
 	D3DXVECTOR4 vLightColor[MAX_LIGHT];
 	D3DXVECTOR4	vLightRange[MAX_LIGHT];
-	D3DXVECTOR4 vKernelVariables;
-	D3DXVECTOR4 vSampleSphere[KERNEL_NUM];
 };
 
 //static const LPCWSTR	NOISE_TEXTURE = L"noise_texture_5x5.bmp";
@@ -60,7 +65,8 @@ private:
 
 	ID3D11VertexShader*     mVertexShader = NULL;
 	ID3D11PixelShader*		mPixelShader = NULL;
-	ID3D11Buffer*			mPSConstBuffer = NULL;
+	ID3D11Buffer*			mPostConstBuffer = NULL;
+	ID3D11Buffer*			mLightConstBuffer = NULL;
 
 	ID3D11PixelShader*		mOccBlurShader = NULL;
 	ID3D11PixelShader*		mFXAAShader = NULL;
